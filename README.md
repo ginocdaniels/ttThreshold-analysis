@@ -1,6 +1,6 @@
 # ttThreshold-analysis
 
-Install FCCAnalyses frameworks:
+Install FCCAnalyses framework:
 
 ```
 git clone --branch pre-edm4hep1 https://github.com/HEP-FCC/FCCAnalyses.git
