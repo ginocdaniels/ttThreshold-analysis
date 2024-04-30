@@ -56,4 +56,4 @@ fccanalysis run examples/histmaker_flavor.py
 fccanalysis plots examples/plots_flavor.py
 ```
 
-For more info, check out the [FCCAnalyses tutorial](https://hep-fcc.github.io/fcc-tutorials/main/fast-sim-and-analysis/fccanalyses/doc/starterkit/FccFastSimAnalysis/Readme.html#)
+For more info, check out the [FCCAnalyses tutorial](https://hep-fcc.github.io/fcc-tutorials/main/fast-sim-and-analysis/fccanalyses/doc/starterkit/FccFastSimAnalysis/Readme.html)
