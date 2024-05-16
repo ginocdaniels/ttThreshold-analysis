@@ -3,7 +3,7 @@ import os, copy
 # list of processes
 processList = {
     "wzp6_ee_WbWb_semihad_ecm345": {
-        "fraction": 0.1,
+        "fraction": 1E-03,
     },
 
     #"p8_ee_WW_ecm365": {
@@ -33,11 +33,17 @@ includePaths = ["examples/functions.h"]
 ## latest particle transformer model, trained on 9M jets in winter2023 samples
 model_name = "fccee_flavtagging_edm4hep_wc_v1"
 
-## model files needed for unit testing in CI
-
 ## model files locally stored on /eos
 eos_dir ="/eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/"
+model_dir = (
+    "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_13_01_2022/"
+)
+local_preproc = "{}/{}.json".format(model_dir, model_name)
+local_model = "{}/{}.onnx".format(model_dir, model_name)
 
+url_model_dir = "https://fccsw.web.cern.ch/fccsw/testsamples/jet_flavour_tagging/winter2023/wc_pt_13_01_2022/"
+url_preproc = "{}/{}.json".format(url_model_dir, model_name)
+url_model = "{}/{}.onnx".format(url_model_dir, model_name)
 
 ## get local file, else download from url
 def get_file_path(url, filename):
@@ -53,6 +59,9 @@ def get_files(eos_dir, proc):
     if os.path.exists(basepath):
         files =  [os.path.join(basepath,x) for x in os.listdir(basepath) if os.path.isfile(os.path.join(basepath, x)) ]
     return files
+
+weaver_preproc = get_file_path(url_preproc, local_preproc)
+weaver_model = get_file_path(url_model, local_model)
 
 #inputDir = eos_dir
 
@@ -221,6 +230,9 @@ class RDFanalysis:
 
         df = jetFlavourHelper.define(df)
 
+        ## tagger inference
+        df = jetFlavourHelper.inference(weaver_preproc, weaver_model, df)
+
         df = df.Define(
             "lep_p", "muons_sel_iso.size() >0 ? FCCAnalyses::ReconstructedParticle::get_p(muons_sel_iso)[0] : (electrons_sel_iso.size() > 0 ? FCCAnalyses::ReconstructedParticle::get_p(electrons_sel_iso)[0] : -9999) "
         )
@@ -238,18 +250,18 @@ class RDFanalysis:
 
         df = df.Define(
             "missing_p",
-            "FCCAnalyses::ReconstructedParticle::get_p(MissingET)",
+            "FCCAnalyses::ReconstructedParticle::get_p(MissingET)[0]",
         )
 
         df = df.Define(
-            'missing_p_theta', 'ReconstructedParticle::get_theta(MissingET)',
+            'missing_p_theta', 'ReconstructedParticle::get_theta(MissingET)[0]',
         )
 
         df = df.Define(
-            'missing_p_phi', 'ReconstructedParticle::get_phi(MissingET)',
+            'missing_p_phi', 'ReconstructedParticle::get_phi(MissingET)[0]',
         )
 
-        '''
+        
         df = df.Define(
             "jets_p4",
             "JetConstituentsUtils::compute_tlv_jets({})".format(
@@ -283,9 +295,27 @@ class RDFanalysis:
         df = df.Define("d_23", "JetClusteringUtils::get_exclusive_dmerge(_jet, 2)")
         df = df.Define("d_34", "JetClusteringUtils::get_exclusive_dmerge(_jet, 3)")
         df = df.Define("d_45", "jets_p4.size()>4 ? JetClusteringUtils::get_exclusive_dmerge(_jet, 4) : -999")
-        '''
 
-        
+
+        df = df.Define("jet1_isG", "JetFlavourUtils::get_weight(MVAVec_, 0)[0]")
+        df = df.Define("jet2_isG", "JetFlavourUtils::get_weight(MVAVec_, 0)[1]")
+        df = df.Define("jet3_isG", "JetFlavourUtils::get_weight(MVAVec_, 0)[2]")
+        df = df.Define("jet4_isG", "JetFlavourUtils::get_weight(MVAVec_, 0)[3]")
+        df = df.Define("jet5_isG", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 0)[4] : -999")
+
+        df = df.Define("jet1_isQ", "JetFlavourUtils::get_weight(MVAVec_, 1)[0]")
+        df = df.Define("jet2_isQ", "JetFlavourUtils::get_weight(MVAVec_, 1)[1]")
+        df = df.Define("jet3_isQ", "JetFlavourUtils::get_weight(MVAVec_, 1)[2]")
+        df = df.Define("jet4_isQ", "JetFlavourUtils::get_weight(MVAVec_, 1)[3]")
+        df = df.Define("jet5_isQ", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 1)[4] : -999")
+
+        df = df.Define("jet1_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[0]")
+        df = df.Define("jet2_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[1]")
+        df = df.Define("jet3_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[2]")
+        df = df.Define("jet4_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[3]")
+        df = df.Define("jet5_isB", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 4)[4] : -999")
+
+
         return df
 
     # __________________________________________________________
@@ -293,14 +323,17 @@ class RDFanalysis:
     def output():
         branchList = [
             "nlep", "lep_p", 'lep_theta', 'lep_phi',
-            #"njets", "jet1_p", "jet2_p", "jet3_p","jet4_p","jet5_p",
-            #"jet1_theta", "jet2_theta", "jet3_theta","jet4_theta","jet5_theta",
-            #"jet1_phi", "jet2_phi", "jet3_phi","jet4_phi","jet5_phi",
+            "njets", "jet1_p", "jet2_p", "jet3_p","jet4_p","jet5_p",
+            "jet1_theta", "jet2_theta", "jet3_theta","jet4_theta","jet5_theta",
+            "jet1_phi", "jet2_phi", "jet3_phi","jet4_phi","jet5_phi",
             "missing_p", "missing_p_theta", "missing_p_phi",
-            #"d_12","d_23","d_34","d_45",
+            "d_12","d_23","d_34","d_45",
+            "jet1_isB", "jet2_isB", "jet3_isB", "jet4_isB", "jet5_isB",
+            "jet1_isG", "jet2_isG", "jet3_isG", "jet4_isG", "jet5_isG",
+            "jet1_isQ", "jet2_isQ", "jet3_isQ", "jet4_isQ", "jet5_isQ",
         ]
         
-        branchList += jetClusteringHelper.outputBranches()
+        #branchList += jetClusteringHelper.outputBranches()
 
         ## outputs jet scores and constituent breakdown
         #branchList += jetFlavourHelper.outputBranches()
