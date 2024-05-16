@@ -309,6 +309,18 @@ class RDFanalysis:
         df = df.Define("jet4_isQ", "JetFlavourUtils::get_weight(MVAVec_, 1)[3]")
         df = df.Define("jet5_isQ", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 1)[4] : -999")
 
+        df = df.Define("jet1_isS", "JetFlavourUtils::get_weight(MVAVec_, 2)[0]")
+        df = df.Define("jet2_isS", "JetFlavourUtils::get_weight(MVAVec_, 2)[1]")
+        df = df.Define("jet3_isS", "JetFlavourUtils::get_weight(MVAVec_, 2)[2]")
+        df = df.Define("jet4_isS", "JetFlavourUtils::get_weight(MVAVec_, 2)[3]")
+        df = df.Define("jet5_isS", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 2)[4] : -999")
+
+        df = df.Define("jet1_isC", "JetFlavourUtils::get_weight(MVAVec_, 3)[0]")
+        df = df.Define("jet2_isC", "JetFlavourUtils::get_weight(MVAVec_, 3)[1]")
+        df = df.Define("jet3_isC", "JetFlavourUtils::get_weight(MVAVec_, 3)[2]")
+        df = df.Define("jet4_isC", "JetFlavourUtils::get_weight(MVAVec_, 3)[3]")
+        df = df.Define("jet5_isC", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 3)[4] : -999")
+
         df = df.Define("jet1_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[0]")
         df = df.Define("jet2_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[1]")
         df = df.Define("jet3_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[2]")
@@ -331,6 +343,8 @@ class RDFanalysis:
             "jet1_isB", "jet2_isB", "jet3_isB", "jet4_isB", "jet5_isB",
             "jet1_isG", "jet2_isG", "jet3_isG", "jet4_isG", "jet5_isG",
             "jet1_isQ", "jet2_isQ", "jet3_isQ", "jet4_isQ", "jet5_isQ",
+            "jet1_isS", "jet2_isS", "jet3_isS", "jet4_isS", "jet5_isS",
+            "jet1_isC", "jet2_isC", "jet3_isC", "jet4_isC", "jet5_isC",
         ]
         
         #branchList += jetClusteringHelper.outputBranches()
