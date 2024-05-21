@@ -1,22 +1,31 @@
 import os, copy
+import urllib
 
 # list of processes
 processList = {
-    "wzp6_ee_WbWb_semihad_ecm345": {
-        "fraction": 1E-03,
+    "wzp6_ee_WbWb_semihad_ecm355": {
+        "fraction": 1,
     },
 
-    #"p8_ee_WW_ecm365": {
-    #    "fraction": 1,
-    #},
-    
-    #"wzp6_ee_WbWb_semihad_ecm350": {
-    #    "fraction": 1,
-    #},
+    "p8_ee_WW_ecm345": {
+       "fraction": 1,
+    },
 
-    #"wzp6_ee_WbWb_semihad_ecm355": {
-    #    "fraction": 1,
-    #},
+    "p8_ee_WW_ecm350": {
+       "fraction": 1,
+    },
+
+    "p8_ee_WW_ecm355": {
+       "fraction": 1,
+    },
+    
+    "wzp6_ee_WbWb_semihad_ecm350": {
+       "fraction": 1,
+    },
+
+    "wzp6_ee_WbWb_semihad_ecm355": {
+        "fraction": 1,
+    },
     
 }
 
