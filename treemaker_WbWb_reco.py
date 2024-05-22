@@ -293,7 +293,7 @@ class RDFanalysis:
         df = df.Define("jet3_theta","recojet_theta[2]")
         df = df.Define("jet4_theta","recojet_theta[3]")
         df = df.Define("jet5_theta","jets_p4.size()>4 ? recojet_theta[4] : -999")
-        df = df.Define("recojet_phi", "JetClusteringUtils::get_phi(jet)")
+        df = df.Define("recojet_phi", "JetClusteringUtils::get_phi_std(jet)")
         df = df.Define("jet1_phi","recojet_phi[0]")
         df = df.Define("jet2_phi","recojet_phi[1]")
         df = df.Define("jet3_phi","recojet_phi[2]")
