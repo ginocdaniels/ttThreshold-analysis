@@ -40,14 +40,18 @@ branchList = [
     "jet1_isQ", "jet2_isQ", "jet3_isQ", "jet4_isQ",
     "jet1_isS", "jet2_isS", "jet3_isS", "jet4_isS",
     "jet1_isC", "jet2_isC", "jet3_isC", "jet4_isC",
+    "BDT_score",
 ]
+
 
 
 for var in branchList:
     logy = False
     if var.endswith("_isB") or var.endswith("_isG") or var.endswith("_isQ") or var.endswith("_isS") or var.endswith("_isC"):
         logy = True
-    if var == "d_12" or var == "d_23" or var == "d_34":
+    if var.endswith('d_12') or var.endswith('d_23') or var.endswith('d_34'):
+        logy = True
+    if 'BDT_score' in var:
         logy = True
     hists[var] = {
         "output": var,
@@ -61,4 +65,19 @@ for var in branchList:
         "xtitle": var,
         "ytitle": "Events",
     }
+
+    hists['BDT_cut_'+var] = {
+        "output": 'BDT_cut_'+var,
+        "logy": logy,
+        "stack": True,
+        "rebin": 1,
+        "xmin": -1,
+        "xmax": -1,
+        "ymin": 0 if not logy else 1,
+        "ymax": -1,
+        "xtitle": var,
+        "ytitle": "Events",
+    }
+    
+    
 
