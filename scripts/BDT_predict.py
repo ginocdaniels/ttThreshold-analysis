@@ -7,14 +7,16 @@ from xgboost import XGBClassifier
 
 
 ecm = 345
+hadronic = True
+channel = 'had' if hadronic else 'semihad'
 
-infile_s = 'outputs/treemaker/WbWb/semilept/wzp6_ee_WbWb_semihad_ecm{}.root'.format(ecm)
-infile_b = 'outputs/treemaker/WbWb/semilept/p8_ee_WW_ecm{}.root'.format(ecm)
+infile_s = 'outputs/treemaker/WbWb/{0}/wzp6_ee_WbWb_{0}_ecm{1}.root'.format(channel,ecm)
+infile_b = 'outputs/treemaker/WbWb/{}/p8_ee_WW_ecm{}.root'.format(channel,ecm)
 
 infiles = [infile_s, infile_b]
 
 bst = XGBClassifier()
-bst.load_model('BDT_model/model.json')
+bst.load_model('BDT_model/model_{}.json'.format(channel))
 
 def evaluateBDT(infile):
     f = uproot.open(infile)
