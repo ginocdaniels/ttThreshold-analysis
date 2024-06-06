@@ -161,3 +161,6 @@ cython_debug/
 
 localSamples/
 outputs/
+
+fccee_flavtagging_edm4hep_wc_v1.json
+fccee_flavtagging_edm4hep_wc_v1.onnx
