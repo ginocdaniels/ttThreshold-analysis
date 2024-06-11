@@ -45,6 +45,12 @@ def main():
     parser.add_argument("--dry", help="check local submission", action="store_true")
 
     parser.add_argument(
+        "--ncpus",
+        help="number of cpus",
+        default=4,
+    )
+
+    parser.add_argument(
         "--queue",
         help="queue for condor",
         choices=[
@@ -95,8 +101,9 @@ log                   = std/condor.$(ClusterId).log
 
 +AccountingGroup = "group_u_CMST3.all"
 +JobFlavour    = "{}"
+request_cpus = {}
 """.format(
-        script, queue
+        script, queue, args.ncpus
     )
     print("")
 
@@ -113,14 +120,15 @@ log                   = std/condor.$(ClusterId).log
             # print("{} : missing output file ".format(outputFile))
             jobCount += 1
 
-            argts = "{} {} {} {} {}".format(os.environ["LOCAL_DIR"], analysis, inputFile, outputFile, nev)
+            argts = "{} {} {} {} {} {}".format(os.environ["LOCAL_DIR"], analysis, inputFile, outputFile, nev, args.ncpus)
 
             cmdfile += 'arguments="{}"\n'.format(argts)
             cmdfile += "queue\n"
 
             cmd = "rm -rf job; ./{} {}".format(script, argts)
 
-            rm_empty_cmd_file += "{} ".format(outputFile)
+            if os.path.exists(outputFile):
+                rm_empty_cmd_file += "{} ".format(outputFile)
 
             if jobCount == 1:
                 print("")
@@ -129,8 +137,9 @@ log                   = std/condor.$(ClusterId).log
     print("")
     print("submitting {} files ".format(jobCount))
     print("")
-    print("remove empty files ... ")
-    os.system(rm_empty_cmd_file)
+    if rm_empty_cmd_file != "rm ":
+        print("remove empty files ... ")
+        os.system(rm_empty_cmd_file)
 
     with open("condor_analysis.sub", "w") as f:
         f.write(cmdfile)

@@ -1,86 +1,84 @@
 import os, sys
+import re
 
 debug = False
 ### to be customized by user
 
 ## analysis script
-script = "../examples/FCCee/weaver/analysis_inference_zh_vvjj_v2.py"
-# script = "../examples/FCCee/weaver/analysis_inference.py"
+script = "../treemaker_WbWb_reco.py"
 
-## name/tag of the physics analysis
-# analysis_name = "zh_vvss_test"
-
-analysis_name = "zh_vvjj_var"
+analysis_name = "WbWb"
 
 ## run nev_per_job = -1 to run on all event in input root files
-# queue = "microcentury"
-queue = "testmatch"
-queue = "nextweek"
+queue = "workday"
 
 nev_per_job = 100000
+ncpus = 4
 
 ## list of samples to run on training jets
 samples = [
-    "wzp6_ee_nunuH_Hbb_ecm240",
-    "wzp6_ee_nunuH_Hcc_ecm240",
-    "wzp6_ee_nunuH_Hgg_ecm240",
-    "wzp6_ee_nunuH_Hss_ecm240",
-    "wzp6_ee_nunuH_Hqq_ecm240",
-    # "wzp6_ee_nunuH_Htautau_ecm240",
-    # "p8_ee_ZH_Znunu_Hbb_ecm240",
-    # "p8_ee_ZH_Znunu_Hcc_ecm240",
-    # "p8_ee_ZH_Znunu_Hgg_ecm240",
-    # "p8_ee_ZH_Znunu_Hss_ecm240",
-    # "p8_ee_WW_ecm240",
-    # "p8_ee_ZZ_ecm240",
-    # "p8_ee_Zqq_ecm240",
+    "wzp6_ee_WbWb_semihad_ecm345",
+    "wzp6_ee_WbWb_had_ecm345",
+    "wzp6_ee_WbWb_semihad_ecm350",
+    "wzp6_ee_WbWb_had_ecm350",
+    "wzp6_ee_WbWb_semihad_ecm355",
+    "wzp6_ee_WbWb_had_ecm355",
+    "p8_ee_WW_ecm345",
+    "wzp6_ee_qq_ecm345",
+    "p8_ee_WW_ecm350",
+    "p8_ee_WW_ecm355",
 ]
-
-"""
-samples = [
-    "wzp6_ee_nunuH_Huu_ecm240",
-    "wzp6_ee_nunuH_Hdd_ecm240",
-    "p8_ee_ZH_Znunu_Huu_ecm240",
-    "p8_ee_ZH_Znunu_Hdd_ecm240",
-]
-"""
-
-
-## list of samples to run on
-samples = [
-    # "wzp6_ee_ZnunuHnonhad_ecm240",
-    "wzp6_ee_nunuH_Hbb_ecm240",
-    "wzp6_ee_nunuH_Hcc_ecm240",
-    "wzp6_ee_nunuH_Hgg_ecm240",
-    "wzp6_ee_nunuH_Hss_ecm240",
-    "wzp6_ee_nunuH_Htautau_ecm240",
-    "wzp6_ee_nunuH_HWW_ecm240",
-    "wzp6_ee_nunuH_HZZ_ecm240",
-    "wzp6_ee_qqH_ecm240",
-    # "p8_ee_ZH_Znunu_Hbb_ecm240",
-    # "p8_ee_ZH_Znunu_Hcc_ecm240",
-    # "p8_ee_ZH_Znunu_Hgg_ecm240",
-    # "p8_ee_ZH_Znunu_Hss_ecm240",
-    # "p8_ee_ZH_Znunu_Htautau_ecm240",
-    "p8_ee_WW_ecm240",
-    "p8_ee_ZZ_ecm240",
-    "p8_ee_Zqq_ecm240",
-]
-
-# indir = "/eos/experiment/fcc/ee/generation/DelphesStandalone/Edm4Hep/pre_winter2023_tests_v2/"
 
 indir = "/eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/"
-outdir = "/eos/experiment/fcc/ee/analyses/case-studies/higgs/flat_trees/{}/".format(analysis_name)
 
-# outdir = "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_13_01_2022/"
+channels = ['had','semihad']
 
-### run condor jobs
-os.system("rm -rf std/*")
-for s in samples:
-    cmd = "python submitAnalysisJobs.py --indir {}/{} ".format(indir, s)
-    cmd += "--outdir {}/{} ".format(outdir, s)
-    cmd += "--queue {} --script {} --nev {} ".format(queue, script, nev_per_job)
-    if debug:
-        cmd += "--dry"
-    print(cmd)
-    #os.system(cmd)
+for channel in channels:
+
+    outdir = "../output_condor/{}/{}".format(analysis_name,channel)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    with open(script, 'r') as file:
+        content = file.read()
+
+    if channel == 'had':
+        content = re.sub(r'hadronic\s*=\s*False', 'hadronic = True', content)
+    elif channel == 'semihad':
+        content = re.sub(r'hadronic\s*=\s*True', 'hadronic = False', content)
+    else:
+        raise ValueError("channel not recognized")
+    
+    content = re.sub(r'includePaths\s*=\s*\["examples/functions.h"\]', 'includePaths = ["functions.h"]', content)
+    
+    base_name, ext = os.path.splitext(script)
+    new_script = "{}_{}.py".format(base_name, channel)
+
+    outdir_script = 'scripts'
+    if not os.path.exists(outdir_script):
+        os.makedirs(outdir_script)
+    os.system("cp ../examples/functions.h {}".format(outdir_script))
+    new_script = '{}/{}'.format(outdir_script, new_script.split('/')[-1])
+
+    lines = content.splitlines()
+    content = [line for line in lines if not 'outputDir' in line]
+        
+    
+    with open(new_script, 'w') as file:
+        for line in content:
+            file.write(line)
+            file.write('\n')
+        
+    ### run condor jobs
+    if not os.path.exists("std"):
+        os.makedirs("std")
+    os.system("rm -rf std/*")
+    for s in samples:
+        cmd = "python submitAnalysisJobs.py --indir {}/{} ".format(indir, s)
+        cmd += "--outdir {}/{} ".format(outdir, s)
+        cmd += "--queue {} --script {} --nev {} ".format(queue, new_script, nev_per_job)
+        cmd += "--ncpus {} ".format(ncpus)
+        if debug:
+            cmd += "--dry"
+            print(cmd)
+        os.system(cmd)
