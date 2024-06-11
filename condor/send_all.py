@@ -12,7 +12,7 @@ analysis_name = "WbWb"
 ## run nev_per_job = -1 to run on all event in input root files
 queue = "workday"
 
-nev_per_job = 100000
+nev_per_job = -1
 ncpus = 4
 
 ## list of samples to run on training jets
