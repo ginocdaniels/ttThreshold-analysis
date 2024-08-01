@@ -7,25 +7,25 @@ processList = {
         "fraction": 1,
     },
 
-    "wzp6_ee_WbWb_semihad_ecm350": {
-       "fraction": 1,
-    },
-
-    "wzp6_ee_WbWb_semihad_ecm355": {
-        "fraction": 1,
-    },
-
-    "p8_ee_WW_ecm345": {
-       "fraction": 1,
-    },
-
-    "p8_ee_WW_ecm350": {
-       "fraction": 1,
-    },
-
-    "p8_ee_WW_ecm355": {
-       "fraction": 1,
-    },
+##am    "wzp6_ee_WbWb_semihad_ecm350": {
+##am       "fraction": 1,
+##am    },
+##am
+##am    "wzp6_ee_WbWb_semihad_ecm355": {
+##am        "fraction": 1,
+##am    },
+##am
+##am    "p8_ee_WW_ecm345": {
+##am       "fraction": 1,
+##am    },
+##am
+##am    "p8_ee_WW_ecm350": {
+##am       "fraction": 1,
+##am    },
+##am
+##am    "p8_ee_WW_ecm355": {
+##am       "fraction": 1,
+##am    },
     
 }
 
@@ -33,7 +33,10 @@ processList = {
 prodTag     = "FCCee/winter2023/IDEA/"
 
 #Optional: output directory, default is local running directory
-outputDir   = "./outputs/treemaker/WbWb/semilept"
+if os.environ['USER'] == "anmehta":
+    basepath="/eos/cms/store/cmst3/user/anmehta/FCC-top"
+else: basepath="."
+outputDir   = "%s/outputs/treemaker/WbWb/semilept" %basepath
 
 
 # additional/costom C++ functions, defined in header files (optional)
