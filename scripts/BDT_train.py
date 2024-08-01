@@ -8,9 +8,11 @@ from sklearn.model_selection import train_test_split
 
 ecm = 345
 max_entries = 1E05
+hadronic = True
+channel = 'had' if hadronic else 'semihad'
 
-infile_s = 'outputs/treemaker/WbWb/semilept/wzp6_ee_WbWb_semihad_ecm{}.root'.format(ecm)
-infile_b = 'outputs/treemaker/WbWb/semilept/p8_ee_WW_ecm{}.root'.format(ecm)
+infile_s = 'outputs/treemaker/WbWb/{0}/wzp6_ee_WbWb_{0}_ecm{1}.root'.format(channel,ecm)
+infile_b = 'outputs/treemaker/WbWb/{}/p8_ee_WW_ecm{}.root'.format(channel,ecm)
 
 tree_s = uproot.open(infile_s)["events"]
 tree_b = uproot.open(infile_b)["events"]
@@ -46,6 +48,6 @@ print('Saving model')
 outdir = 'BDT_model'
 if not os.path.exists(outdir):
     os.makedirs(outdir)
-bst.save_model('{}/model.json'.format(outdir))
-plt.savefig('{}/preds.png'.format(outdir))
+bst.save_model('{}/model_{}.json'.format(outdir,channel))
+plt.savefig('{}/preds_{}.png'.format(outdir,channel))
 plt.close()
