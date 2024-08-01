@@ -2,20 +2,30 @@ import os, copy
 import urllib
 
 # list of processes
-processList = {
+all_processes = {
     "wzp6_ee_WbWb_semihad_ecm345": {
         "fraction": 1,
     },
-
+     "wzp6_ee_WbWb_had_ecm345": {
+         "fraction": 1,
+     },
     "wzp6_ee_WbWb_semihad_ecm350": {
        "fraction": 1,
     },
-
+    "wzp6_ee_WbWb_had_ecm350": {
+       "fraction": 1,
+    },
     "wzp6_ee_WbWb_semihad_ecm355": {
         "fraction": 1,
     },
+    "wzp6_ee_WbWb_had_ecm355": {
+        "fraction": 1,
+    },
+     "p8_ee_WW_ecm345": {
+        "fraction": 1,
+     },
 
-    "p8_ee_WW_ecm345": {
+    "wzp6_ee_qq_ecm345": {
        "fraction": 1,
     },
 
@@ -29,11 +39,23 @@ processList = {
     
 }
 
+available_ecm = [345, 350, 355]
+
+hadronic = False
+ecm = 345
+
+if not ecm in available_ecm:
+    raise ValueError("ecm value not in available_ecm")
+
+channel = 'had' if hadronic else 'semihad'
+
+processList = {key: value for key, value in all_processes.items() if str(ecm) in key and (True if not 'WbWb' in key else channel in key)}
+
 # Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)
 prodTag     = "FCCee/winter2023/IDEA/"
 
-#Optional: output directory, default is local running directory
-outputDir   = "./outputs/treemaker/WbWb/semilept"
+#Optional: output directory, default is local running directoryp
+outputDir   = "./outputs/treemaker/WbWb/{}".format(channel)
 
 
 # additional/costom C++ functions, defined in header files (optional)
@@ -82,6 +104,19 @@ from addons.FastJet.jetClusteringHelper import (
 jetFlavourHelper = None
 jetClusteringHelper = None
 
+all_branches = [
+    "nlep", "lep_p", 'lep_theta', 'lep_phi',
+    "njets", "jet1_p", "jet2_p", "jet3_p","jet4_p","jet5_p","jet6_p",
+    "jet1_theta", "jet2_theta", "jet3_theta","jet4_theta","jet5_theta","jet6_theta",
+    "jet1_phi", "jet2_phi", "jet3_phi","jet4_phi","jet5_phi","jet6_phi",
+    "missing_p", "missing_p_theta", "missing_p_phi",
+    "d_12","d_23","d_34","d_45","d_56",
+    "jet1_isB", "jet2_isB", "jet3_isB", "jet4_isB", "jet5_isB", "jet6_isB",
+    "jet1_isG", "jet2_isG", "jet3_isG", "jet4_isG", "jet5_isG", "jet6_isG",
+    "jet1_isQ", "jet2_isQ", "jet3_isQ", "jet4_isQ", "jet5_isQ", "jet6_isQ",
+    "jet1_isS", "jet2_isS", "jet3_isS", "jet4_isS", "jet5_isS", "jet6_isS",
+    "jet1_isC", "jet2_isC", "jet3_isC", "jet4_isC", "jet5_isC", "jet6_isC",
+]
 
 # Mandatory: RDFanalysis class where the use defines the operations on the TTree
 class RDFanalysis:
@@ -140,49 +175,52 @@ class RDFanalysis:
             "FCCAnalyses::ZHfunctions::sel_iso(0.25)(electrons_sel, electrons_iso)",
         )
 
-        df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 1")
+        if hadronic:
+            df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 0")
+        else:
+            df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 1")
 
-
-        df = df.Define(
-            "muons_p", "FCCAnalyses::ReconstructedParticle::get_p(muons_sel_iso)"
-        )
-
-
-        df = df.Define(
-            "electrons_p", "FCCAnalyses::ReconstructedParticle::get_p(electrons_sel_iso)"
-        )
-        
-        df = df.Define(
-            "muons_theta",
-            "FCCAnalyses::ReconstructedParticle::get_theta(muons_sel_iso)",
-        )
-        df = df.Define(
-            "muons_phi",
-            "FCCAnalyses::ReconstructedParticle::get_phi(muons_sel_iso)",
-        )
-        df = df.Define(
-            "muons_q",
-            "FCCAnalyses::ReconstructedParticle::get_charge(muons_sel_iso)",
-        )
-        df = df.Define(
-            "muons_n", "FCCAnalyses::ReconstructedParticle::get_n(muons_sel_iso)",
-        )
-
-        df = df.Define(
-            "electrons_theta",
-            "FCCAnalyses::ReconstructedParticle::get_theta(electrons_sel_iso)",
-        )
-        df = df.Define(
-            "electrons_phi",
-            "FCCAnalyses::ReconstructedParticle::get_phi(electrons_sel_iso)",
+        if not hadronic:
+            df = df.Define(
+                "muons_p", "FCCAnalyses::ReconstructedParticle::get_p(muons_sel_iso)"
             )
-        df = df.Define(
-            "electrons_q",
-            "FCCAnalyses::ReconstructedParticle::get_charge(electrons_sel_iso)",
+
+
+            df = df.Define(
+                "electrons_p", "FCCAnalyses::ReconstructedParticle::get_p(electrons_sel_iso)"
             )
-        df = df.Define(
-            "electrons_n", "FCCAnalyses::ReconstructedParticle::get_n(electrons_sel_iso)",
-        )
+
+            df = df.Define(
+                "muons_theta",
+                "FCCAnalyses::ReconstructedParticle::get_theta(muons_sel_iso)",
+            )
+            df = df.Define(
+                "muons_phi",
+                "FCCAnalyses::ReconstructedParticle::get_phi(muons_sel_iso)",
+            )
+            df = df.Define(
+                "muons_q",
+                "FCCAnalyses::ReconstructedParticle::get_charge(muons_sel_iso)",
+            )
+            df = df.Define(
+                "muons_n", "FCCAnalyses::ReconstructedParticle::get_n(muons_sel_iso)",
+            )
+
+            df = df.Define(
+                "electrons_theta",
+                "FCCAnalyses::ReconstructedParticle::get_theta(electrons_sel_iso)",
+            )
+            df = df.Define(
+                "electrons_phi",
+                "FCCAnalyses::ReconstructedParticle::get_phi(electrons_sel_iso)",
+                )
+            df = df.Define(
+                "electrons_q",
+                "FCCAnalyses::ReconstructedParticle::get_charge(electrons_sel_iso)",
+                )
+            df = df.Define(
+                "electrons_n", "FCCAnalyses::ReconstructedParticle::get_n(electrons_sel_iso)",
+            )
 
         
         ## here cluster jets in the events but first remove muons from the list of
@@ -219,7 +257,7 @@ class RDFanalysis:
             "Bz": "magFieldBz",
         }
 
-        nJets = 4
+        nJets = 4 if not hadronic else 6
 
         collections_noleps = copy.deepcopy(collections)
         collections_noleps["PFParticles"] = "ReconstructedParticlesNoMuNoEl"
@@ -242,14 +280,15 @@ class RDFanalysis:
         ## tagger inference
         df = jetFlavourHelper.inference(weaver_preproc, weaver_model, df)
 
+
         df = df.Define(
-            "lep_p", "muons_sel_iso.size() >0 ? FCCAnalyses::ReconstructedParticle::get_p(muons_sel_iso)[0] : (electrons_sel_iso.size() > 0 ? FCCAnalyses::ReconstructedParticle::get_p(electrons_sel_iso)[0] : -9999) "
+            "lep_p", "muons_sel_iso.size() >0 ? FCCAnalyses::ReconstructedParticle::get_p(muons_sel_iso)[0] : (electrons_sel_iso.size() > 0 ? FCCAnalyses::ReconstructedParticle::get_p(electrons_sel_iso)[0] : -999) "
         )
         df = df.Define(
-            'lep_theta', 'muons_sel_iso.size() >0 ? FCCAnalyses::ReconstructedParticle::get_theta(muons_sel_iso)[0] : (electrons_sel_iso.size() > 0 ? FCCAnalyses::ReconstructedParticle::get_theta(electrons_sel_iso)[0] : -9999) '
+            'lep_theta', 'muons_sel_iso.size() >0 ? FCCAnalyses::ReconstructedParticle::get_theta(muons_sel_iso)[0] : (electrons_sel_iso.size() > 0 ? FCCAnalyses::ReconstructedParticle::get_theta(electrons_sel_iso)[0] : -999) '
         )
         df = df.Define(
-            'lep_phi', 'muons_sel_iso.size() >0 ? FCCAnalyses::ReconstructedParticle::get_phi(muons_sel_iso)[0] : (electrons_sel_iso.size() > 0 ? FCCAnalyses::ReconstructedParticle::get_phi(electrons_sel_iso)[0] : -9999) '
+            'lep_phi', 'muons_sel_iso.size() >0 ? FCCAnalyses::ReconstructedParticle::get_phi(muons_sel_iso)[0] : (electrons_sel_iso.size() > 0 ? FCCAnalyses::ReconstructedParticle::get_phi(electrons_sel_iso)[0] : -999) '
         )
         df = df.Define(
             "nlep",
@@ -287,23 +326,27 @@ class RDFanalysis:
         df = df.Define("jet3_p","jet3.P()")
         df = df.Define("jet4_p","jet4.P()")
         df = df.Define("jet5_p","jets_p4.size()>4 ? jets_p4[4].P() : -999")
+        df = df.Define("jet6_p","jets_p4.size()>5 ? jets_p4[5].P() : -999")
         df = df.Define("recojet_theta", "JetClusteringUtils::get_theta(jet)")
         df = df.Define("jet1_theta","recojet_theta[0]")
         df = df.Define("jet2_theta","recojet_theta[1]")
         df = df.Define("jet3_theta","recojet_theta[2]")
         df = df.Define("jet4_theta","recojet_theta[3]")
         df = df.Define("jet5_theta","jets_p4.size()>4 ? recojet_theta[4] : -999")
+        df = df.Define("jet6_theta","jets_p4.size()>5 ? recojet_theta[5] : -999")
         df = df.Define("recojet_phi", "JetClusteringUtils::get_phi_std(jet)")
         df = df.Define("jet1_phi","recojet_phi[0]")
         df = df.Define("jet2_phi","recojet_phi[1]")
         df = df.Define("jet3_phi","recojet_phi[2]")
         df = df.Define("jet4_phi","recojet_phi[3]")
         df = df.Define("jet5_phi","jets_p4.size()>4 ? recojet_phi[4] : -999")
+        df = df.Define("jet6_phi","jets_p4.size()>5 ? recojet_phi[5] : -999")
         df = df.Define("njets", "jets_p4.size()")
         df = df.Define("d_12", "JetClusteringUtils::get_exclusive_dmerge(_jet, 1)")
         df = df.Define("d_23", "JetClusteringUtils::get_exclusive_dmerge(_jet, 2)")
         df = df.Define("d_34", "JetClusteringUtils::get_exclusive_dmerge(_jet, 3)")
         df = df.Define("d_45", "jets_p4.size()>4 ? JetClusteringUtils::get_exclusive_dmerge(_jet, 4) : -999")
+        df = df.Define("d_56", "jets_p4.size()>5 ? JetClusteringUtils::get_exclusive_dmerge(_jet, 5) : -999")
 
 
         df = df.Define("jet1_isG", "JetFlavourUtils::get_weight(MVAVec_, 0)[0]")
@@ -311,30 +354,35 @@ class RDFanalysis:
         df = df.Define("jet3_isG", "JetFlavourUtils::get_weight(MVAVec_, 0)[2]")
         df = df.Define("jet4_isG", "JetFlavourUtils::get_weight(MVAVec_, 0)[3]")
         df = df.Define("jet5_isG", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 0)[4] : -999")
+        df = df.Define("jet6_isG", "jets_p4.size()>5 ? JetFlavourUtils::get_weight(MVAVec_, 0)[5] : -999")
 
         df = df.Define("jet1_isQ", "JetFlavourUtils::get_weight(MVAVec_, 1)[0]")
         df = df.Define("jet2_isQ", "JetFlavourUtils::get_weight(MVAVec_, 1)[1]")
         df = df.Define("jet3_isQ", "JetFlavourUtils::get_weight(MVAVec_, 1)[2]")
         df = df.Define("jet4_isQ", "JetFlavourUtils::get_weight(MVAVec_, 1)[3]")
         df = df.Define("jet5_isQ", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 1)[4] : -999")
+        df = df.Define("jet6_isQ", "jets_p4.size()>5 ? JetFlavourUtils::get_weight(MVAVec_, 1)[5] : -999")
 
         df = df.Define("jet1_isS", "JetFlavourUtils::get_weight(MVAVec_, 2)[0]")
         df = df.Define("jet2_isS", "JetFlavourUtils::get_weight(MVAVec_, 2)[1]")
         df = df.Define("jet3_isS", "JetFlavourUtils::get_weight(MVAVec_, 2)[2]")
         df = df.Define("jet4_isS", "JetFlavourUtils::get_weight(MVAVec_, 2)[3]")
         df = df.Define("jet5_isS", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 2)[4] : -999")
+        df = df.Define("jet6_isS", "jets_p4.size()>5 ? JetFlavourUtils::get_weight(MVAVec_, 2)[5] : -999")
 
         df = df.Define("jet1_isC", "JetFlavourUtils::get_weight(MVAVec_, 3)[0]")
         df = df.Define("jet2_isC", "JetFlavourUtils::get_weight(MVAVec_, 3)[1]")
         df = df.Define("jet3_isC", "JetFlavourUtils::get_weight(MVAVec_, 3)[2]")
         df = df.Define("jet4_isC", "JetFlavourUtils::get_weight(MVAVec_, 3)[3]")
         df = df.Define("jet5_isC", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 3)[4] : -999")
+        df = df.Define("jet6_isC", "jets_p4.size()>5 ? JetFlavourUtils::get_weight(MVAVec_, 3)[5] : -999")
 
         df = df.Define("jet1_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[0]")
         df = df.Define("jet2_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[1]")
         df = df.Define("jet3_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[2]")
         df = df.Define("jet4_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)[3]")
         df = df.Define("jet5_isB", "jets_p4.size()>4 ? JetFlavourUtils::get_weight(MVAVec_, 4)[4] : -999")
+        df = df.Define("jet6_isB", "jets_p4.size()>5 ? JetFlavourUtils::get_weight(MVAVec_, 4)[5] : -999")
 
 
         return df
@@ -342,23 +390,12 @@ class RDFanalysis:
     # __________________________________________________________
     # Mandatory: output function, please make sure you return the branchlist as a python list
     def output():
-        branchList = [
-            "nlep", "lep_p", 'lep_theta', 'lep_phi',
-            "njets", "jet1_p", "jet2_p", "jet3_p","jet4_p","jet5_p",
-            "jet1_theta", "jet2_theta", "jet3_theta","jet4_theta","jet5_theta",
-            "jet1_phi", "jet2_phi", "jet3_phi","jet4_phi","jet5_phi",
-            "missing_p", "missing_p_theta", "missing_p_phi",
-            "d_12","d_23","d_34","d_45",
-            "jet1_isB", "jet2_isB", "jet3_isB", "jet4_isB", "jet5_isB",
-            "jet1_isG", "jet2_isG", "jet3_isG", "jet4_isG", "jet5_isG",
-            "jet1_isQ", "jet2_isQ", "jet3_isQ", "jet4_isQ", "jet5_isQ",
-            "jet1_isS", "jet2_isS", "jet3_isS", "jet4_isS", "jet5_isS",
-            "jet1_isC", "jet2_isC", "jet3_isC", "jet4_isC", "jet5_isC",
-        ]
+        return all_branches
+
         
         #branchList += jetClusteringHelper.outputBranches()
 
         ## outputs jet scores and constituent breakdown
         #branchList += jetFlavourHelper.outputBranches()
 
-        return branchList
+        #return branchList
