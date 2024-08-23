@@ -3,43 +3,59 @@ import urllib
 
 # list of processes
 all_processes = {
+    
     "wzp6_ee_WbWb_semihad_ecm345": {
         "fraction": 1,
     },
      "wzp6_ee_WbWb_had_ecm345": {
          "fraction": 1,
      },
-    "wzp6_ee_WbWb_semihad_ecm350": {
-       "fraction": 1,
-    },
-    "wzp6_ee_WbWb_had_ecm350": {
-       "fraction": 1,
-    },
+#    "wzp6_ee_WbWb_semihad_ecm350": {
+#       "fraction": 1,
+#    },
+#    "wzp6_ee_WbWb_had_ecm350": {
+#       "fraction": 1,
+#    },
     "wzp6_ee_WbWb_semihad_ecm355": {
         "fraction": 1,
     },
     "wzp6_ee_WbWb_had_ecm355": {
         "fraction": 1,
     },
-     "p8_ee_WW_ecm345": {
+    "wzp6_ee_WbWb_semihad_ecm340": {
+        "fraction": 1,
+    },
+#    "wzp6_ee_WbWb_had_ecm340": {
+#        "fraction": 1,
+#    },
+#
+    "p8_ee_WW_ecm345": {
         "fraction": 1,
      },
-
+    
     "wzp6_ee_qq_ecm345": {
        "fraction": 1,
     },
-
-    "p8_ee_WW_ecm350": {
+ #   "wzp6_ee_qq_ecm340": {
+ #      "fraction": 1,
+ #   },
+ #   
+ #   "p8_ee_WW_ecm350": {
+ #      "fraction": 1,
+ #   },
+    "p8_ee_WW_ecm340": {
        "fraction": 1,
     },
-
+    
     "p8_ee_WW_ecm355": {
        "fraction": 1,
     },
     
+
+    
 }
 
-available_ecm = [345, 350, 355]
+available_ecm = [340,345, 350, 355]
 
 hadronic = False
 ecm = 345
