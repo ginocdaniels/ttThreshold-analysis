@@ -14,9 +14,9 @@ def if3(cond, iftrue, iffalse):
 
 
 
-useflav=True 
+useflav=False
 usebtagged=False if useflav else True
-noflav=False
+noflav=True
 if noflav:
     usebtagged=False
     useflav=False
@@ -46,8 +46,8 @@ infile_b =  uproot.concatenate([os.path.join(base_dir,bkg,f)+':events' for f in 
 flavor_branches=[v for v in all_branches if '_is' in v]
 pf="%s"%if3(usebtagged,'_withbtaggedJet',if3(useflav,'_withflav','_noflav'))
 
+
 if usebtagged:
-    
     infile_s["jet1_btagged"] =np.where(infile_s["jet1_isB"] > 0.5,1, 0)
     infile_b["jet1_btagged"] =np.where(infile_b["jet1_isB"] > 0.5,1, 0)
     infile_s["jet2_btagged"] =np.where(infile_s["jet2_isB"] > 0.5,1, 0)
@@ -63,6 +63,7 @@ if usebtagged:
 
     infile_s=infile_s.drop(columns=flavor_branches, axis=1)
     infile_b=infile_b.drop(columns=flavor_branches, axis=1)
+    
 
 if noflav:
         infile_s=infile_s.drop(columns=flavor_branches, axis=1)
@@ -71,7 +72,7 @@ if noflav:
     
 #branches_toTrain.append('')
 print(infile_s)
-
+print(pf)
 
 #print(type(infile_b))
 pd_s = (infile_s)
@@ -107,11 +108,24 @@ pd_train_preds['preds'] = train_preds[:,1]
 import matplotlib.pyplot as plt
 
 # Plot signal and background predictions
-plt.hist(pd_preds[pd_preds['target'] == 1]['preds'], bins=50, label='Signal-test', histtype='step',color='tab:red',alpha=0.5, log=True)
-plt.hist(pd_preds[pd_preds['target'] == 0]['preds'], bins=50, label='Background-test', histtype='step',color='tab:blue',alpha=0.5, log=True)
-plt.hist(pd_train_preds[pd_train_preds['target'] == 1]['preds'], bins=50, label='Signal-train', histtype='step',color='tab:green',alpha=0.5, log=True)
-plt.hist(pd_train_preds[pd_train_preds['target'] == 0]['preds'], bins=50, label='Background-train',  histtype='step',color='tab:orange',alpha=0.5, log=True)
+bins=np.linspace(0,1,51)
+n,bins,_=plt.hist(pd_preds[pd_preds['target'] == 1]['preds'], bins=bins, label='Signal-test', histtype='step',color='red', log=True)
+mid = 0.5*(bins[1:] + bins[:-1])
+plt.errorbar(mid, n, yerr=np.sqrt(n), fmt='none',ecolor='red')
 
+n1,bins1,_=plt.hist(pd_preds[pd_preds['target'] == 0]['preds'], bins=bins, label='Background-test', histtype='step',color='blue', log=True)
+mid1 = 0.5*(bins1[1:] + bins1[:-1])
+plt.errorbar(mid1, n1, yerr=np.sqrt(n1), fmt='none',ecolor='blue')
+#ax.errorbar(bin_mids, n_SM, yerr = calculate_stat_bin_ucts(Y_pred[Y_test==0], w_SM, bins), fmt='none', ecolor='black', capsize=0)
+
+
+n2,bins2,_=plt.hist(pd_train_preds[pd_train_preds['target'] == 1]['preds'], bins=bins, label='Signal-train', histtype='step',color='green', log=True)
+mid2 = 0.5*(bins2[1:] + bins2[:-1])
+plt.errorbar(mid2, n2, yerr=np.sqrt(n2), fmt='none',ecolor='green')
+
+n3,bins3,_=plt.hist(pd_train_preds[pd_train_preds['target'] == 0]['preds'], bins=bins, label='Background-train',  histtype='step',color='orange', log=True)
+mid3 = 0.5*(bins3[1:] + bins3[:-1])
+plt.errorbar(mid3, n3, yerr=np.sqrt(n3), fmt='none',ecolor='orange')
 
 
 plt.xlabel('Prediction')

@@ -4,16 +4,19 @@ import ROOT,uproot
 
 from treemaker_WbWb_reco import available_ecm, all_branches as branchList
 branchList.append('BDT_score')
+branchList.append('nbjets')
 def if3(cond, iftrue, iffalse):
     return iftrue if cond else iffalse
 
 hadronic = False
 channel = 'had' if hadronic else 'semihad'
-useflav=False
+
+useflav=True
 usebtagged=False
+
 pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
 
-ecm = 345
+ecm = 355
 
 
 intLumi = 1
@@ -27,6 +30,7 @@ formats = ["png","pdf"]
 inputDir       = '/eos/cms/store/cmst3/group/top/anmehta/FCC/condor_WbWb/outputs/histmaker/WbWb/{}/{}/'.format(channel,pf) 
 outdir         = '/eos/user/a/anmehta/www/FCC_top/{}/{}/{}/'.format(channel,pf,ecm)
 
+print('saving plots here',outdir)
 plotStatUnc = True
 
 colors = {}
@@ -43,11 +47,9 @@ legend["WW"] = "WW"
 
 hists = {}
 
-#tree=uproot.open(inputDir+"/p8_ee_WW_ecm340.root")["events"]
 
-#branchList=['lep_p','BDT_score','lep_theta','jet1_p']
 for var in branchList:
- 
+
     if "_is" in var: continue
     logy = False
     if var.endswith("_isB") or var.endswith("_isG") or var.endswith("_isQ") or var.endswith("_isS") or var.endswith("_isC"):
