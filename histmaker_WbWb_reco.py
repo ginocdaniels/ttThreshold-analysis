@@ -1,18 +1,26 @@
 # list of processes (mandatory)
+import os, sys
 from treemaker_WbWb_reco import all_processes, available_ecm
 
+def if3(cond, iftrue, iffalse):
+    return iftrue if cond else iffalse
 
 hadronic = False
 channel = 'had' if hadronic else 'semihad'
 
-ecm = 345
-if not ecm in available_ecm:
-    raise ValueError("ecm value not in available_ecm")
+ecm = '355'
+useflav=True
+usebtagged=False
 
-processList = {key: value for key, value in all_processes.items() if str(ecm) in key and (True if not 'WbWb' in key else channel in key)}
+pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
+
+#if not ecm in available_ecm:
+#    raise ValueError("ecm value not in available_ecm")
 
 
-
+            
+processList={key: value for key, value in all_processes.items() if ecm in available_ecm and (True if not 'WbWb' in key else channel in key)}
+print(processList)
 
 # Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)
 #prodTag = "FCCee/winter2023/IDEA/"
@@ -21,10 +29,12 @@ processList = {key: value for key, value in all_processes.items() if str(ecm) in
 procDict = "FCCee_procDict_winter2023_IDEA.json"
 
 # Define the input dir (optional)
-inputDir    = "./outputs/treemaker/WbWb/{}_BDT/".format(channel)
+
+
+inputDir   ="/eos/cms/store/cmst3/group/top/anmehta/FCC/condor_WbWb/{}/{}/".format(channel,pf)
 
 # Optional: output directory, default is local running directory
-outputDir = "./outputs/histmaker/WbWb/{}/".format(channel)
+outputDir = "/eos/cms/store/cmst3/group/top/anmehta/FCC/condor_WbWb/outputs/histmaker/WbWb/{}/{}/".format(channel,pf)
 
 
 # optional: ncpus, default is 4, -1 uses all cores available
@@ -41,6 +51,7 @@ bins = {
     "theta": (100, 0, 3.2),
     "p": (100, 0, 200),
     "tagger": (100, 0, 1),
+    "nbjets" :(5,-0.5,4.5),
     "dij": {
         "d_12": (100, 0, 100000),
         "d_23": (100, 0, 10000),
@@ -57,16 +68,22 @@ def build_graph(df, dataset):
     column_names = df.GetColumnNames()
 
     results = []
-
     df = df.Define("weight", "1.0")
     weightsum = df.Sum("weight")
-    df_BDT = df.Filter("BDT_score > 0.5")
-
+    print(column_names)
+    df_BDT  = df.Filter("BDT_score > 0.5")
+    #df_oneb = df.Filter("nbjets == 1")
+    #df_oneb = df.Filter("nbjets == 1")
+    #df_twob = df.Filter("nbjets > 1")
+    #df_BDT_oneb  = df_oneb.Filter("BDT_score > 0.5")
+    #df_BDT_twob  = df_twob.Filter("BDT_score > 0.5")
+    
     for var in column_names:
         var = str(var)
         #if var in ['nlep', 'njets'] or 'jet5' in var or var == 'd_45': continue
         #if var in ['nlep', 'njets']: continue
         if var.endswith("_phi"): binning = bins["phi"]
+        if var == 'nbjets': binning = bins["nbjets"]
         elif var.endswith("_theta"): binning = bins["theta"]
         elif var.endswith("_p"): binning = bins["p"]
         elif var.endswith("_isB") or var.endswith("_isG") or var.endswith("_isQ") or var.endswith("_isS") or var.endswith("_isC"): binning = bins["tagger"]
@@ -78,6 +95,9 @@ def build_graph(df, dataset):
 
         results.append(df.Histo1D(("no_cut_"+var, "", *binning), var))
         results.append(df_BDT.Histo1D(('BDT_cut_'+var, "", *binning), var))
-
+        #results.append(df_oneb.Histo1D(('onebtag_'+var, "", *binning), var))
+        #results.append(df_twob.Histo1D(('atleast2btag_'+var, "", *binning), var))
+        #results.append(df_BDT_oneb.Histo1D(('BDT_cut_onebtag_'+var, "", *binning), var))
+        #results.append(df_BDT_twob.Histo1D(('BDT_cut_atleast2btag_'+var, "", *binning), var))
 
     return results, weightsum
