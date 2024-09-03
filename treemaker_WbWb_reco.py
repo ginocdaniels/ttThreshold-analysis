@@ -3,6 +3,7 @@ import urllib
 
 # list of processes
 all_processes = {
+    
     "wzp6_ee_WbWb_semihad_ecm345": {
         "fraction": 1,
     },
@@ -21,30 +22,45 @@ all_processes = {
     "wzp6_ee_WbWb_had_ecm355": {
         "fraction": 1,
     },
-     "p8_ee_WW_ecm345": {
+    "wzp6_ee_WbWb_semihad_ecm340": {
         "fraction": 1,
-     },
-
-    "wzp6_ee_qq_ecm345": {
-       "fraction": 1,
+    },
+    "wzp6_ee_WbWb_had_ecm340": {
+        "fraction": 1,
     },
 
+    "p8_ee_WW_ecm345": {
+        "fraction": 1,
+     },
+    
+    #"wzp6_ee_qq_ecm345": {
+    #   "fraction": 1,
+#    },
+#    "wzp6_ee_qq_ecm340": {
+#       "fraction": 1,
+ #   },
+    
     "p8_ee_WW_ecm350": {
        "fraction": 1,
     },
-
+    "p8_ee_WW_ecm340": {
+       "fraction": 1,
+    },
+    
     "p8_ee_WW_ecm355": {
        "fraction": 1,
     },
     
+
+    
 }
 
-available_ecm = [345, 350, 355]
+available_ecm = ['340','345', '350', '355']
 
 hadronic = False
 ecm = 345
 
-if not ecm in available_ecm:
+if not str(ecm) in available_ecm:
     raise ValueError("ecm value not in available_ecm")
 
 channel = 'had' if hadronic else 'semihad'
@@ -171,10 +187,10 @@ class RDFanalysis:
         )
 
         df = df.Define(
-            "electrons_sel_iso",
+            "Electrons_sel_iso",
             "FCCAnalyses::ZHfunctions::sel_iso(0.25)(electrons_sel, electrons_iso)",
         )
-
+        
         if hadronic:
             df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 0")
         else:
@@ -301,6 +317,7 @@ class RDFanalysis:
             "FCCAnalyses::ReconstructedParticle::get_p(MissingET)[0]",
         )
 
+        
         df = df.Define(
             'missing_p_theta', 'ReconstructedParticle::get_theta(MissingET)[0]',
         )
@@ -342,6 +359,8 @@ class RDFanalysis:
         df = df.Define("jet5_phi","jets_p4.size()>4 ? recojet_phi[4] : -999")
         df = df.Define("jet6_phi","jets_p4.size()>5 ? recojet_phi[5] : -999")
         df = df.Define("njets", "jets_p4.size()")
+        
+        
         df = df.Define("d_12", "JetClusteringUtils::get_exclusive_dmerge(_jet, 1)")
         df = df.Define("d_23", "JetClusteringUtils::get_exclusive_dmerge(_jet, 2)")
         df = df.Define("d_34", "JetClusteringUtils::get_exclusive_dmerge(_jet, 3)")

@@ -1,16 +1,22 @@
-import ROOT
+import ROOT,uproot
 
 # global parameters
 
 from treemaker_WbWb_reco import available_ecm, all_branches as branchList
 branchList.append('BDT_score')
+branchList.append('nbjets')
+def if3(cond, iftrue, iffalse):
+    return iftrue if cond else iffalse
 
-hadronic = True
+hadronic = False
 channel = 'had' if hadronic else 'semihad'
 
-ecm = 345
-if not ecm in available_ecm:
-    raise ValueError("ecm value not in available_ecm")
+useflav=True
+usebtagged=False
+
+pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
+
+ecm = 355
 
 
 intLumi = 1
@@ -19,11 +25,12 @@ ana_tex = "e^{+}e^{-} #rightarrow WbWb #rightarrow "+channel
 delphesVersion = "3.4.2"
 energy = ecm
 collider = "FCC-ee"
-formats = ["png"]
+formats = ["png","pdf"]
 
-outdir         = './outputs/plots/WbWb/{}/'.format(channel) 
-inputDir       = './outputs/histmaker/WbWb/{}/'.format(channel) 
+inputDir       = '/eos/cms/store/cmst3/group/top/anmehta/FCC/condor_WbWb/outputs/histmaker/WbWb/{}/{}/'.format(channel,pf) 
+outdir         = '/eos/user/a/anmehta/www/FCC_top/{}/{}/{}/'.format(channel,pf,ecm)
 
+print('saving plots here',outdir)
 plotStatUnc = True
 
 colors = {}
@@ -42,6 +49,8 @@ hists = {}
 
 
 for var in branchList:
+
+    if "_is" in var: continue
     logy = False
     if var.endswith("_isB") or var.endswith("_isG") or var.endswith("_isQ") or var.endswith("_isS") or var.endswith("_isC"):
         logy = True
@@ -49,7 +58,20 @@ for var in branchList:
         logy = True
     if 'BDT_score' in var:
         logy = True
-    hists[var] = {
+    hists['no_cut_'+var] = {
+        "output": var+"_stack",
+        "logy": logy,
+        "stack": True,
+        "rebin": 1,
+        "xmin": -1,
+        "xmax": -1,
+        "ymin": 0 if not logy else 1,
+        "ymax": -1,
+        "xtitle": var,
+        "ytitle": "Events",
+    }
+
+    hists['no_cut_'+var] = {
         "output": var,
         "logy": logy,
         "stack": False,
@@ -64,7 +86,7 @@ for var in branchList:
 
 
     hists['BDT_cut_'+var] = {
-        "output": 'BDT_cut_'+var,
+        "output": 'BDT_cut_'+var+"_nostack",
         "logy": logy,
         "stack": True,
         "rebin": 1,
@@ -75,6 +97,20 @@ for var in branchList:
         "xtitle": var,
         "ytitle": "Events",
     }
+
     
+    hists['BDT_cut_'+var] = {
+        "output": 'BDT_cut_'+var,
+        "logy": logy,
+        "stack": False,
+        "rebin": 1,
+        "xmin": -1,
+        "xmax": -1,
+        "ymin": 0 if not logy else 1,
+        "ymax": -1,
+        "xtitle": var,
+        "ytitle": "Events",
+    }
+
     
 
