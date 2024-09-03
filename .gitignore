@@ -168,3 +168,5 @@ fccee_flavtagging_edm4hep_wc_v1.onnx
 zz_old
 *.png
 *.cc
+condor/scripts
+*.sub
