@@ -17,37 +17,49 @@ ncpus = 4
 
 ## list of samples to run on training jets
 samples = [
-    "wzp6_ee_WbWb_semihad_ecm345",
-    "wzp6_ee_WbWb_had_ecm345",
-    "wzp6_ee_WbWb_semihad_ecm350",
-    "wzp6_ee_WbWb_had_ecm350",
-    "wzp6_ee_WbWb_semihad_ecm355",
-    "wzp6_ee_WbWb_had_ecm355",
-    "p8_ee_WW_ecm345",
-    "wzp6_ee_qq_ecm345",
-    "p8_ee_WW_ecm350",
-    "p8_ee_WW_ecm355",
+    "wzp6_ee_WbWb_semihad_ecm340",
+    "wzp6_ee_WbWb_had_ecm340",
+    #"wzp6_ee_WbWb_lep_ecm340",
+    "p8_ee_WW_ecm340",
+#    "wzp6_ee_WbWb_semihad_ecm345",
+#    "wzp6_ee_WbWb_had_ecm345",
+#    "wzp6_ee_WbWb_semihad_ecm350",
+#    "wzp6_ee_WbWb_had_ecm350",
+#    "wzp6_ee_WbWb_semihad_ecm355",
+#    "wzp6_ee_WbWb_had_ecm355",
+#    "wzp6_ee_WbWb_lep_ecm340",
+#    "wzp6_ee_WbWb_lep_ecm345",
+#    "wzp6_ee_WbWb_lep_ecm350",
+#    "wzp6_ee_WbWb_lep_ecm355",
+#    "wzp6_ee_WbWb_lep_ecm365",
+#    "p8_ee_WW_ecm345",
+#    "wzp6_ee_qq_ecm345",
+#    "p8_ee_WW_ecm350",
+#    "p8_ee_WW_ecm355",
 ]
 
 indir = "/eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/"
 
-channels = ['had','semihad']
+channels = ['had','semihad','lep']
 
 for channel in channels:
 
-    outdir = "../output_condor/{}/{}".format(analysis_name,channel)
+    outdir = "/eos/cms/store/cmst3/group/top/anmehta/FCC/output_condor_06092024/{}/{}".format(analysis_name,channel)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
     with open(script, 'r') as file:
         content = file.read()
-
-    if channel == 'had':
-        content = re.sub(r'hadronic\s*=\s*False', 'hadronic = True', content)
-    elif channel == 'semihad':
-        content = re.sub(r'hadronic\s*=\s*True', 'hadronic = False', content)
-    else:
-        raise ValueError("channel not recognized")
+        content = re.sub(r'CHANNELNAMEHERE',channel,content)
+        
+#    if channel == 'had':
+#        content = re.sub(r'hadronic\s*=\s*False', 'hadronic = True', content)
+#    elif channel == 'semihad':
+#        content = re.sub(r'hadronic\s*=\s*True', 'hadronic = False', content)
+#    elif  channel == 'lep':
+#        content = re.sub(r'hadronic\s*=\s*True', 'hadronic = False', content)
+#    else :
+#        raise ValueError("channel not recognized")
     
     content = re.sub(r'includePaths\s*=\s*\["examples/functions.h"\]', 'includePaths = ["functions.h"]', content)
     

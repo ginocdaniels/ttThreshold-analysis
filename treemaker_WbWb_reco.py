@@ -32,13 +32,28 @@ all_processes = {
     "p8_ee_WW_ecm345": {
         "fraction": 1,
      },
-    
-    #"wzp6_ee_qq_ecm345": {
-    #   "fraction": 1,
-#    },
-#    "wzp6_ee_qq_ecm340": {
-#       "fraction": 1,
- #   },
+    "wzp6_ee_WbWb_lep_ecm340": {
+     "fraction": 1,
+     },
+    "wzp6_ee_WbWb_lep_ecm345": {
+             "fraction": 1,
+     },
+    "wzp6_ee_WbWb_lep_ecm350": {
+     "fraction": 1,
+     },
+    "wzp6_ee_WbWb_lep_ecm355": {
+             "fraction": 1,
+     },
+    "wzp6_ee_WbWb_lep_ecm365": {
+         "fraction": 1,
+     },
+##    
+##    #"wzp6_ee_qq_ecm345": {
+##    #   "fraction": 1,
+###    },
+###    "wzp6_ee_qq_ecm340": {
+###       "fraction": 1,
+## #   },
     
     "p8_ee_WW_ecm350": {
        "fraction": 1,
@@ -58,32 +73,38 @@ all_processes = {
 available_ecm = ['340','345', '350', '355']
 
 hadronic = False
+#semihad  = False
+#lep      = False
 ecm = 345
 
 if not str(ecm) in available_ecm:
     raise ValueError("ecm value not in available_ecm")
 
-channel = 'had' if hadronic else 'semihad'
+channel = "CHANNELNAMEHERE"
 
+if  channel not in ["lep","semihad","had"]:
+    print("using defa channel settings")
+    channel="semihad"
+    
 processList = {key: value for key, value in all_processes.items() if str(ecm) in key and (True if not 'WbWb' in key else channel in key)}
 
 # Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)
 prodTag     = "FCCee/winter2023/IDEA/"
 
 #Optional: output directory, default is local running directoryp
-outputDir   = "./outputs/treemaker/WbWb/{}".format(channel)
+outputDir   = "/outputs/treemaker/WbWb/{}".format(channel)
 
 
 # additional/costom C++ functions, defined in header files (optional)
 includePaths = ["examples/functions.h"]
 
 ## latest particle transformer model, trained on 9M jets in winter2023 samples
-model_name = "fccee_flavtagging_edm4hep_wc_v1"
+model_name = "fccee_flavtagging_edm4hep_wc" #"fccee_flavtagging_edm4hep_wc_v1"
 
 ## model files locally stored on /eos
 eos_dir ="/eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/"
 model_dir = (
-    "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_13_01_2022/"
+    "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_7classes_12_04_2023/"    # "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_13_01_2022/"
 )
 local_preproc = "{}/{}.json".format(model_dir, model_name)
 local_model = "{}/{}.onnx".format(model_dir, model_name)
@@ -125,6 +146,7 @@ all_branches = [
     "njets", "jet1_p", "jet2_p", "jet3_p","jet4_p","jet5_p","jet6_p",
     "jet1_theta", "jet2_theta", "jet3_theta","jet4_theta","jet5_theta","jet6_theta",
     "jet1_phi", "jet2_phi", "jet3_phi","jet4_phi","jet5_phi","jet6_phi",
+    "jet1_isTau", "jet2_isTau", "jet3_isTau","jet4_isTau","jet5_isTau","jet6_isTau",
     "missing_p", "missing_p_theta", "missing_p_phi",
     "d_12","d_23","d_34","d_45","d_56",
     "jet1_isB", "jet2_isB", "jet3_isB", "jet4_isB", "jet5_isB", "jet6_isB",
@@ -174,7 +196,6 @@ class RDFanalysis:
             "muons_iso",
             "FCCAnalyses::ZHfunctions::coneIsolation(0.01, 0.5)(muons_sel, ReconstructedParticles)",
         )
-
         # compute the electron isolation and store electrons with an isolation cut of 0df = df.25 in a separate column electrons_sel_iso
         df = df.Define(
             "electrons_iso",
@@ -187,16 +208,21 @@ class RDFanalysis:
         )
 
         df = df.Define(
-            "Electrons_sel_iso",
+            "electrons_sel_iso",
             "FCCAnalyses::ZHfunctions::sel_iso(0.25)(electrons_sel, electrons_iso)",
         )
-        
-        if hadronic:
-            df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 0")
-        else:
-            df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 1")
 
-        if not hadronic:
+        if channel == "had":
+            #hadronic=True
+            df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 0")
+        elif  channel == "semihad":
+            #semihad=True
+            df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 1")
+        else:
+            #lep=True
+            df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 2")
+
+        if not (channel == "had"):
             df = df.Define(
                 "muons_p", "FCCAnalyses::ReconstructedParticle::get_p(muons_sel_iso)"
             )
@@ -273,7 +299,7 @@ class RDFanalysis:
             "Bz": "magFieldBz",
         }
 
-        nJets = 4 if not hadronic else 6
+        nJets = 4 if  channel == "semihad" else 6
 
         collections_noleps = copy.deepcopy(collections)
         collections_noleps["PFParticles"] = "ReconstructedParticlesNoMuNoEl"
@@ -351,6 +377,15 @@ class RDFanalysis:
         df = df.Define("jet4_theta","recojet_theta[3]")
         df = df.Define("jet5_theta","jets_p4.size()>4 ? recojet_theta[4] : -999")
         df = df.Define("jet6_theta","jets_p4.size()>5 ? recojet_theta[5] : -999")
+
+        df = df.Define("jet1_isTau","recojet_isTAU[0]")
+        df = df.Define("jet2_isTau","recojet_isTAU[1]")
+        df = df.Define("jet3_isTau","recojet_isTAU[2]")
+        df = df.Define("jet4_isTau","recojet_isTAU[3]")
+        df = df.Define("jet5_isTau","jets_p4.size()>4 ? recojet_isTAU[4] : -999")
+        df = df.Define("jet6_isTau","jets_p4.size()>5 ? recojet_isTAU[5] : -999")
+
+        
         df = df.Define("recojet_phi", "JetClusteringUtils::get_phi_std(jet)")
         df = df.Define("jet1_phi","recojet_phi[0]")
         df = df.Define("jet2_phi","recojet_phi[1]")
@@ -409,12 +444,18 @@ class RDFanalysis:
     # __________________________________________________________
     # Mandatory: output function, please make sure you return the branchlist as a python list
     def output():
+        print(jetClusteringHelper.outputBranches())
         return all_branches
 
         
-        #branchList += jetClusteringHelper.outputBranches()
+        #all_branches+= jetClusteringHelper.outputBranches()
 
         ## outputs jet scores and constituent breakdown
         #branchList += jetFlavourHelper.outputBranches()
+    
+        #return all_branches #branchList
 
-        #return branchList
+
+
+
+        ##test command fccanalysis run --nevents=10 treemaker_WbWb_reco.py
