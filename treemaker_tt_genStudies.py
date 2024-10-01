@@ -2,16 +2,18 @@ import os, copy, ROOT
 
 # list of processes
 processList = {
-    "wzp6_ee_WbWb_semihad_ecm345": {
+    "wzp6_ee_WbWb_semihad_ecm365": {
         "fraction": 1,
         "crossSection": 1,
     },
-    
+    "wzp6_ee_WbWb_semihad_ecm345": {
+        "fraction": 1,
+        "crossSection": 1,
+    },    
     "wzp6_ee_WbWb_semihad_ecm350": {
         "fraction": 1,
         "crossSection": 1,
     },
-
     "wzp6_ee_WbWb_semihad_ecm355": {
         "fraction": 1,
         "crossSection": 1,
@@ -21,6 +23,8 @@ processList = {
         "crossSection": 1,
     },
 }
+
+acceptance_study = True
 
 # Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)
 #prodTag     = "FCCee/winter2023/IDEA/"
@@ -89,16 +93,24 @@ class RDFanalysis:
         # get all the leptons from the collectio
         df = df.Define("status1parts",           "FCCAnalyses::MCParticle::sel_genStatus(1)(Particle)")
         df = df.Define("gen_leps_status1",       "FCCAnalyses::MCParticle::sel_genleps(13,11, true)(status1parts)")
-        df = df.Define("gen_neutrinos_status1",  "FCCAnalyses::MCParticle::sel_genleps(14,12, true)(status1parts)")
-        df = df.Define("ngen_leps_status1",      "FCCAnalyses::MCParticle::get_n(gen_leps_status1)")        
-        df = df.Define("ngen_neutrinos_status1", "FCCAnalyses::MCParticle::get_n(gen_neutrinos_status1)")
-        
-        df = df.Define("gen_leps_status1_p",      "FCCAnalyses::MCParticle::get_p(gen_leps_status1)")
-        df = df.Define("gen_leps_status1_theta",  "FCCAnalyses::MCParticle::get_theta(gen_leps_status1)")
-        df = df.Define("gen_leps_status1_phi",    "FCCAnalyses::MCParticle::get_phi(gen_leps_status1)")
-        df = df.Define("gen_leps_status1_charge", "FCCAnalyses::MCParticle::get_charge(gen_leps_status1)")
-        df = df.Define("gen_leps_status1_pdgId",  "FCCAnalyses::MCParticle::get_pdg(gen_leps_status1)")
+        df = df.Define("ngen_leps_status1",      "FCCAnalyses::MCParticle::get_n(gen_leps_status1)")
         df = df.Define("gen_leps_status1_mother_pdgId", "FCCAnalyses::MCParticle::get_leptons_origin(gen_leps_status1,Particle,Particle0)")
+        df = df.Define("gen_leps_status1_fromW",       "FCCAnalyses::MCParticle::sel_genlepsfromW()(gen_leps_status1,gen_leps_status1_mother_pdgId)")
+        df = df.Define("ngen_leps_status1_fromW",      "FCCAnalyses::MCParticle::get_n(gen_leps_status1_fromW)")
+        df = df.Filter("ngen_leps_status1_fromW == 1")
+        
+        df = df.Define("gen_leps_status1_p",      "FCCAnalyses::MCParticle::get_p(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_theta",  "FCCAnalyses::MCParticle::get_theta(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_phi",    "FCCAnalyses::MCParticle::get_phi(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_charge", "FCCAnalyses::MCParticle::get_charge(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_pdgId",  "FCCAnalyses::MCParticle::get_pdg(gen_leps_status1_fromW)")
+
+
+        if acceptance_study:
+            return df
+        
+        df = df.Define("gen_neutrinos_status1",  "FCCAnalyses::MCParticle::sel_genleps(14,12, true)(status1parts)")
+        df = df.Define("ngen_neutrinos_status1", "FCCAnalyses::MCParticle::get_n(gen_neutrinos_status1)")
 
         df = df.Define("gen_neutrinos_status1_p",      "FCCAnalyses::MCParticle::get_p(gen_neutrinos_status1)")
         df = df.Define("gen_neutrinos_status1_theta",  "FCCAnalyses::MCParticle::get_theta(gen_neutrinos_status1)")
@@ -109,7 +121,7 @@ class RDFanalysis:
         
         df = df.Define('gen_lightquarks',    'FCCAnalyses::MCParticle::sel_lightQuarks(true)(Particle)')
         df = df.Define("ngen_partons","FCCAnalyses::MCParticle::get_n(gen_lightquarks)");
-        df = df.Filter("ngen_leps_status1 > 0")
+
 
 
         
@@ -152,19 +164,24 @@ class RDFanalysis:
     # Mandatory: output function, please make sure you return the branchlist as a python list
     def output():
         branchList = [
-            "ngen_partons",
-            "ngen_leps_status1", 
             "gen_leps_status1_p",      
             "gen_leps_status1_theta",  
             "gen_leps_status1_phi",    
             "gen_leps_status1_charge", 
-            "gen_leps_status1_pdgId",  "gen_leps_status1_mother_pdgId","GP_p","GP_pdgId","GP_status",
-            "Genjets_kt_e",
-            "Genjets_kt_px",
-            "Genjets_kt_py",
-            "Genjets_kt_pz",
-            "Genjets_kt_m"
+            "gen_leps_status1_pdgId",
         ]
+
+        if not acceptance_study:
+            add = [
+                "ngen_partons",
+                "GP_p","GP_pdgId","GP_status",
+                "Genjets_kt_e",
+                "Genjets_kt_px",
+                "Genjets_kt_py",
+                "Genjets_kt_pz",
+                "Genjets_kt_m",
+            ]
+            branchList += add
 
 
         ## outputs jet scores and constituent breakdown
