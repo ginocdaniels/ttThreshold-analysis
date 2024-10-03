@@ -15,10 +15,11 @@ outdir = '/eos/user/a/anmehta/www/FCC_top/BDT_model'
 
 
 
-ecm_model='345'
+ecm_model='345'0.8
 branches_toTrain=[]
 branches_toTrain=all_branches
 
+bjet_wp=0.8
 
 channel = 'lep' #'had' if hadronic else 'semihad'
 base_dir="/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/" #{}/".format(channel)
@@ -41,14 +42,14 @@ def evaluate(proc,ecm,channel,useflav,usebtagged):
     flavor_branches=[];
     if "lep" not in channel:
         flavor_branches=[v for v in all_branches if re.match(".*is[a-z]$",v,re.IGNORECASE)] ##using taus in the training
-        nbjets= np.where(infiles["jet1_isB"] > 0.9,1,0) + np.where(infiles["jet2_isB"] > 0.9 ,1,0) + np.where(infiles["jet3_isB"] > 0.9,1,0) + np.where(infiles["jet4_isB"] > 0.9,1,0) + np.where(infiles["jet5_isB"] > 0.9,1,0)
+        nbjets= np.where(infiles["jet1_isB"] > bjet_wp,1,0) + np.where(infiles["jet2_isB"] > bjet_wp ,1,0) + np.where(infiles["jet3_isB"] > bjet_wp,1,0) + np.where(infiles["jet4_isB"] > bjet_wp,1,0) + np.where(infiles["jet5_isB"] > bjet_wp,1,0)
         ntau_h= np.where(infiles["jet1_isTau"] > 0.95,1,0) + np.where(infiles["jet2_isTau"] > 0.95 ,1,0) + np.where(infiles["jet3_isTau"] > 0.95,1,0) + np.where(infiles["jet4_isTau"] > 0.95,1,0) + np.where(infiles["jet5_isTau"] > 0.95,1,0)
-        jet1_btagged =np.where(infiles["jet1_isB"] > 0.9,1, 0)
-        jet2_btagged =np.where(infiles["jet2_isB"] > 0.9,1, 0)
-        jet3_btagged =np.where(infiles["jet3_isB"] > 0.9,1, 0)
-        jet4_btagged =np.where(infiles["jet4_isB"] > 0.9,1, 0)
-        jet5_btagged =np.where(infiles["jet5_isB"] > 0.9,1, 0)
-        jet6_btagged =np.where(infiles["jet6_isB"] > 0.9,1, 0)
+        jet1_btagged =np.where(infiles["jet1_isB"] > bjet_wp,1, 0)
+        jet2_btagged =np.where(infiles["jet2_isB"] > bjet_wp,1, 0)
+        jet3_btagged =np.where(infiles["jet3_isB"] > bjet_wp,1, 0)
+        jet4_btagged =np.where(infiles["jet4_isB"] > bjet_wp,1, 0)
+        jet5_btagged =np.where(infiles["jet5_isB"] > bjet_wp,1, 0)
+        jet6_btagged =np.where(infiles["jet6_isB"] > bjet_wp,1, 0)
         jet1_Qtagged =np.where(infiles["jet1_isQ"] > 0.5,1, 0)
         jet2_Qtagged =np.where(infiles["jet2_isQ"] > 0.5,1, 0)
         jet3_Qtagged =np.where(infiles["jet3_isQ"] > 0.5,1, 0)
@@ -57,16 +58,16 @@ def evaluate(proc,ecm,channel,useflav,usebtagged):
         jet6_Qtagged =np.where(infiles["jet6_isQ"] > 0.5,1, 0)
         
     else:
-        nbjets= np.where(infiles["jet1_isB"] > 0.9,1,0) + np.where(infiles["jet2_isB"] > 0.9 ,1,0) + np.where(infiles["jet3_isB"] > 0.9,1,0) + np.where(infiles["jet4_isB"] > 0.9,1,0) + np.where(infiles["jet5_isB"] > 0.9,1,0)
+        nbjets= np.where(infiles["jet1_isB"] > bjet_wp,1,0) + np.where(infiles["jet2_isB"] > bjet_wp ,1,0) + np.where(infiles["jet3_isB"] > bjet_wp,1,0) + np.where(infiles["jet4_isB"] > bjet_wp,1,0) + np.where(infiles["jet5_isB"] > bjet_wp,1,0)
         ntau_h=[]
         
     if usebtagged and 'lep' not in 'channel':
-        infiles["jet1_btagged"] =np.where(infiles["jet1_isB"] > 0.9,1, 0)
-        infiles["jet2_btagged"] =np.where(infiles["jet2_isB"] > 0.9,1, 0)
-        infiles["jet3_btagged"] =np.where(infiles["jet3_isB"] > 0.9,1, 0)
-        infiles["jet4_btagged"] =np.where(infiles["jet4_isB"] > 0.9,1, 0)
-        infiles["jet5_btagged"] =np.where(infiles["jet5_isB"] > 0.9,1, 0)
-        infiles["jet6_btagged"] =np.where(infiles["jet6_isB"] > 0.9,1, 0)
+        infiles["jet1_btagged"] =np.where(infiles["jet1_isB"] > bjet_wp,1, 0)
+        infiles["jet2_btagged"] =np.where(infiles["jet2_isB"] > bjet_wp,1, 0)
+        infiles["jet3_btagged"] =np.where(infiles["jet3_isB"] > bjet_wp,1, 0)
+        infiles["jet4_btagged"] =np.where(infiles["jet4_isB"] > bjet_wp,1, 0)
+        infiles["jet5_btagged"] =np.where(infiles["jet5_isB"] > bjet_wp,1, 0)
+        infiles["jet6_btagged"] =np.where(infiles["jet6_isB"] > bjet_wp,1, 0)
         infiles=infiles.drop(columns=flavor_branches, axis=1)
     if not usebtagged and not useflav :
         #if not 'lep' in 'channel':
@@ -76,8 +77,8 @@ def evaluate(proc,ecm,channel,useflav,usebtagged):
         
     ##load model 
     pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
-    #pf_tmp="%s"%if3(usebtagged,'withbtaggedJetWPpt9',if3(useflav,'withflav','noflav'))
-    pf=pf+"WPpt9"
+
+    pf=pf+"WPpt%s"%(str(bjet_wp).split('.')[-1])
     print('runnning for %s %s channel'%(pf,channel))
     bst = XGBClassifier()
     bst.load_model('{}/model_{}_{}_{}.json'.format(outdir,channel,ecm_model,pf))
@@ -121,23 +122,18 @@ def evaluate(proc,ecm,channel,useflav,usebtagged):
     #print(sumW,p.GetVal())
     p.Write();
     fname.Write();fname.Close();
-for ecm in ['340','345','350','355']:
+for ecm in ['365','340','345','350','355']:
     for ch in ['semihad','had']:
         if ecm == '340' and ch == 'lep': continue
         sig="wzp6_ee_WbWb_{0}_ecm{1}".format(ch,ecm)
         bkg="p8_ee_WW_ecm{}".format(ecm)
         print(sig,bkg,ecm,ch)
-        ##        evaluate(proc,ecm,channel,useflav,usebtagged)
         evaluate(sig,ecm,ch,True,False)
-        evaluate(bkg,ecm,ch,True,False)
-        #print('done2')
+        if not ecm == "365": evaluate(bkg,ecm,ch,True,False)
         evaluate(sig,ecm,ch,False,True)
-        #print('done3')
-        evaluate(bkg,ecm,ch,False,True)
-        #print('done4')
+        if not ecm == "365": evaluate(bkg,ecm,ch,False,True)
         evaluate(sig,ecm,ch,False,False)
-        print('done6')
-        evaluate(bkg,ecm,ch,False,False)
+        if not ecm == "365": evaluate(bkg,ecm,ch,False,False)
 
 
 

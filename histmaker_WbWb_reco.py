@@ -12,7 +12,8 @@ ecm = 'ECMHERE'
 useflav=useflavHERE
 usebtagged=usebtaggedHERE
 
-pf="%s"%if3(usebtagged,'withbtaggedJet_tightBtag',if3(useflav,'withflav','noflav'))
+pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
+pf=pf+"WPpt5"
 
 #if not ecm in available_ecm:
 #    raise ValueError("ecm value not in available_ecm")
@@ -37,13 +38,13 @@ inputDir="/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbW
 
 # Optional: output directory, default is local running directory
 outputDir = "/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/outputs/histmaker/{}/{}/".format(channel,pf)
-
+print('this is outdir',outputDir)
 
 # optional: ncpus, default is 4, -1 uses all cores available
 nCPUS = -1
 
 # scale the histograms with the cross-section and integrated luminosity
-doScale = True
+doScale = False
 intLumi = 36000 #5000000  # 5 /ab
 
 
@@ -55,7 +56,11 @@ bins = {
     "tagger": (20, 0, 1),
     "tagged": (2, -0.5, 1.5),
     "nleps" : (5,-0.5,4.5),
+    'singlebin' : (1,-0.5,0.5),
     "nbjets" : (7,-0.5,6.5),
+    "atleastonebjet" : (1,1,7),
+    "twobins_semihad" : (2,0,4),
+    "twobins_had" : (2,0,6),
     "dij": {
         "d_12": (100, 0, 100000),
         "d_23": (100, 0, 10000),
@@ -69,44 +74,50 @@ bins = {
 # build_graph function that contains the analysis logic, cuts and histograms (mandatory)
 def build_graph(df, dataset):
 
-    column_names = df.GetColumnNames()
+
 
     results = []
     df = df.Define("weight", "1.0")
+    df = df.Define('nbjets_sig','nbjets')
+    df = df.Define('nbjets_cr','nbjets')
+    df = df.Define('nbjets_semihad','nbjets')
+    df = df.Define('nbjets_had','nbjets')
     weightsum = df.Sum("weight")
+    column_names = df.GetColumnNames()
     print(column_names)
-    df_BDT  = df.Filter("BDT_score > 0.5")
-    df_zerob = df.Filter("nbjets == 0")
-    df_oneb = df.Filter("nbjets > 0")
-    #df_twob = df.Filter("nbjets > 1")
+    df_BDT        = df.Filter("BDT_score > 0.5")
+    df_zerob      = df.Filter("nbjets == 0")
+    df_oneb       = df.Filter("nbjets > 0")
     df_BDT_zerob  = df_zerob.Filter("BDT_score > 0.5")
-    df_BDT_oneb  = df_oneb.Filter("BDT_score > 0.5")
+    df_BDT_oneb   = df_oneb.Filter("BDT_score > 0.5")
 
     
     for var in column_names:
         var = str(var)
+
         #if var in ['nlep', 'njets'] or 'jet5' in var or var == 'd_45': continue
         #if var in ['nlep', 'njets']: continue
-        if var.endswith("_phi"): binning = bins["phi"]
-        elif 'nbjets' in var:
-            binning = bins["nbjets"]
-            print("this is the binning for bjets",binning)
+        if var.endswith("_phi"): binning = bins["phi"];        
+        elif var == 'nbjets':    binning = bins["nbjets"]
+        elif var == "nbjets_cr":  binning = bins["singlebin"]
+        elif var == "nbjets_sig":  binning = bins["atleastonebjet"]
+        elif var == "nbjets_semihad":  binning = bins["twobins_semihad"]
+        elif var == "nbjets_had":  binning = bins["twobins_had"]
         elif "tagged" in var: binning = bins["tagged"] 
-        elif var == 'ntau_h':
-            binning = bins["nleps"]
-        elif var.endswith("_theta"): binning = bins["theta"]
-        elif var.endswith("_p"): binning = bins["p"]
-        elif var.endswith("_isB") or var.endswith("_isG") or var.endswith("_isQ") or var.endswith("_isS") or var.endswith("_isC"): binning = bins["tagger"]
-        elif var in ['d_12', 'd_23', 'd_34', 'd_45', 'd_56']: binning = bins["dij"][var]
-        elif 'BDT_score' in var: binning = bins["tagger"]
+        elif var == 'ntau_h':            binning = bins["nleps"]
+        elif var.endswith("_theta"): binning = bins["theta"]; 
+        elif var.endswith("_p"): binning = bins["p"]; 
+        elif var.endswith("_isB") or var.endswith("_isG") or var.endswith("_isQ") or var.endswith("_isS") or var.endswith("_isC"): binning = bins["tagger"]; 
+        elif var in ['d_12', 'd_23', 'd_34', 'd_45', 'd_56']: binning = bins["dij"][var]; 
+        elif 'BDT_score' in var: binning = bins["tagger"]; 
         else: 
             print('Default binning for variable {}'.format(var))
             binning = (100, -1, 100)
 
         results.append(df.Histo1D(("no_cut_"+var, "", *binning), var))
         results.append(df_BDT.Histo1D(('BDT_cut_'+var, "", *binning), var))
-        results.append(df_zerob.Histo1D(('zerobtag_'+var, "", *binning), var))
-        results.append(df_oneb.Histo1D(('onebtag_'+var, "", *binning), var))
+        #results.append(df_zerob.Histo1D(('zerobtag_'+var, "", *binning), var))
+        #results.append(df_oneb.Histo1D(('onebtag_'+var, "", *binning), var))
         results.append(df_BDT_zerob.Histo1D(('BDT_cut_zerobtag_'+var, "", *binning), var))
         results.append(df_BDT_oneb.Histo1D(('BDT_cut_onebtag_'+var, "", *binning), var))
 
