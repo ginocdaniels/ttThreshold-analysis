@@ -17,11 +17,11 @@ def if3(cond, iftrue, iffalse):
 
 ecm = '345'
 
-useflav=True #sys.argv[1] #False
-noflav=False #sys.argv[2] #True
+useflav=False #sys.argv[1] #False
+noflav=True #sys.argv[2] #True
 nJ='1' #sys.argv[3]
 
-
+bjet_wp=0.8
 
 usebtagged=not (useflav)
 
@@ -34,8 +34,9 @@ else:
     
 
 print('useflav',useflav,'noflav',noflav,'nJ',nJ)
-pf="%s"%if3(usebtagged,'_withbtaggedJetWPpt9',if3(useflav,'_withflav','_noflav'))
-pf=pf+"WPpt9"
+pf="%s"%if3(usebtagged,'_withbtaggedJet',if3(useflav,'_withflav','_noflav'))
+pf=pf+"WPpt%s"%(str(bjet_wp).split('.')[-1])
+#pf=pf+"WPpt8"
 print('this is the config',pf)
 branches_toTrain=[]
 
@@ -64,18 +65,18 @@ flavor_branches=[v for v in all_branches if re.match(".*is[a-z]$",v,re.IGNORECAS
 jet_branches=[v for v in all_branches if 'Jet' in v]
 
 if usebtagged and "lep" not in channel :
-    infile_s["jet1_btagged"] =np.where(infile_s["jet1_isB"] > 0.9,1, 0)
-    infile_b["jet1_btagged"] =np.where(infile_b["jet1_isB"] > 0.9,1, 0)
-    infile_s["jet2_btagged"] =np.where(infile_s["jet2_isB"] > 0.9,1, 0)
-    infile_b["jet2_btagged"] =np.where(infile_b["jet2_isB"] > 0.9,1, 0)
-    infile_s["jet3_btagged"] =np.where(infile_s["jet3_isB"] > 0.9,1, 0)
-    infile_b["jet3_btagged"] =np.where(infile_b["jet3_isB"] > 0.9,1, 0)
-    infile_s["jet4_btagged"] =np.where(infile_s["jet4_isB"] > 0.9,1, 0)
-    infile_b["jet4_btagged"] =np.where(infile_b["jet4_isB"] > 0.9,1, 0)
-    infile_s["jet5_btagged"] =np.where(infile_s["jet5_isB"] > 0.9,1, 0)
-    infile_b["jet5_btagged"] =np.where(infile_b["jet5_isB"] > 0.9,1, 0)
-    infile_s["jet6_btagged"] =np.where(infile_s["jet6_isB"] > 0.9,1, 0)
-    infile_b["jet6_btagged"] =np.where(infile_b["jet6_isB"] > 0.9,1, 0)
+    infile_s["jet1_btagged"] =np.where(infile_s["jet1_isB"] > bjet_wp,1, 0)
+    infile_b["jet1_btagged"] =np.where(infile_b["jet1_isB"] > bjet_wp,1, 0)
+    infile_s["jet2_btagged"] =np.where(infile_s["jet2_isB"] > bjet_wp,1, 0)
+    infile_b["jet2_btagged"] =np.where(infile_b["jet2_isB"] > bjet_wp,1, 0)
+    infile_s["jet3_btagged"] =np.where(infile_s["jet3_isB"] > bjet_wp,1, 0)
+    infile_b["jet3_btagged"] =np.where(infile_b["jet3_isB"] > bjet_wp,1, 0)
+    infile_s["jet4_btagged"] =np.where(infile_s["jet4_isB"] > bjet_wp,1, 0)
+    infile_b["jet4_btagged"] =np.where(infile_b["jet4_isB"] > bjet_wp,1, 0)
+    infile_s["jet5_btagged"] =np.where(infile_s["jet5_isB"] > bjet_wp,1, 0)
+    infile_b["jet5_btagged"] =np.where(infile_b["jet5_isB"] > bjet_wp,1, 0)
+    infile_s["jet6_btagged"] =np.where(infile_s["jet6_isB"] > bjet_wp,1, 0)
+    infile_b["jet6_btagged"] =np.where(infile_b["jet6_isB"] > bjet_wp,1, 0)
 
     infile_s=infile_s.drop(columns=flavor_branches, axis=1)
     infile_b=infile_b.drop(columns=flavor_branches, axis=1)

@@ -1,12 +1,17 @@
-import ROOT,uproot
+import ROOT,uproot,datetime
 
+date = datetime.date.today().isoformat()
 # global parameters
 
 from treemaker_WbWb_reco import available_ecm, all_branches as branchList
 #branchList=[]
 branchList.append('BDT_score')
 branchList.append('nbjets')
+branchList.append('nbjets_sig')
+branchList.append('nbjets_cr')
 branchList.append('ntau_h')
+branchList.append('nbjets_semihad')
+branchList.append('nbjets_had')
 branchList.append('jet1_btagged')
 branchList.append('jet2_btagged')
 branchList.append('jet3_btagged')
@@ -41,8 +46,8 @@ usebtagged=usebtaggedHERE
 ##amusebtagged=False
 ##amecm = 355
 
-pf="%s"%if3(usebtagged,'withbtaggedJet_tightBtag',if3(useflav,'withflav','noflav'))
-
+pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
+pf=pf+"WPpt5"
 
 
 
@@ -55,7 +60,7 @@ collider = "FCC-ee"
 formats = ["png","pdf","root"]
 inputDir  = '/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/outputs/histmaker/{}/{}/'.format(channel,pf)
 print('this is the inputDir',inputDir)
-outdir    = '/eos/user/a/anmehta/www/FCC_top/{}/{}/{}/'.format(channel,pf,ecm)
+outdir    = '/eos/user/a/anmehta/www/FCC_top/{}/{}/{}/{}/'.format(date,channel,pf,ecm)
 print('saving plots here',outdir)
 
 plotStatUnc = True
