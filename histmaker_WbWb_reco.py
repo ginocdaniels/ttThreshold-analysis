@@ -13,7 +13,7 @@ useflav=useflavHERE
 usebtagged=usebtaggedHERE
 
 pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
-pf=pf+"WPpt5"
+pf=pf+"WPpt8"
 
 #if not ecm in available_ecm:
 #    raise ValueError("ecm value not in available_ecm")
