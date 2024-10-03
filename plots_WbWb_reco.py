@@ -47,7 +47,7 @@ usebtagged=usebtaggedHERE
 ##amecm = 355
 
 pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
-pf=pf+"WPpt5"
+pf=pf+"WPpt8"
 
 
 
