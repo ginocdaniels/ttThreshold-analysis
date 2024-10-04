@@ -1,4 +1,5 @@
-import uproot
+
+41;2500;0cimport uproot
 import pandas as pd
 import numpy as np
 
@@ -41,8 +42,8 @@ def evaluate(proc,ecm,channel,useflav,usebtagged):
     infiles =  uproot.concatenate([os.path.join(base_dir,channel,proc,f)+':events' for f in os.listdir(os.path.join(base_dir,channel,proc)) if re.search('^events_\d*.root',f)],branches_toTrain ,library="pd")
     flavor_branches=[];
     if "lep" not in channel:
-        flavor_branches=[v for v in all_branches if re.match(".*is[a-z]$",v,re.IGNORECASE)] ##using taus in the training
-        nbjets= np.where(infiles["jet1_isB"] > bjet_wp,1,0) + np.where(infiles["jet2_isB"] > bjet_wp ,1,0) + np.where(infiles["jet3_isB"] > bjet_wp,1,0) + np.where(infiles["jet4_isB"] > bjet_wp,1,0) + np.where(infiles["jet5_isB"] > bjet_wp,1,0)
+        flavor_branches=[v for v in all_branches if re.match(".*_is[a-z]$",v,re.IGNORECASE)] ##using taus in the training
+        nbjets= np.where(infiles["jet1_isB"] > bjet_wp,1,0) + np.where(infiles["jet2_isB"] > bjet_wp ,1,0) + np.where(infiles["jet3_isB"] > bjet_wp,1,0) + np.where(infiles["jet4_isB"] > bjet_wp,1,0) + np.where(infiles["jet5_isB"] > bjet_wp,1,0)+np.where(infiles["jet6_isB"] > bjet_wp,1,0)
         ntau_h= np.where(infiles["jet1_isTau"] > 0.95,1,0) + np.where(infiles["jet2_isTau"] > 0.95 ,1,0) + np.where(infiles["jet3_isTau"] > 0.95,1,0) + np.where(infiles["jet4_isTau"] > 0.95,1,0) + np.where(infiles["jet5_isTau"] > 0.95,1,0)
         jet1_btagged =np.where(infiles["jet1_isB"] > bjet_wp,1, 0)
         jet2_btagged =np.where(infiles["jet2_isB"] > bjet_wp,1, 0)
@@ -58,7 +59,7 @@ def evaluate(proc,ecm,channel,useflav,usebtagged):
         jet6_Qtagged =np.where(infiles["jet6_isQ"] > 0.5,1, 0)
         
     else:
-        nbjets= np.where(infiles["jet1_isB"] > bjet_wp,1,0) + np.where(infiles["jet2_isB"] > bjet_wp ,1,0) + np.where(infiles["jet3_isB"] > bjet_wp,1,0) + np.where(infiles["jet4_isB"] > bjet_wp,1,0) + np.where(infiles["jet5_isB"] > bjet_wp,1,0)
+        nbjets= np.where(infiles["jet1_isB"] > bjet_wp,1,0) + np.where(infiles["jet2_isB"] > bjet_wp ,1,0) + np.where(infiles["jet3_isB"] > bjet_wp,1,0) + np.where(infiles["jet4_isB"] > bjet_wp,1,0) + np.where(infiles["jet5_isB"] > bjet_wp,1,0) + np.where(infiles["jet6_isB"] > bjet_wp,1,0)
         ntau_h=[]
         
     if usebtagged and 'lep' not in 'channel':

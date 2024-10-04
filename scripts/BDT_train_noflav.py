@@ -17,36 +17,18 @@ def if3(cond, iftrue, iffalse):
 
 ecm = '345'
 
-useflav=False #sys.argv[1] #False
-noflav=True #sys.argv[2] #True
 nJ='1' #sys.argv[3]
 
-bjet_wp=0.8
-
-usebtagged=not (useflav)
-
-if noflav:
-    usebtagged=False
-    useflav=False
-else:
-    useflav=useflav
-    usebtagged=usebtagged
     
 
-print('useflav',useflav,'noflav',noflav,'nJ',nJ)
-pf="%s"%if3(usebtagged,'_withbtaggedJet',if3(useflav,'_withflav','_noflav'))
-pf=pf+"WPpt%s"%(str(bjet_wp).split('.')[-1])
-#pf=pf+"WPpt8"
-print('this is the config',pf)
-branches_toTrain=[]
 
+pf="noflav"
+print('this is the config',pf)
+
+branches_toTrain=[]
 branches_toTrain=all_branches
 
 
-
-
-max_entries = 1E05
-hadronic = False
 channel =  if3(nJ == '0','lep',if3(nJ=='1', 'semihad','had')) #'hadronic','semihad','lep'
 base_dir="/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/{}/".format(channel)
 sig="wzp6_ee_WbWb_{0}_ecm{1}".format(channel,ecm)
@@ -54,48 +36,20 @@ bkg="p8_ee_WW_ecm{}".format(ecm)
 
 
 
-
 infile_s =  uproot.concatenate([os.path.join(base_dir,sig,f)+':events' for f in os.listdir(os.path.join(base_dir,sig)) if f.endswith(".root")],branches_toTrain ,library="pd")
 infile_b =  uproot.concatenate([os.path.join(base_dir,bkg,f)+':events' for f in os.listdir(os.path.join(base_dir,bkg)) if f.endswith(".root")],branches_toTrain ,library="pd")
 
-flavor_branches=[v for v in all_branches if '_is' in v]
-#flavor_branches=[v for v in all_branches if re.match(".*_is[a-z]$",v,re.IGNORECASE)] ##using taus in the training
-print(flavor_branches)
-
-jet_branches=[v for v in all_branches if 'Jet' in v]
-
-if usebtagged and "lep" not in channel :
-    infile_s["jet1_btagged"] =np.where(infile_s["jet1_isB"] > bjet_wp,1, 0)
-    infile_b["jet1_btagged"] =np.where(infile_b["jet1_isB"] > bjet_wp,1, 0)
-    infile_s["jet2_btagged"] =np.where(infile_s["jet2_isB"] > bjet_wp,1, 0)
-    infile_b["jet2_btagged"] =np.where(infile_b["jet2_isB"] > bjet_wp,1, 0)
-    infile_s["jet3_btagged"] =np.where(infile_s["jet3_isB"] > bjet_wp,1, 0)
-    infile_b["jet3_btagged"] =np.where(infile_b["jet3_isB"] > bjet_wp,1, 0)
-    infile_s["jet4_btagged"] =np.where(infile_s["jet4_isB"] > bjet_wp,1, 0)
-    infile_b["jet4_btagged"] =np.where(infile_b["jet4_isB"] > bjet_wp,1, 0)
-    infile_s["jet5_btagged"] =np.where(infile_s["jet5_isB"] > bjet_wp,1, 0)
-    infile_b["jet5_btagged"] =np.where(infile_b["jet5_isB"] > bjet_wp,1, 0)
-    infile_s["jet6_btagged"] =np.where(infile_s["jet6_isB"] > bjet_wp,1, 0)
-    infile_b["jet6_btagged"] =np.where(infile_b["jet6_isB"] > bjet_wp,1, 0)
-
-    infile_s=infile_s.drop(columns=flavor_branches, axis=1)
-    infile_b=infile_b.drop(columns=flavor_branches, axis=1)
-    
-
-if noflav : # or "lep" 
-        infile_s=infile_s.drop(columns=flavor_branches, axis=1)
-        infile_b=infile_b.drop(columns=flavor_branches, axis=1)
-
-#if "lep" in channel:
-#        infile_s=infile_s.drop(columns=jet_branches, axis=1)
-#        infile_b=infile_b.drop(columns=jet_branches, axis=1)
+flavor_branches=[v for v in all_branches if '_is' in v or 'nbjets' in v]
 
 
-#branches_toTrain.append('')
+infile_s=infile_s.drop(columns=flavor_branches, axis=1)
+infile_b=infile_b.drop(columns=flavor_branches, axis=1)
+
+
+
 print(infile_s)
 print(pf)
 
-#print(type(infile_b))
 pd_s = (infile_s)
 pd_b = (infile_b)
 
@@ -104,7 +58,6 @@ pd_s['target'] = 1.
 pd_b['target'] = 0.
 
 pd_all = pd.concat([pd_s, pd_b])
-
 
 
 X_train, X_test, y_train, y_test = train_test_split(pd_all.drop(columns=['target']), pd_all['target'], test_size=0.5) #train_test_split
@@ -171,7 +124,7 @@ outdir = '/eos/user/a/anmehta/www/FCC_top/BDT_model/'
 if not os.path.exists(outdir):
     os.makedirs(outdir)
 
-bst.save_model('{}/model_{}_{}{}.json'.format(outdir,channel,ecm,pf))
-plt.savefig('{}/preds_{}_{}{}.png'.format(outdir,channel,ecm,pf))
-plt.savefig('{}/preds_{}_{}{}.pdf'.format(outdir,channel,ecm,pf))
+bst.save_model('{}/model_{}_{}_{}.json'.format(outdir,channel,ecm,pf))
+plt.savefig('{}/preds_{}_{}_{}.png'.format(outdir,channel,ecm,pf))
+plt.savefig('{}/preds_{}_{}_{}.pdf'.format(outdir,channel,ecm,pf))
 plt.close()

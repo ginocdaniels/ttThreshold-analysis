@@ -12,17 +12,19 @@ ecm = 'ECMHERE'
 useflav=useflavHERE
 usebtagged=usebtaggedHERE
 
-pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
-pf=pf+"WPpt8"
+#pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
+#pf=pf+"WPpt8"
+
+pf="noflav"
 
 #if not ecm in available_ecm:
 #    raise ValueError("ecm value not in available_ecm")
 
 
             
-processList={key: value for key, value in all_processes.items() if ecm in available_ecm and (True if not 'WbWb' in key else str("_"+channel) in key)}  #avoid looking for semihad samples in had category
+processList={key: value for key, value in all_processes.items() if ecm in available_ecm and (True if  str('p8_ee_WW_ecm'+ecm) in key else str("_"+channel+"_ecm"+ecm) in key)}  #avoid looking for semihad samples in had category
 
-print(processList)
+print("these are the procs",processList)
 
 # Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)
 #prodTag = "FCCee/winter2023/IDEA/"
@@ -57,10 +59,8 @@ bins = {
     "tagged": (2, -0.5, 1.5),
     "nleps" : (5,-0.5,4.5),
     'singlebin' : (1,-0.5,0.5),
-    "nbjets" : (7,-0.5,6.5),
-    "atleastonebjet" : (1,1,7),
-    "twobins_semihad" : (2,0,4),
-    "twobins_had" : (2,0,6),
+    "nbjets" : (7,-0.5,7.5),
+    "atleastonebjet" : (7,0.5,7.5),
     "dij": {
         "d_12": (100, 0, 100000),
         "d_23": (100, 0, 10000),
@@ -78,19 +78,25 @@ def build_graph(df, dataset):
 
     results = []
     df = df.Define("weight", "1.0")
-    df = df.Define('nbjets_sig','nbjets')
-    df = df.Define('nbjets_cr','nbjets')
-    df = df.Define('nbjets_semihad','nbjets')
-    df = df.Define('nbjets_had','nbjets')
+    df = df.Define("nbjets_loose", "(jet1_isB > 0.5?1: 0) +(jet2_isB > 0.5?1: 0)+ (jet3_isB > 0.5?1: 0)+(jet4_isB > 0.5?1: 0)+(jet5_isB > 0.5?1: 0)+(jet6_isB > 0.5?1: 0)")
+    df = df.Define("nbjets_tight", "(jet1_isB > 0.8?1: 0) +(jet2_isB > 0.8?1: 0)+ (jet3_isB > 0.8?1: 0)+(jet4_isB > 0.8?1: 0)+(jet5_isB > 0.8?1: 0)+(jet6_isB > 0.8?1: 0)")
+    df = df.Define('nbjets_sig_loose','nbjets_loose')
+    df = df.Define('nbjets_sig_tight','nbjets_tight')
+    df = df.Define('nbjets_cr_loose','nbjets_loose')
+    df = df.Define('nbjets_cr_tight','nbjets_tight')
     weightsum = df.Sum("weight")
     column_names = df.GetColumnNames()
     print(column_names)
     df_BDT        = df.Filter("BDT_score > 0.5")
-    df_zerob      = df.Filter("nbjets == 0")
-    df_oneb       = df.Filter("nbjets > 0")
-    df_BDT_zerob  = df_zerob.Filter("BDT_score > 0.5")
-    df_BDT_oneb   = df_oneb.Filter("BDT_score > 0.5")
+    df_zerobT      = df.Filter("nbjets_tight == 0")
+    df_onebT       = df.Filter("nbjets_tight > 0")
+    df_zerobL      = df.Filter("nbjets_loose == 0")
+    df_onebL       = df.Filter("nbjets_loose > 0")
 
+    df_BDT_zerobL  = df_zerobL.Filter("BDT_score > 0.5")
+    df_BDT_onebL   = df_onebL.Filter("BDT_score > 0.5")
+    df_BDT_zerobT  = df_zerobT.Filter("BDT_score > 0.5")
+    df_BDT_onebT   = df_onebT.Filter("BDT_score > 0.5")
     
     for var in column_names:
         var = str(var)
@@ -99,10 +105,9 @@ def build_graph(df, dataset):
         #if var in ['nlep', 'njets']: continue
         if var.endswith("_phi"): binning = bins["phi"];        
         elif var == 'nbjets':    binning = bins["nbjets"]
-        elif var == "nbjets_cr":  binning = bins["singlebin"]
-        elif var == "nbjets_sig":  binning = bins["atleastonebjet"]
-        elif var == "nbjets_semihad":  binning = bins["twobins_semihad"]
-        elif var == "nbjets_had":  binning = bins["twobins_had"]
+        elif "nbjets_cr" in var :  binning = bins["singlebin"]
+        elif "nbjets_sig" in var :            binning = bins["atleastonebjet"]
+            #print(var,'this is the binning',binning)
         elif "tagged" in var: binning = bins["tagged"] 
         elif var == 'ntau_h':            binning = bins["nleps"]
         elif var.endswith("_theta"): binning = bins["theta"]; 
@@ -116,10 +121,10 @@ def build_graph(df, dataset):
 
         results.append(df.Histo1D(("no_cut_"+var, "", *binning), var))
         results.append(df_BDT.Histo1D(('BDT_cut_'+var, "", *binning), var))
-        #results.append(df_zerob.Histo1D(('zerobtag_'+var, "", *binning), var))
-        #results.append(df_oneb.Histo1D(('onebtag_'+var, "", *binning), var))
-        results.append(df_BDT_zerob.Histo1D(('BDT_cut_zerobtag_'+var, "", *binning), var))
-        results.append(df_BDT_oneb.Histo1D(('BDT_cut_onebtag_'+var, "", *binning), var))
+        results.append(df_BDT_zerobL.Histo1D(('BDT_cut_zerobtagL_'+var, "", *binning), var))
+        results.append(df_BDT_onebL.Histo1D(('BDT_cut_onebtagL_'+var, "", *binning), var))
+        results.append(df_BDT_zerobT.Histo1D(('BDT_cut_zerobtagT_'+var, "", *binning), var))
+        results.append(df_BDT_onebT.Histo1D(('BDT_cut_onebtagT_'+var, "", *binning), var))
 
 
 
