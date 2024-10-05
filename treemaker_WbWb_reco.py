@@ -7,6 +7,67 @@ all_processes = {
     "wzp6_ee_WbWb_semihad_ecm345": {
         "fraction": 1,
     },
+     "wzp6_ee_WbWb_had_ecm345": {
+         "fraction": 1,
+     },
+    "wzp6_ee_WbWb_semihad_ecm350": {
+       "fraction": 1,
+    },
+    "wzp6_ee_WbWb_had_ecm350": {
+       "fraction": 1,
+    },
+    "wzp6_ee_WbWb_semihad_ecm355": {
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_had_ecm355": {
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_semihad_ecm340": {
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_had_ecm340": {
+        "fraction": 1,
+    },
+    "p8_ee_WW_ecm345": {
+        "fraction": 1,
+     },
+    "wzp6_ee_WbWb_lep_ecm340": {
+     "fraction": 1,
+     },
+    "wzp6_ee_WbWb_lep_ecm345": {
+             "fraction": 1,
+     },
+    "wzp6_ee_WbWb_lep_ecm350": {
+     "fraction": 1,
+     },
+    "wzp6_ee_WbWb_lep_ecm355": {
+             "fraction": 1,
+     },
+    "wzp6_ee_WbWb_lep_ecm365": {
+         "fraction": 1,
+     },
+    "wzp6_ee_WbWb_semihad_ecm365": {
+        "fraction": 1,
+     },
+    "wzp6_ee_WbWb_had_ecm365": {
+         "fraction": 1,
+    },
+##am    "wzp6_ee_WbWb_semihad_mtop173p5_ecm365": {
+##am         "fraction": 1,
+##am    },
+##am    
+##am    "wzp6_ee_WbWb_semihad_mtop171p5_ecm365": {
+##am         "fraction": 1,
+##am    },
+    "p8_ee_WW_ecm365": {
+         "fraction": 1,
+    },    
+    "p8_ee_WW_ecm350": {
+       "fraction": 1,
+    },
+    "p8_ee_WW_ecm340": {
+       "fraction": 1,
+    },
 ##     "wzp6_ee_WbWb_had_ecm345": {
 ##         "fraction": 1,
 ##     },
@@ -64,30 +125,21 @@ all_processes = {
     #     "fraction": 1,
     #},
     
-##    
-##    #"wzp6_ee_qq_ecm345": {
-##    #   "fraction": 1,
-###    },
-###    "wzp6_ee_qq_ecm340": {
-###       "fraction": 1,
-## #   },
-    
-##    "p8_ee_WW_ecm350": {
-##       "fraction": 1,
-##    },
-##    "p8_ee_WW_ecm340": {
-##       "fraction": 1,
-##    },
-##    
-##    "p8_ee_WW_ecm355": {
-##       "fraction": 1,
-##    },
-    
+    "p8_ee_WW_ecm355": {
+       "fraction": 1,
+    },
+    #"wzp6_ee_qq_ecm345": {
+    #   "fraction": 1,
+    #},
+    #"wzp6_ee_qq_ecm340": {
+   #   "fraction": 1,
+    #},
+
 
     
 }
 
-available_ecm = ['340','345', '350', '355']
+available_ecm = ['340','345', '350', '355','365']
 
 hadronic = False
 #semihad  = False
