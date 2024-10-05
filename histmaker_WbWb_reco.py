@@ -59,7 +59,7 @@ bins = {
     "tagged": (2, -0.5, 1.5),
     "nleps" : (5,-0.5,4.5),
     'singlebin' : (1,-0.5,0.5),
-    "nbjets" : (7,-0.5,7.5),
+    "nbjets" : (7,-0.5,6.5),
     "atleastonebjet" : (7,0.5,7.5),
     "dij": {
         "d_12": (100, 0, 100000),
@@ -78,20 +78,21 @@ def build_graph(df, dataset):
 
     results = []
     df = df.Define("weight", "1.0")
-    df = df.Define("nbjets_loose", "(jet1_isB > 0.5?1: 0) +(jet2_isB > 0.5?1: 0)+ (jet3_isB > 0.5?1: 0)+(jet4_isB > 0.5?1: 0)+(jet5_isB > 0.5?1: 0)+(jet6_isB > 0.5?1: 0)")
-    df = df.Define("nbjets_tight", "(jet1_isB > 0.8?1: 0) +(jet2_isB > 0.8?1: 0)+ (jet3_isB > 0.8?1: 0)+(jet4_isB > 0.8?1: 0)+(jet5_isB > 0.8?1: 0)+(jet6_isB > 0.8?1: 0)")
-    df = df.Define('nbjets_sig_loose','nbjets_loose')
-    df = df.Define('nbjets_sig_tight','nbjets_tight')
-    df = df.Define('nbjets_cr_loose','nbjets_loose ')
-    df = df.Define('nbjets_cr_tight','nbjets_tight ')
+    #df = df.Define("nbjets_loose", "(jet1_isB > 0.5?1: 0) +(jet2_isB > 0.5?1: 0)+ (jet3_isB > 0.5?1: 0)+(jet4_isB > 0.5?1: 0)+(jet5_isB > 0.5?1: 0)+(jet6_isB > 0.5?1: 0)")
+    #df = df.Define("nbjets_tight", "(jet1_isB > 0.8?1: 0) +(jet2_isB > 0.8?1: 0)+ (jet3_isB > 0.8?1: 0)+(jet4_isB > 0.8?1: 0)+(jet5_isB > 0.8?1: 0)+(jet6_isB > 0.8?1: 0)")
+
+    df = df.Define('nbjets_sig_loose','nbjets_WPp5')
+    df = df.Define('nbjets_sig_tight','nbjets_WPp8')
+    df = df.Define('nbjets_cr_loose','nbjets_WPp5 ')
+    df = df.Define('nbjets_cr_tight','nbjets_WPp8 ')
     weightsum = df.Sum("weight")
     column_names = df.GetColumnNames()
     print(column_names)
     df_BDT        = df.Filter("BDT_score > 0.5")
-    df_zerobT      = df.Filter("nbjets_tight == 0")
-    df_onebT       = df.Filter("nbjets_tight > 0")
-    df_zerobL      = df.Filter("nbjets_loose == 0")
-    df_onebL       = df.Filter("nbjets_loose > 0")
+    df_zerobT      = df.Filter("nbjets_WPp8 == 0")
+    df_onebT       = df.Filter("nbjets_WPp8 > 0")
+    df_zerobL      = df.Filter("nbjets_WPp5 == 0")
+    df_onebL       = df.Filter("nbjets_WPp5 > 0")
 
     df_BDT_zerobL  = df_zerobL.Filter("BDT_score > 0.5")
     df_BDT_onebL   = df_onebL.Filter("BDT_score > 0.5")
@@ -104,8 +105,8 @@ def build_graph(df, dataset):
         #if var in ['nlep', 'njets'] or 'jet5' in var or var == 'd_45': continue
         #if var in ['nlep', 'njets']: continue
         if var.endswith("_phi"): binning = bins["phi"];        
-        elif var == 'nbjets_loose':    binning = bins["nbjets"]
-        elif var == 'nbjets_tight':    binning = bins["nbjets"]
+        elif var == 'nbjets_WPp5':    binning = bins["nbjets"]
+        elif var == 'nbjets_WPp8':    binning = bins["nbjets"]
         elif "nbjets_cr" in var :  binning = bins["singlebin"]
         elif "nbjets_sig" in var :            binning = bins["atleastonebjet"]
             #print(var,'this is the binning',binning)
@@ -122,10 +123,10 @@ def build_graph(df, dataset):
 
         results.append(df.Histo1D(("no_cut_"+var, "", *binning), var))
         results.append(df_BDT.Histo1D(('BDT_cut_'+var, "", *binning), var))
-        results.append(df_BDT_zerobL.Histo1D(('BDT_cut_zerobtagL_'+var, "", *binning), var))
-        results.append(df_BDT_onebL.Histo1D(('BDT_cut_onebtagL_'+var, "", *binning), var))
-        results.append(df_BDT_zerobT.Histo1D(('BDT_cut_zerobtagT_'+var, "", *binning), var))
-        results.append(df_BDT_onebT.Histo1D(('BDT_cut_onebtagT_'+var, "", *binning), var))
+        results.append(df_BDT_zerobL.Histo1D(('BDT_cut_zerobtagl_'+var, "", *binning), var))
+        results.append(df_BDT_onebL.Histo1D(('BDT_cut_onebtagl_'+var, "", *binning), var))
+        results.append(df_BDT_zerobT.Histo1D(('BDT_cut_zerobtagt_'+var, "", *binning), var))
+        results.append(df_BDT_onebT.Histo1D(('BDT_cut_onebtagt_'+var, "", *binning), var))
 
 
 

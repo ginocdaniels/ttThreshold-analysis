@@ -1,6 +1,6 @@
-import ROOT,sys,optparse
-
-
+import ROOT,sys,optparse,os
+import datetime
+date = datetime.date.today().isoformat()
 def if3(cond, iftrue, iffalse):
     return iftrue if cond else iffalse
 
@@ -57,36 +57,40 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt):
         morey=20
     else:
         hs.GetYaxis().SetTitleOffset(1.25);
-        morey=1.65 if 'incl' not in channel else 0.5
+        morey=1.65 if 'incl' not in channel else 0.35
         
     hs.SetMaximum(morey*(h_sig.Integral()+h_bkg.Integral()));   legend.Draw("same");
     Canv.Update();
-    Canv.Print(f"/eos/user/a/anmehta/www/FCC_top/Oct04/{vname}_{channel}_{config}_{ecm}{pf}.pdf")
-    Canv.Print(f"/eos/user/a/anmehta/www/FCC_top/Oct04/{vname}_{channel}_{config}_{ecm}{pf}.png")
+    plotsdir=f"/eos/user/a/anmehta/www/FCC_top/{date}Final"
+    if not os.path.isdir(plotsdir):        os.system("mkdir %s"%plotsdir);  os.system('cp ~/public/index.php %s/'%plotsdir)
+
+    Canv.Print(f"{plotsdir}/{vname}_{channel}_{config}_{ecm}{pf}.pdf")
+    Canv.Print(f"{plotsdir}/{vname}_{channel}_{config}_{ecm}{pf}.png")
     return True
 
-def getHist(isSig,vname,h_name,xsec_sig,channel,config,ecm):
-    sf=1.0;sumW=1.0;xsec_M=1.0;
+def getHist(isSig,vname,h_name,xsec_sig,channel,config,ecm,lumi):
+    sf=1.0;sumW=1.0;xsec=1.0;
     if isSig:
-        proc=f'wzp6_ee_WbWb_{channel}_ecm{ecm}'
-        xsec_M=xsec_sig
+        proc=f'wzp6_ee_WbWb_ecm{ecm}'
+        xsec=xsec_sig
     else:
         proc=f'p8_ee_WW_ecm{ecm}'
-    f_in=ROOT.TFile.Open(f'/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/outputs/histmaker/{channel}/{config}/{proc}.root')
+    f_in=ROOT.TFile.Open(f'/eos/cms/store/cmst3/group/top/anmehta/FCC/output_condor_20241005_1231/WbWb/outputs/histmaker/{channel}/{config}/{proc}.root')
     h_in=f_in.Get(vname).Clone(h_name);    xsec=f_in.Get('crossSection').GetVal();    sumW=f_in.Get('sumOfWeights').GetVal()
+    if isSig:  xsec=xsec_sig;
     N_tot=f_in.Get('eventsProcessed').GetVal()
-    print('sumW',sumW)
     print('input ylds',h_in.Integral())
-    sf=xsec*xsec_M*lumi/N_tot #sumW
+    sf=xsec*lumi/N_tot #sumW
+    print('xsec\t',xsec,'\t n_tot\t',N_tot,"\t lumi\t",lumi,"\t sf \t",sf)
     h_in.Scale(sf);    h_in.SetDirectory(0);    f_in.Close();
     print('integral after scaling',h_in.Integral())
     return h_in
 
 def cards(mkplots,lumi,xsec_sig,channel,sel,config,bWP,ecm,logy,vname,xtitle,showInt):
-    h_sig=getHist(True,vname,"x_sig",xsec_sig,channel,config,ecm)
+    h_sig=getHist(True,vname,"x_sig",xsec_sig,channel,config,ecm,lumi)
     print('sig',h_sig.Integral())
     h_obs=h_sig.Clone("x_data_obs")
-    h_bkg=getHist(False,vname,"x_bkg_%s"%channel,1.0,channel,config,ecm)
+    h_bkg=getHist(False,vname,"x_bkg_%s"%channel,1.0,channel,config,ecm,lumi)
     h_obs.Add(h_bkg)
     print('bkg',h_bkg.Integral())
     fout_name=f"{channel}_{sel}_{config}_bWP{bWP}_{ecm}.root"
@@ -121,10 +125,14 @@ if __name__ == '__main__':
     xsec_tt=0.1 if opts.ecm =="340" else 0.5
     xsec_sig=xsec_tt #*(br_semihad if "semihad" in opts.channel else br_had)
     #btag_wp='%sWPpt%s'%(opts.config,opts.btagWP)
-    nb_var='L_nbjets_loose' if "loose" in opts.btagWP else 'T_nbjets_loose'
-    vname= if3(opts.sel == 'cr', "BDT_cut_zerobtag%s"%nb_var, if3(opts.sel == 'sig',"BDT_cut_onebtag%s"%nb_var,"BDT_cut_nbjets_%s"%(opts.btagWP)))    #vname = 'no_cut_njets' #BDT_cut_nbjets' #no_cut_BDT_score' #no_cut_nbjets'
+    btagWP_1='5' if "loose" in opts.btagWP else "8"
+    nb_var='%s_nbjets_%s_%s'%(opts.btagWP[0],opts.sel,opts.btagWP)
+
+    #nb_var='L_nbjets_WPp5' if "5" in opts.btagWP else 'T_nbjets_WPp8'
+
+    vname= if3(opts.sel == 'cr', "BDT_cut_zerobtag%s"%nb_var, if3(opts.sel == 'sig',"BDT_cut_onebtag%s"%nb_var,"BDT_cut_nbjets_WPp%s"%(btagWP_1)))    #vname = 'no_cut_njets' #BDT_cut_nbjets' #no_cut_BDT_score' #no_cut_nbjets'
     print(vname)
     xtitle= "N_{bjets}^{%s} with BDT score > 0.5"%opts.btagWP 
 
     cards(opts.mkplots,lumi,xsec_sig,opts.channel,opts.sel,opts.config,opts.btagWP,opts.ecm,opts.logy,vname,xtitle,opts.showInt)
-        
+

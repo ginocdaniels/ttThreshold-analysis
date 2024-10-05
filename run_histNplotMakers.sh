@@ -3,7 +3,7 @@
 #ecm=${1}; shift;
 #useflav=${1}; shift;
 #usebtagged=${1}; shift;
-for ecm in  340  350 355 345 365
+for ecm in  350 355 345 365 340
 do
     for channel in semihad had #lep
     do
