@@ -1,7 +1,6 @@
 import ROOT,sys,optparse
 
 
-
 def if3(cond, iftrue, iffalse):
     return iftrue if cond else iffalse
 
@@ -62,8 +61,8 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt):
         
     hs.SetMaximum(morey*(h_sig.Integral()+h_bkg.Integral()));   legend.Draw("same");
     Canv.Update();
-    Canv.Print(f"/eos/user/a/anmehta/www/FCC_top/{vname}_{channel}_{config}_{ecm}{pf}.pdf")
-    Canv.Print(f"/eos/user/a/anmehta/www/FCC_top/{vname}_{channel}_{config}_{ecm}{pf}.png")
+    Canv.Print(f"/eos/user/a/anmehta/www/FCC_top/Oct04/{vname}_{channel}_{config}_{ecm}{pf}.pdf")
+    Canv.Print(f"/eos/user/a/anmehta/www/FCC_top/Oct04/{vname}_{channel}_{config}_{ecm}{pf}.png")
     return True
 
 def getHist(isSig,vname,h_name,xsec_sig,channel,config,ecm):
@@ -75,22 +74,22 @@ def getHist(isSig,vname,h_name,xsec_sig,channel,config,ecm):
         proc=f'p8_ee_WW_ecm{ecm}'
     f_in=ROOT.TFile.Open(f'/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/outputs/histmaker/{channel}/{config}/{proc}.root')
     h_in=f_in.Get(vname).Clone(h_name);    xsec=f_in.Get('crossSection').GetVal();    sumW=f_in.Get('sumOfWeights').GetVal()
-    #N_tot=f_in.Get('eventsProcessed').GetVal()
+    N_tot=f_in.Get('eventsProcessed').GetVal()
     print('sumW',sumW)
     print('input ylds',h_in.Integral())
-    sf=xsec*xsec_M*lumi/sumW
+    sf=xsec*xsec_M*lumi/N_tot #sumW
     h_in.Scale(sf);    h_in.SetDirectory(0);    f_in.Close();
     print('integral after scaling',h_in.Integral())
     return h_in
 
-def cards(mkplots,lumi,xsec_sig,channel,sel,config,ecm,logy,vname,xtitle,showInt):
+def cards(mkplots,lumi,xsec_sig,channel,sel,config,bWP,ecm,logy,vname,xtitle,showInt):
     h_sig=getHist(True,vname,"x_sig",xsec_sig,channel,config,ecm)
     print('sig',h_sig.Integral())
     h_obs=h_sig.Clone("x_data_obs")
     h_bkg=getHist(False,vname,"x_bkg_%s"%channel,1.0,channel,config,ecm)
     h_obs.Add(h_bkg)
     print('bkg',h_bkg.Integral())
-    fout_name=f"{channel}_{sel}_{config}_{ecm}.root"
+    fout_name=f"{channel}_{sel}_{config}_bWP{bWP}_{ecm}.root"
     f_out=ROOT.TFile(fout_name,"RECREATE");
     f_out.cd();
     h_sig.Write();    h_bkg.Write();    h_obs.Write();    f_out.Close();
@@ -107,7 +106,7 @@ if __name__ == '__main__':
     parser.add_option('-f',  '--fconf',    dest='config',  type='string',         default='noflav',     help='withflav/noflav/withbtaggedJet')
     parser.add_option('-s',  '--sel',      dest='sel' ,    type='string',         default='incl',       help='sig/cr')
     parser.add_option('-e',  '--ecm',      dest='ecm' ,    type='string',         default='345',        help='ecm')
-    parser.add_option('-w',  '--bwp',      dest='btagWP',  type='string',         default='',           help='btagWP:loose/tight')
+    parser.add_option('-w',  '--bwp',      dest='btagWP',  type='string',         default='loose',      help='btagWP:loose/tight')
     parser.add_option('-l',  '--lum',      dest='lum' ,    type=float,            default=36.0,         help='lumi in fb')
     parser.add_option('-p',  '--plots',    dest='mkplots', action='store_true',   default=False,        help='make plots too')
     parser.add_option('-i',  '--sInt',     dest='showInt' ,action='store_true',   default=False,        help='show integral in legends')
@@ -120,12 +119,12 @@ if __name__ == '__main__':
     br_semihad=0.438
     br_had=0.457
     xsec_tt=0.1 if opts.ecm =="340" else 0.5
-    xsec_sig=xsec_tt*(br_semihad if "semihad" in opts.channel else br_had)
+    xsec_sig=xsec_tt #*(br_semihad if "semihad" in opts.channel else br_had)
     #btag_wp='%sWPpt%s'%(opts.config,opts.btagWP)
     nb_var='L_nbjets_loose' if "loose" in opts.btagWP else 'T_nbjets_loose'
-    vname= if3(opts.sel == 'cr', "BDT_cut_zerobtag%s_cr"%nb_var, if3(opts.sel == 'sig',"BDT_cut_onebtag%s_sig"%nb_var,"BDT_cut_nbjets_%s"%(nb_var)))    #vname = 'no_cut_njets' #BDT_cut_nbjets' #no_cut_BDT_score' #no_cut_nbjets'
-    
-    xtitle= "N_{bjets}^%s} with BDT score > 0.5"%opts.btagWP 
+    vname= if3(opts.sel == 'cr', "BDT_cut_zerobtag%s"%nb_var, if3(opts.sel == 'sig',"BDT_cut_onebtag%s"%nb_var,"BDT_cut_nbjets_%s"%(opts.btagWP)))    #vname = 'no_cut_njets' #BDT_cut_nbjets' #no_cut_BDT_score' #no_cut_nbjets'
+    print(vname)
+    xtitle= "N_{bjets}^{%s} with BDT score > 0.5"%opts.btagWP 
 
-    cards(opts.mkplots,lumi,xsec_sig,opts.channel,opts.sel,config,opts.ecm,opts.logy,vname,xtitle,opts.showInt)
+    cards(opts.mkplots,lumi,xsec_sig,opts.channel,opts.sel,opts.config,opts.btagWP,opts.ecm,opts.logy,vname,xtitle,opts.showInt)
         

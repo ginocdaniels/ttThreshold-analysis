@@ -17,7 +17,7 @@ outdir = '/eos/user/a/anmehta/www/FCC_top/BDT_model'
 
 ecm_model='345'
 branches_toTrain=all_branches
-base_dir="/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/" #{}/".format(channel)
+base_dir="/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_20241005_1231/WbWb/" #{}/".format(channel)
 
 
 def calcsumW(proc,channel):
@@ -49,7 +49,7 @@ def evaluate(proc,ecm,channel):
     print('runnning for %s %s channel'%(pf,channel))
     bst = XGBClassifier()
     print('model used is','{}/model_{}_{}_{}.json'.format(outdir,channel,ecm_model,pf))
-    bst.load_model('{}/model_{}_{}_{}.json'.format(outdir,channel,ecm_model,pf))
+    bst.load_model(f'{outdir}/model_{channel}_345_noflav.json') #model_{}_{}_{}.json'.format(outdir,channel,ecm_model,pf))
     preds = bst.predict_proba(infiles)
     pd = (infiles)
     pd['BDT_score'] = preds[:,1]
@@ -79,7 +79,7 @@ def evaluate(proc,ecm,channel):
 for ecm in ['365','340','345','350','355']:
     for ch in ['semihad','had']:
         #if ecm == '340' and ch == 'lep': continue
-        sig="wzp6_ee_WbWb_{0}_ecm{1}".format(ch,ecm)
+        sig="wzp6_ee_WbWb_ecm{}".format(ecm)
         bkg="p8_ee_WW_ecm{}".format(ecm)
         print(sig,bkg,ecm,ch)
         evaluate(sig,ecm,ch)

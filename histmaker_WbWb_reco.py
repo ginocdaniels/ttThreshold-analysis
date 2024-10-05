@@ -22,7 +22,7 @@ pf="noflav"
 
 
             
-processList={key: value for key, value in all_processes.items() if ecm in available_ecm and (True if  str('p8_ee_WW_ecm'+ecm) in key else str("_"+channel+"_ecm"+ecm) in key)}  #avoid looking for semihad samples in had category
+processList={key: value for key, value in all_processes.items() if ecm in available_ecm and (True if str('p8_ee_WW_ecm'+ecm) in key else str('wzp6_ee_WbWb_ecm'+ecm) in key)}  #avoid looking for semihad samples in had category
 
 print("these are the procs",processList)
 
@@ -35,11 +35,11 @@ procDict = "FCCee_procDict_winter2023_IDEA.json"
 # Define the input dir (optional)
 
 
-inputDir="/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/{}/{}/".format(channel,pf)
+inputDir="/eos/cms/store/cmst3/group/top/anmehta/FCC///output_condor_20241005_1231/WbWb/{}/{}/".format(channel,pf)
 #inputDir   ="/eos/cms/store/cmst3/group/top/anmehta/FCC/condor_WbWb/{}/{}/".format(channel,pf)
 
 # Optional: output directory, default is local running directory
-outputDir = "/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/outputs/histmaker/{}/{}/".format(channel,pf)
+outputDir = "/eos/cms/store/cmst3/group/top/anmehta/FCC///output_condor_20241005_1231/WbWb/outputs/histmaker/{}/{}/".format(channel,pf)
 print('this is outdir',outputDir)
 
 # optional: ncpus, default is 4, -1 uses all cores available
@@ -82,8 +82,8 @@ def build_graph(df, dataset):
     df = df.Define("nbjets_tight", "(jet1_isB > 0.8?1: 0) +(jet2_isB > 0.8?1: 0)+ (jet3_isB > 0.8?1: 0)+(jet4_isB > 0.8?1: 0)+(jet5_isB > 0.8?1: 0)+(jet6_isB > 0.8?1: 0)")
     df = df.Define('nbjets_sig_loose','nbjets_loose')
     df = df.Define('nbjets_sig_tight','nbjets_tight')
-    df = df.Define('nbjets_cr_loose','nbjets_loose')
-    df = df.Define('nbjets_cr_tight','nbjets_tight')
+    df = df.Define('nbjets_cr_loose','nbjets_loose ')
+    df = df.Define('nbjets_cr_tight','nbjets_tight ')
     weightsum = df.Sum("weight")
     column_names = df.GetColumnNames()
     print(column_names)
@@ -104,7 +104,8 @@ def build_graph(df, dataset):
         #if var in ['nlep', 'njets'] or 'jet5' in var or var == 'd_45': continue
         #if var in ['nlep', 'njets']: continue
         if var.endswith("_phi"): binning = bins["phi"];        
-        elif var == 'nbjets':    binning = bins["nbjets"]
+        elif var == 'nbjets_loose':    binning = bins["nbjets"]
+        elif var == 'nbjets_tight':    binning = bins["nbjets"]
         elif "nbjets_cr" in var :  binning = bins["singlebin"]
         elif "nbjets_sig" in var :            binning = bins["atleastonebjet"]
             #print(var,'this is the binning',binning)
