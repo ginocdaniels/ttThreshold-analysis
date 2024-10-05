@@ -31,10 +31,10 @@ def drawSLatex(xpos,ypos,text,size):
     latex.SetTextFont(42)
     latex.DrawLatex(xpos,ypos,text)
 
-#vname= if3(cuts == 'cr', "BDT_cut_zerobtag_nbjets_cr", if3(cuts == 'sig',"BDT_cut_onebtag_nbjets_sig","BDT_cut_nbjets"))
-vname = 'no_cut_njets' #BDT_cut_nbjets' #no_cut_BDT_score' #no_cut_nbjets'
-xtitle= "N_{jets}" # with BDT score > 0.5" #"BDT score" #
-print('used variable is \t', vname)
+vname= if3(cuts == 'cr', "BDT_cut_zerobtag_nbjets_cr", if3(cuts == 'sig',"BDT_cut_onebtag_nbjets_sig","BDT_cut_nbjets"))
+#vname = 'no_cut_njets' #BDT_cut_nbjets' #no_cut_BDT_score' #no_cut_nbjets'
+xtitle= "N_{jets} with BDT score > 0.5" #"BDT score" #
+#print('used variable is \t', vname)
 def stackPlot(fname):
 
     Canv = ROOT.TCanvas(f'Canv_{channel}_{config}_{ecm}',"",600,600)

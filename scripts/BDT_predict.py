@@ -15,7 +15,7 @@ outdir = '/eos/user/a/anmehta/www/FCC_top/BDT_model'
 
 
 
-ecm_model='345'0.8
+ecm_model='345'
 branches_toTrain=[]
 branches_toTrain=all_branches
 
@@ -124,16 +124,16 @@ def evaluate(proc,ecm,channel,useflav,usebtagged):
     fname.Write();fname.Close();
 for ecm in ['365','340','345','350','355']:
     for ch in ['semihad','had']:
-        if ecm == '340' and ch == 'lep': continue
+        #if ecm == '340' and ch == 'lep': continue
         sig="wzp6_ee_WbWb_{0}_ecm{1}".format(ch,ecm)
         bkg="p8_ee_WW_ecm{}".format(ecm)
         print(sig,bkg,ecm,ch)
         evaluate(sig,ecm,ch,True,False)
-        if not ecm == "365": evaluate(bkg,ecm,ch,True,False)
+        evaluate(bkg,ecm,ch,True,False)
         evaluate(sig,ecm,ch,False,True)
-        if not ecm == "365": evaluate(bkg,ecm,ch,False,True)
+        evaluate(bkg,ecm,ch,False,True)
         evaluate(sig,ecm,ch,False,False)
-        if not ecm == "365": evaluate(bkg,ecm,ch,False,False)
+        evaluate(bkg,ecm,ch,False,False)
 
 
 
