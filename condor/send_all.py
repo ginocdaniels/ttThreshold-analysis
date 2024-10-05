@@ -17,10 +17,16 @@ nev_per_job = -1
 ncpus = 4
 
 ## list of samples to run on training jets
+
 samples = [
+    "wzp6_ee_WbWb_ecm340",
+    "wzp6_ee_WbWb_ecm345",
+    "wzp6_ee_WbWb_ecm350",
+    "wzp6_ee_WbWb_ecm355",
+    "wzp6_ee_WbWb_ecm365",
     "wzp6_ee_WbWb_semihad_ecm340",
     "wzp6_ee_WbWb_had_ecm340",
-    "wzp6_ee_WbWb_lep_ecm340",
+    #"wzp6_ee_WbWb_lep_ecm340",
     "p8_ee_WW_ecm340",
     "wzp6_ee_WbWb_semihad_ecm345",
     "wzp6_ee_WbWb_had_ecm345",
@@ -28,12 +34,12 @@ samples = [
     "wzp6_ee_WbWb_had_ecm350",
     "wzp6_ee_WbWb_semihad_ecm355",
     "wzp6_ee_WbWb_had_ecm355",
-    "wzp6_ee_WbWb_lep_ecm340",
-    "wzp6_ee_WbWb_lep_ecm345",
-    "wzp6_ee_WbWb_lep_ecm350",
-    "wzp6_ee_WbWb_lep_ecm355",
+    #"wzp6_ee_WbWb_lep_ecm340",
+    #"wzp6_ee_WbWb_lep_ecm345",
+    #"wzp6_ee_WbWb_lep_ecm350",
+    #"wzp6_ee_WbWb_lep_ecm355",
     "p8_ee_WW_ecm365",
-    "wzp6_ee_WbWb_lep_ecm365",
+    #"wzp6_ee_WbWb_lep_ecm365",
     "wzp6_ee_WbWb_semihad_ecm365",
     "wzp6_ee_WbWb_had_ecm365",
     "wzp6_ee_WbWb_semihad_mtop171p5_ecm365",
@@ -46,7 +52,9 @@ samples = [
 
 indir = "/eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/"
 
-channels = ['had','semihad','lep']
+#channels = ['had','semihad','lep']
+channels = ['had','semihad']
+
 
 now = datetime.now()
 

@@ -5,14 +5,16 @@ import numpy as np
 import os,sys,re
 import ROOT
 from xgboost import XGBClassifier
+import argparse
+
 def if3(cond, iftrue, iffalse):
     return iftrue if cond else iffalse
 
 sys.path.insert(0, "/afs/cern.ch/work/a/anmehta/public/FCC/ttThreshold-analysis/") #os.getcwd()+'../')
 from treemaker_WbWb_reco import all_branches
+from multiprocessing import Pool
 
-outdir = '/eos/user/a/anmehta/www/FCC_top/BDT_model'
-
+outdir = '/eos/cms/store/cmst3/group/top/anmehta/FCC/BDT_model/'
 
 
 ecm_model='345'
@@ -36,8 +38,8 @@ def evaluate(proc,ecm,channel):
     infiles =  uproot.concatenate([os.path.join(base_dir,channel,proc,f)+':events' for f in os.listdir(os.path.join(base_dir,channel,proc)) if re.search('^events_\d*.root',f)],branches_toTrain ,library="pd")
 
     flavor_branches=[v for v in all_branches if '_is' in v or 'nbjets' in v]
-    bjet_wpL=0.5;
-    bjet_wpT=0.8;
+    #bjet_wpL=0.5;
+    #bjet_wpT=0.8;
     pd_out=(infiles)
     #nbjets_loose= np.where(infiles["jet1_isB"] > bjet_wpL,1,0) + np.where(infiles["jet2_isB"] > bjet_wpL ,1,0) + np.where(infiles["jet3_isB"] > bjet_wpL,1,0) + np.where(infiles["jet4_isB"] > bjet_wpL,1,0) + np.where(infiles["jet5_isB"] > bjet_wpL,1,0)+np.where(infiles["jet6_isB"] > bjet_wpL,1,0)
     #nbjets_tight= np.where(infiles["jet1_isB"] > bjet_wpT,1,0) + np.where(infiles["jet2_isB"] > bjet_wpT ,1,0) + np.where(infiles["jet3_isB"] > bjet_wpT,1,0) + np.where(infiles["jet4_isB"] > bjet_wpT,1,0) + np.where(infiles["jet5_isB"] > bjet_wpT,1,0)+np.where(infiles["jet6_isB"] > bjet_wpT,1,0)
@@ -66,7 +68,7 @@ def evaluate(proc,ecm,channel):
     if os.path.exists(fname_new):
         os.remove(fname_new)
     #print ('this is the name of the output file',fname_new)
-    rdf = ROOT.RDF.MakeNumpyDataFrame(data_dict)
+    rdf = ROOT.RDF.FromNumpy(data_dict)
     rdf.Snapshot('events', fname_new,  pd_out.columns)
     print("now trying to update the existing root file")
     fname=ROOT.TFile.Open(fname_new,"update")
@@ -76,17 +78,25 @@ def evaluate(proc,ecm,channel):
     #print(sumW,p.GetVal())
     p.Write();
     fname.Write();fname.Close();
-for ecm in ['365','340','345','350','355']:
-    for ch in ['semihad','had']:
-        #if ecm == '340' and ch == 'lep': continue
-        sig="wzp6_ee_WbWb_ecm{}".format(ecm)
-        bkg="p8_ee_WW_ecm{}".format(ecm)
-        print(sig,bkg,ecm,ch)
-        evaluate(sig,ecm,ch)
-        evaluate(bkg,ecm,ch)
 
+def parallel_evaluate(args):
+    proc, ecm, ch = args
+    evaluate(proc, ecm, ch)
 
+def main(ncores=4):
+    tasks = []
+    for ecm in ['340', '345', '350', '355', '365']:
+        for ch in ['semihad', 'had']:
+            sig = "wzp6_ee_WbWb_ecm{}".format(ecm)
+            bkg = "p8_ee_WW_ecm{}".format(ecm)
+            tasks.append((sig, ecm, ch))
+            tasks.append((bkg, ecm, ch))
 
+    with Pool(ncores) as pool:
+        pool.map(parallel_evaluate, tasks)
 
-
-#eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/lep/wzp6_ee_WbWb_had_ecm345
+if __name__ == "__main__":
+    args = argparse.ArgumentParser()
+    args.add_argument("--ncores", type=int, default=4)
+    args = args.parse_args()
+    main(ncores=args.ncores)
