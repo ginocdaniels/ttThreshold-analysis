@@ -170,3 +170,4 @@ zz_old
 *.cc
 condor/scripts
 *.sub
+condor/std

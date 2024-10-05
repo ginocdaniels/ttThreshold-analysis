@@ -68,6 +68,62 @@ all_processes = {
     "p8_ee_WW_ecm340": {
        "fraction": 1,
     },
+##     "wzp6_ee_WbWb_had_ecm345": {
+##         "fraction": 1,
+##     },
+##    "wzp6_ee_WbWb_semihad_ecm350": {
+##       "fraction": 1,
+##    },
+##    "wzp6_ee_WbWb_had_ecm350": {
+##       "fraction": 1,
+##    },
+##    "wzp6_ee_WbWb_semihad_ecm355": {
+##        "fraction": 1,
+##    },
+##    "wzp6_ee_WbWb_had_ecm355": {
+##        "fraction": 1,
+##    },
+##    "wzp6_ee_WbWb_semihad_ecm340": {
+##        "fraction": 1,
+##    },
+##    "wzp6_ee_WbWb_had_ecm340": {
+##        "fraction": 1,
+##    },
+##
+##    "p8_ee_WW_ecm345": {
+##        "fraction": 1,
+##     },
+##    "wzp6_ee_WbWb_lep_ecm340": {
+##     "fraction": 1,
+##     },
+##    "wzp6_ee_WbWb_lep_ecm345": {
+##             "fraction": 1,
+##     },
+##    "wzp6_ee_WbWb_lep_ecm350": {
+##     "fraction": 1,
+##     },
+##    "wzp6_ee_WbWb_lep_ecm355": {
+##             "fraction": 1,
+##     },
+    #"wzp6_ee_WbWb_lep_ecm365": {
+    #     "fraction": 1,
+    # },
+    #"wzp6_ee_WbWb_semihad_ecm365": {
+    #    "fraction": 1,
+    # },
+    #"wzp6_ee_WbWb_had_ecm365": {
+    #     "fraction": 1,
+    #},
+    #"wzp6_ee_WbWb_semihad_mtop173p5_ecm365": {
+    #     "fraction": 1,
+    #},
+    #
+    #"wzp6_ee_WbWb_semihad_mtop171p5_ecm365": {
+    #     "fraction": 1,
+    #},
+    #"p8_ee_WW_ecm365": {
+    #     "fraction": 1,
+    #},
     
     "p8_ee_WW_ecm355": {
        "fraction": 1,
@@ -161,6 +217,7 @@ all_branches = [
     "jet1_phi", "jet2_phi", "jet3_phi","jet4_phi","jet5_phi","jet6_phi",
     "jet1_isTau", "jet2_isTau", "jet3_isTau","jet4_isTau","jet5_isTau","jet6_isTau",
     "missing_p", "missing_p_theta", "missing_p_phi",
+    "nbjets_WPp5", "nbjets_WPp8",
     "d_12","d_23","d_34","d_45","d_56",
     "jet1_isB", "jet2_isB", "jet3_isB", "jet4_isB", "jet5_isB", "jet6_isB",
     "jet1_isG", "jet2_isG", "jet3_isG", "jet4_isG", "jet5_isG", "jet6_isG",
@@ -373,6 +430,12 @@ class RDFanalysis:
             ),
         )
 
+        df = df.Define("jets_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)")
+        df = df.Define("bjets_WPp5", "ZHfunctions::sel_btag(0.5)(jets_isB)")
+        df = df.Define("bjets_WPp8", "ZHfunctions::sel_btag(0.8)(jets_isB)")
+        df = df.Define("nbjets_WPp5", "bjets_WPp5.size()")
+        df = df.Define("nbjets_WPp8", "bjets_WPp8.size()")
+    
         df = df.Define("jet1", "jets_p4[0]")
         df = df.Define("jet2", "jets_p4[1]")
         df = df.Define("jet3", "jets_p4[2]")
@@ -457,7 +520,7 @@ class RDFanalysis:
     # __________________________________________________________
     # Mandatory: output function, please make sure you return the branchlist as a python list
     def output():
-        print(jetClusteringHelper.outputBranches())
+        #print(jetClusteringHelper.outputBranches())
         return all_branches
 
         
