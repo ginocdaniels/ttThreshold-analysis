@@ -160,7 +160,26 @@ ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>  sel_iso::operator() (Vec
     return result;
 }
 
- 
+
+struct sel_btag {
+    sel_btag(float arg_min_btag);
+    float m_min_btag = 0.5;
+    ROOT::VecOps::RVec<float> operator() (ROOT::VecOps::RVec<float> btag);
+};
+
+sel_btag::sel_btag(float arg_min_btag) : m_min_btag(arg_min_btag) {}
+ROOT::VecOps::RVec<float> sel_btag::operator() (ROOT::VecOps::RVec<float> btag) {
+    ROOT::VecOps::RVec<float> result;
+    result.reserve(btag.size());
+    for (auto &p : btag) {
+        if (p > m_min_btag) {
+            result.emplace_back(p);
+        }
+    }
+    return result;
+}
+
+
 // compute the cone isolation for reco particles
 struct coneIsolation {
 

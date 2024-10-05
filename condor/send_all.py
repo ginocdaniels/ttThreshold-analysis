@@ -1,5 +1,6 @@
 import os, sys
 import re
+from datetime import datetime
 
 debug = False
 ### to be customized by user
@@ -17,39 +18,41 @@ ncpus = 4
 
 ## list of samples to run on training jets
 samples = [
-#    "wzp6_ee_WbWb_semihad_ecm340",
- #   "wzp6_ee_WbWb_had_ecm340",
-    #"wzp6_ee_WbWb_lep_ecm340",
-  #  "p8_ee_WW_ecm340",
-#    "wzp6_ee_WbWb_semihad_ecm345",
-#    "wzp6_ee_WbWb_had_ecm345",
-#    "wzp6_ee_WbWb_semihad_ecm350",
-#    "wzp6_ee_WbWb_had_ecm350",
-#    "wzp6_ee_WbWb_semihad_ecm355",
-#    "wzp6_ee_WbWb_had_ecm355",
-#    "wzp6_ee_WbWb_lep_ecm340",
-#    "wzp6_ee_WbWb_lep_ecm345",
-#    "wzp6_ee_WbWb_lep_ecm350",
-#    "wzp6_ee_WbWb_lep_ecm355",
+    "wzp6_ee_WbWb_semihad_ecm340",
+    "wzp6_ee_WbWb_had_ecm340",
+    "wzp6_ee_WbWb_lep_ecm340",
+    "p8_ee_WW_ecm340",
+    "wzp6_ee_WbWb_semihad_ecm345",
+    "wzp6_ee_WbWb_had_ecm345",
+    "wzp6_ee_WbWb_semihad_ecm350",
+    "wzp6_ee_WbWb_had_ecm350",
+    "wzp6_ee_WbWb_semihad_ecm355",
+    "wzp6_ee_WbWb_had_ecm355",
+    "wzp6_ee_WbWb_lep_ecm340",
+    "wzp6_ee_WbWb_lep_ecm345",
+    "wzp6_ee_WbWb_lep_ecm350",
+    "wzp6_ee_WbWb_lep_ecm355",
     "p8_ee_WW_ecm365",
-#    "wzp6_ee_WbWb_lep_ecm365",
-#    "wzp6_ee_WbWb_semihad_ecm365",
-#    "wzp6_ee_WbWb_had_ecm365",
-#    "wzp6_ee_WbWb_semihad_mtop171p5_ecm365",
-#    "wzp6_ee_WbWb_semihad_mtop173p5_ecm365",
-#    "p8_ee_WW_ecm345",
-#    "wzp6_ee_qq_ecm345",
-#    "p8_ee_WW_ecm350",
-#    "p8_ee_WW_ecm355",
+    "wzp6_ee_WbWb_lep_ecm365",
+    "wzp6_ee_WbWb_semihad_ecm365",
+    "wzp6_ee_WbWb_had_ecm365",
+    "wzp6_ee_WbWb_semihad_mtop171p5_ecm365",
+    "wzp6_ee_WbWb_semihad_mtop173p5_ecm365",
+    "p8_ee_WW_ecm345",
+    "wzp6_ee_qq_ecm345",
+    "p8_ee_WW_ecm350",
+    "p8_ee_WW_ecm355",
 ]
 
 indir = "/eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/"
 
 channels = ['had','semihad','lep']
 
+now = datetime.now()
+
 for channel in channels:
 
-    outdir = "/eos/cms/store/cmst3/group/top/anmehta/FCC/output_condor_06092024/{}/{}".format(analysis_name,channel)
+    outdir = "/eos/cms/store/cmst3/group/top/anmehta/FCC/output_condor_{}/{}/{}".format(now.strftime("%Y%m%d_%H%M"),analysis_name,channel)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
