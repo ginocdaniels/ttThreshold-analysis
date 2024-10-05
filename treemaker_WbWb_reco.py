@@ -3,7 +3,24 @@ import urllib
 
 # list of processes
 all_processes = {
-    
+
+    "wzp6_ee_WbWb_ecm340": {
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_ecm345": {
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_ecm350": {
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_ecm355": {
+        "fraction": 1,
+    },
+
+    "wzp6_ee_WbWb_ecm365": {
+        "fraction": 1,
+    },
+
     "wzp6_ee_WbWb_semihad_ecm345": {
         "fraction": 1,
     },
