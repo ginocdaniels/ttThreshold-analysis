@@ -242,11 +242,12 @@ all_branches = [
     "jet1_isQ", "jet2_isQ", "jet3_isQ", "jet4_isQ", "jet5_isQ", "jet6_isQ",
     "jet1_isS", "jet2_isS", "jet3_isS", "jet4_isS", "jet5_isS", "jet6_isS",
     "jet1_isC", "jet2_isC", "jet3_isC", "jet4_isC", "jet5_isC", "jet6_isC",
-    "njets_R5",       "jet1_R5_p",      "jet2_R5_p",       "jet3_R5_p",     "jet4_R5_p",     "jet5_R5_p",    "jet6_R5_p",
-    "jet1_R5_theta",  "jet2_R5_theta",  "jet3_R5_theta",  "jet4_R5_theta",  "jet5_R5_theta", "jet6_R5_theta",
+    "njets_R5",  "jet1_R5_p", "jet2_R5_p", "jet3_R5_p", "jet4_R5_p", "jet5_R5_p", "jet6_R5_p",
+    "jet1_R5_theta",  "jet2_R5_theta",  "jet3_R5_theta",  "jet4_R5_theta", "jet5_R5_theta", "jet6_R5_theta",
     "jet1_R5_pflavor", "jet2_R5_pflavor", "jet3_R5_pflavor", "jet4_R5_pflavor", "jet5_R5_pflavor","jet6_R5_pflavor",
     "nbjets_R5_true", "ncjets_R5_true","nljets_R5_true","ngjets_R5_true",
-    "nbjets_R5_WPp5", "nbjets_R5_WPp8",
+    "nbjets_R5_eff_p9", "nbjets_R5_eff_p89","nbjets_R5_eff_p91",
+    "nbjets_R5_WPp5", "nbjets_R5_WPp8", "nbjets_R5_WPp85", "nbjets_R5_WPp9",
     "jet1_R5_isG","jet2_R5_isG","jet3_R5_isG","jet4_R5_isG","jet5_R5_isG","jet6_R5_isG",                
     "jet1_R5_isU","jet2_R5_isU","jet3_R5_isU","jet4_R5_isU","jet5_R5_isU","jet6_R5_isU",                
     "jet1_R5_isB","jet2_R5_isB","jet3_R5_isB","jet4_R5_isB","jet5_R5_isB","jet6_R5_isB",                
@@ -254,7 +255,6 @@ all_branches = [
     "jet1_R5_isC","jet2_R5_isC","jet3_R5_isC","jet4_R5_isC","jet5_R5_isC","jet6_R5_isC",                
     "jet1_R5_isD","jet2_R5_isD","jet3_R5_isD","jet4_R5_isD","jet5_R5_isD","jet6_R5_isD",                                
     "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU",
-
     
 ]
 
@@ -512,15 +512,28 @@ class RDFanalysis:
         df = df.Define("jets_R5_ltag_true", "JetTaggingUtils::get_ltag({}, 1.0)".format('jets_R5_pflavor'))
         df = df.Define("jets_R5_gtag_true", "JetTaggingUtils::get_gtag({}, 1.0)".format('jets_R5_pflavor'))
 
+        df = df.Define("jets_R5_btag_eff_p9", "JetTaggingUtils::get_btag({}, .9)".format('jets_R5_pflavor'))
+        df = df.Define("jets_R5_btag_eff_p89", "JetTaggingUtils::get_btag({}, .89)".format('jets_R5_pflavor'))
+        df = df.Define("jets_R5_btag_eff_p91", "JetTaggingUtils::get_btag({}, .91)".format('jets_R5_pflavor'))
+
         df = df.Define("jets_R5_btagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_true,{})".format(jetClusteringHelper_R5.jets))
         df = df.Define("jets_R5_ctagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ctag_true,{})".format(jetClusteringHelper_R5.jets))
         df = df.Define("jets_R5_ltagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ltag_true,{})".format(jetClusteringHelper_R5.jets))
         df = df.Define("jets_R5_gtagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_gtag_true,{})".format(jetClusteringHelper_R5.jets))
 
-        df = df.Define("nbjets_R5_true",         "return int(jets_R5_btagged_true.size())")
-        df = df.Define("ncjets_R5_true",         "return int(jets_R5_ctag_true.size())")
-        df = df.Define("nljets_R5_true",         "return int(jets_R5_ltag_true.size())")
-        df = df.Define("ngjets_R5_true",         "return int(jets_R5_gtag_true.size())")
+        df = df.Define("jets_R5_btagged_eff_p9", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_eff_p9,{})".format(jetClusteringHelper_R5.jets))
+        df = df.Define("jets_R5_btagged_eff_p89", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_eff_p89,{})".format(jetClusteringHelper_R5.jets))
+        df = df.Define("jets_R5_btagged_eff_p91", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_eff_p91,{})".format(jetClusteringHelper_R5.jets))
+
+        df = df.Define("nbjets_R5_true", "return int(jets_R5_btagged_true.size())")
+        df = df.Define("ncjets_R5_true", "return int(jets_R5_ctag_true.size())")
+        df = df.Define("nljets_R5_true", "return int(jets_R5_ltag_true.size())")
+        df = df.Define("ngjets_R5_true", "return int(jets_R5_gtag_true.size())")
+
+        df = df.Define("nbjets_R5_eff_p9", "return int(jets_R5_btagged_eff_p9.size())")
+        df = df.Define("nbjets_R5_eff_p89", "return int(jets_R5_btagged_eff_p89.size())")
+        df = df.Define("nbjets_R5_eff_p91", "return int(jets_R5_btagged_eff_p91.size())")
+
 
         df = df.Define("jet1_R5_isG", "recojet_isG_R5[0]")
         df = df.Define("jet2_R5_isG", "recojet_isG_R5[1]")
@@ -575,9 +588,13 @@ class RDFanalysis:
         
         df = df.Define("bjets_R5_WPp5","ZHfunctions::sel_btag(0.5)(jets_R5_isB)")
         df = df.Define("bjets_R5_WPp8","ZHfunctions::sel_btag(0.8)(jets_R5_isB)")
+        df = df.Define("bjets_R5_WPp85","ZHfunctions::sel_btag(0.85)(jets_R5_isB)")
+        df = df.Define("bjets_R5_WPp9","ZHfunctions::sel_btag(0.9)(jets_R5_isB)")
 
         df = df.Define("nbjets_R5_WPp5","bjets_R5_WPp5.size()")
         df = df.Define("nbjets_R5_WPp8","bjets_R5_WPp8.size()")
+        df = df.Define("nbjets_R5_WPp85","bjets_R5_WPp85.size()")
+        df = df.Define("nbjets_R5_WPp9","bjets_R5_WPp9.size()")
 
         
         #['recojet_isG_R5', 'recojet_isU_R5', 'recojet_isS_R5', 'recojet_isC_R5', 'recojet_isB_R5', 'recojet_isTAU_R5', 'recojet_isD_R5', 'jet_nmu_R5', 'jet_nel_R5', 'jet_nchad_R5', 'jet_ngamma_R5', 'jet_nnhad_R5']
