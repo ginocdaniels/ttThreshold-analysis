@@ -4,71 +4,71 @@ import urllib
 # list of processes
 all_processes = {
 
-    "wzp6_ee_WbWb_ecm340": {
-        "fraction": 1,
-    },
+    # "wzp6_ee_WbWb_ecm340": {
+    #     "fraction": 1,
+    # },
     "wzp6_ee_WbWb_ecm345": {
         "fraction": 1,
     },
-    "wzp6_ee_WbWb_ecm350": {
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_ecm355": {
-        "fraction": 1,
-    },
-
-    "wzp6_ee_WbWb_ecm365": {
-        "fraction": 1,
-    },
-
-    "wzp6_ee_WbWb_semihad_ecm345": {
-        "fraction": 1,
-    },
-     "wzp6_ee_WbWb_had_ecm345": {
-         "fraction": 1,
-     },
-    "wzp6_ee_WbWb_semihad_ecm350": {
-       "fraction": 1,
-    },
-    "wzp6_ee_WbWb_had_ecm350": {
-       "fraction": 1,
-    },
-    "wzp6_ee_WbWb_semihad_ecm355": {
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_had_ecm355": {
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_semihad_ecm340": {
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_had_ecm340": {
-        "fraction": 1,
-    },
-    "p8_ee_WW_ecm345": {
-        "fraction": 1,
-     },
-    "wzp6_ee_WbWb_lep_ecm340": {
-     "fraction": 1,
-     },
-    "wzp6_ee_WbWb_lep_ecm345": {
-             "fraction": 1,
-     },
-    "wzp6_ee_WbWb_lep_ecm350": {
-     "fraction": 1,
-     },
-    "wzp6_ee_WbWb_lep_ecm355": {
-             "fraction": 1,
-     },
-    "wzp6_ee_WbWb_lep_ecm365": {
-         "fraction": 1,
-     },
-    "wzp6_ee_WbWb_semihad_ecm365": {
-        "fraction": 1,
-     },
-    "wzp6_ee_WbWb_had_ecm365": {
-         "fraction": 1,
-    },
+##am    "wzp6_ee_WbWb_ecm350": {
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_ecm355": {
+##am        "fraction": 1,
+##am    },
+##am
+##am    "wzp6_ee_WbWb_ecm365": {
+##am        "fraction": 1,
+##am    },
+##am
+    # "wzp6_ee_WbWb_semihad_ecm345": {
+    #     "fraction": 1,
+    # },
+##am     "wzp6_ee_WbWb_had_ecm345": {
+##am         "fraction": 1,
+##am     },
+##am    "wzp6_ee_WbWb_semihad_ecm350": {
+##am       "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_had_ecm350": {
+##am       "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_semihad_ecm355": {
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_had_ecm355": {
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_semihad_ecm340": {
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_had_ecm340": {
+##am        "fraction": 1,
+##am    },
+##am    "p8_ee_WW_ecm345": {
+##am        "fraction": 1,
+##am     },
+##am    "wzp6_ee_WbWb_lep_ecm340": {
+##am     "fraction": 1,
+##am     },
+##am    "wzp6_ee_WbWb_lep_ecm345": {
+##am             "fraction": 1,
+##am     },
+##am    "wzp6_ee_WbWb_lep_ecm350": {
+##am     "fraction": 1,
+##am     },
+##am    "wzp6_ee_WbWb_lep_ecm355": {
+##am             "fraction": 1,
+##am     },
+##am    "wzp6_ee_WbWb_lep_ecm365": {
+##am         "fraction": 1,
+##am     },
+##am    "wzp6_ee_WbWb_semihad_ecm365": {
+##am        "fraction": 1,
+##am     },
+##am    "wzp6_ee_WbWb_had_ecm365": {
+##am         "fraction": 1,
+##am    },
 ##am    "wzp6_ee_WbWb_semihad_mtop173p5_ecm365": {
 ##am         "fraction": 1,
 ##am    },
@@ -76,15 +76,15 @@ all_processes = {
 ##am    "wzp6_ee_WbWb_semihad_mtop171p5_ecm365": {
 ##am         "fraction": 1,
 ##am    },
-    "p8_ee_WW_ecm365": {
-         "fraction": 1,
-    },    
-    "p8_ee_WW_ecm350": {
-       "fraction": 1,
-    },
-    "p8_ee_WW_ecm340": {
-       "fraction": 1,
-    },
+##am    "p8_ee_WW_ecm365": {
+##am         "fraction": 1,
+##am    },    
+##am    "p8_ee_WW_ecm350": {
+##am       "fraction": 1,
+##am    },
+##am    "p8_ee_WW_ecm340": {
+##am       "fraction": 1,
+##am    },
 ##     "wzp6_ee_WbWb_had_ecm345": {
 ##         "fraction": 1,
 ##     },
@@ -107,9 +107,6 @@ all_processes = {
 ##        "fraction": 1,
 ##    },
 ##
-##    "p8_ee_WW_ecm345": {
-##        "fraction": 1,
-##     },
 ##    "wzp6_ee_WbWb_lep_ecm340": {
 ##     "fraction": 1,
 ##     },
@@ -142,9 +139,9 @@ all_processes = {
     #     "fraction": 1,
     #},
     
-    "p8_ee_WW_ecm355": {
-       "fraction": 1,
-    },
+    # "p8_ee_WW_ecm355": {
+    #    "fraction": 1,
+    # },
     #"wzp6_ee_qq_ecm345": {
     #   "fraction": 1,
     #},
@@ -172,13 +169,13 @@ if  channel not in ["lep","semihad","had"]:
     print("using defa channel settings")
     channel="semihad"
     
-processList = {key: value for key, value in all_processes.items() if str(ecm) in key and (True if not 'WbWb' in key else channel in key)}
+processList = {key: value for key, value in all_processes.items() if str(ecm) in key} # and (True if not 'WbWb' in key else channel in key)}
 
 # Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)
 prodTag     = "FCCee/winter2023/IDEA/"
 
 #Optional: output directory, default is local running directoryp
-outputDir   = "/outputs/treemaker/WbWb/{}".format(channel)
+outputDir   = "outputs/treemaker/WbWb/{}".format(channel)
 
 
 # additional/costom C++ functions, defined in header files (optional)
@@ -222,10 +219,13 @@ weaver_model = get_file_path(url_model, local_model)
 from addons.ONNXRuntime.jetFlavourHelper import JetFlavourHelper
 from addons.FastJet.jetClusteringHelper import (
     ExclusiveJetClusteringHelper,
+    InclusiveJetClusteringHelper,
 )
 
 jetFlavourHelper = None
+jetFlavourHelper_R5 = None
 jetClusteringHelper = None
+jetClusteringHelper_R5 = None
 
 all_branches = [
     "nlep", "lep_p", 'lep_theta', 'lep_phi',
@@ -235,12 +235,27 @@ all_branches = [
     "jet1_isTau", "jet2_isTau", "jet3_isTau","jet4_isTau","jet5_isTau","jet6_isTau",
     "missing_p", "missing_p_theta", "missing_p_phi",
     "nbjets_WPp5", "nbjets_WPp8",
+    "nbjets_WPp85", "nbjets_WPp9",
     "d_12","d_23","d_34","d_45","d_56",
     "jet1_isB", "jet2_isB", "jet3_isB", "jet4_isB", "jet5_isB", "jet6_isB",
     "jet1_isG", "jet2_isG", "jet3_isG", "jet4_isG", "jet5_isG", "jet6_isG",
     "jet1_isQ", "jet2_isQ", "jet3_isQ", "jet4_isQ", "jet5_isQ", "jet6_isQ",
     "jet1_isS", "jet2_isS", "jet3_isS", "jet4_isS", "jet5_isS", "jet6_isS",
     "jet1_isC", "jet2_isC", "jet3_isC", "jet4_isC", "jet5_isC", "jet6_isC",
+    "njets_R5",  "jet1_R5_p", "jet2_R5_p", "jet3_R5_p", "jet4_R5_p", "jet5_R5_p", "jet6_R5_p",
+    "jet1_R5_theta",  "jet2_R5_theta",  "jet3_R5_theta",  "jet4_R5_theta", "jet5_R5_theta", "jet6_R5_theta",
+    "jet1_R5_pflavor", "jet2_R5_pflavor", "jet3_R5_pflavor", "jet4_R5_pflavor", "jet5_R5_pflavor","jet6_R5_pflavor",
+    "nbjets_R5_true", "ncjets_R5_true","nljets_R5_true","ngjets_R5_true",
+    "nbjets_R5_eff_p9", "nbjets_R5_eff_p89","nbjets_R5_eff_p91",
+    "nbjets_R5_WPp5", "nbjets_R5_WPp8", "nbjets_R5_WPp85", "nbjets_R5_WPp9",
+    "jet1_R5_isG","jet2_R5_isG","jet3_R5_isG","jet4_R5_isG","jet5_R5_isG","jet6_R5_isG",                
+    "jet1_R5_isU","jet2_R5_isU","jet3_R5_isU","jet4_R5_isU","jet5_R5_isU","jet6_R5_isU",                
+    "jet1_R5_isB","jet2_R5_isB","jet3_R5_isB","jet4_R5_isB","jet5_R5_isB","jet6_R5_isB",                
+    "jet1_R5_isS","jet2_R5_isS","jet3_R5_isS","jet4_R5_isS","jet5_R5_isS","jet6_R5_isS",                
+    "jet1_R5_isC","jet2_R5_isC","jet3_R5_isC","jet4_R5_isC","jet5_R5_isC","jet6_R5_isC",                
+    "jet1_R5_isD","jet2_R5_isD","jet3_R5_isD","jet4_R5_isD","jet5_R5_isD","jet6_R5_isD",                                
+    "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU",
+    
 ]
 
 # Mandatory: RDFanalysis class where the use defines the operations on the TTree
@@ -291,12 +306,12 @@ class RDFanalysis:
 
         df = df.Define(
             "muons_sel_iso",
-            "FCCAnalyses::ZHfunctions::sel_iso(0.25)(muons_sel, muons_iso)",
+            "FCCAnalyses::ZHfunctions::sel_iso(0.7)(muons_sel, muons_iso)",
         )
 
         df = df.Define(
             "electrons_sel_iso",
-            "FCCAnalyses::ZHfunctions::sel_iso(0.25)(electrons_sel, electrons_iso)",
+            "FCCAnalyses::ZHfunctions::sel_iso(0.7)(electrons_sel, electrons_iso)",
         )
 
         if channel == "had":
@@ -369,7 +384,9 @@ class RDFanalysis:
         ## perform exclusive jet clustering
         global jetClusteringHelper
         global jetFlavourHelper
-
+        global jetFlavourHelper_R5
+        global jetClusteringHelper_R5
+        
         ## define jet and run clustering parameters
         ## name of collections in EDM root files
         collections = {
@@ -394,8 +411,12 @@ class RDFanalysis:
         jetClusteringHelper = ExclusiveJetClusteringHelper(
             collections_noleps["PFParticles"], nJets
         )
+        jetClusteringHelper_R5  = InclusiveJetClusteringHelper(
+            collections_noleps["PFParticles"], 0.5, 10, "R5"
+        )
+        
         df = jetClusteringHelper.define(df)
-
+        df = jetClusteringHelper_R5.define(df)
         ## define jet flavour tagging parameters
 
         jetFlavourHelper = JetFlavourHelper(
@@ -403,12 +424,18 @@ class RDFanalysis:
             jetClusteringHelper.jets,
             jetClusteringHelper.constituents,
         )
+        jetFlavourHelper_R5 = JetFlavourHelper(
+            collections_noleps,
+            jetClusteringHelper_R5.jets,
+            jetClusteringHelper_R5.constituents,
+            "R5",
+        )
 
         df = jetFlavourHelper.define(df)
-
+        df = jetFlavourHelper_R5.define(df)
         ## tagger inference
         df = jetFlavourHelper.inference(weaver_preproc, weaver_model, df)
-
+        df = jetFlavourHelper_R5.inference(weaver_preproc, weaver_model,df)
 
         df = df.Define(
             "lep_p", "muons_sel_iso.size() >0 ? FCCAnalyses::ReconstructedParticle::get_p(muons_sel_iso)[0] : (electrons_sel_iso.size() > 0 ? FCCAnalyses::ReconstructedParticle::get_p(electrons_sel_iso)[0] : -999) "
@@ -446,12 +473,141 @@ class RDFanalysis:
                 jetClusteringHelper.jets
             ),
         )
+        
+        df = df.Define(
+            "jets_R5_p4",
+            "JetConstituentsUtils::compute_tlv_jets({})".format(
+                jetClusteringHelper_R5.jets
+            ),
+        )
 
-        df = df.Define("jets_isB", "JetFlavourUtils::get_weight(MVAVec_, 4)")
+        df = df.Define("jets_R5_p",           "JetClusteringUtils::get_p({})".format(jetClusteringHelper_R5.jets))
+        df = df.Define("jets_R5_theta",       "JetClusteringUtils::get_theta({})".format(jetClusteringHelper_R5.jets))
+        df = df.Define("jet1_R5_p","jets_R5_p[0]")
+        df = df.Define("jet2_R5_p","jets_R5_p[1]")
+        df = df.Define("jet3_R5_p","jets_R5_p.size()>2 ? jets_R5_p[2] : -999")
+        df = df.Define("jet4_R5_p","jets_R5_p.size()>3 ? jets_R5_p[3] : -999")
+        df = df.Define("jet5_R5_p","jets_R5_p.size()>4 ? jets_R5_p[4] : -999")
+        df = df.Define("jet6_R5_p","jets_R5_p.size()>5 ? jets_R5_p[5] : -999")
+
+
+        df = df.Define("jet1_R5_theta","jets_R5_theta[0]")
+        df = df.Define("jet2_R5_theta","jets_R5_theta[1]")
+        df = df.Define("jet3_R5_theta","jets_R5_theta.size()>2 ? jets_R5_theta[2] : -999")
+        df = df.Define("jet4_R5_theta","jets_R5_theta.size()>3 ? jets_R5_theta[3] : -999")
+        df = df.Define("jet5_R5_theta","jets_R5_theta.size()>4 ? jets_R5_theta[4] : -999")
+        df = df.Define("jet6_R5_theta","jets_R5_theta.size()>5 ? jets_R5_theta[5] : -999")
+        
+        df = df.Define("jets_R5_pflavor", "JetTaggingUtils::get_flavour({}, Particle, 0.25)".format(jetClusteringHelper_R5.jets) )
+        df = df.Define("jet1_R5_pflavor","jets_R5_pflavor[0]")
+        df = df.Define("jet2_R5_pflavor","jets_R5_pflavor[1]")
+        df = df.Define("jet3_R5_pflavor","jets_R5_p.size()>2 ? jets_R5_pflavor[2] : -999")
+        df = df.Define("jet4_R5_pflavor","jets_R5_p.size()>3 ? jets_R5_pflavor[3] : -999")
+        df = df.Define("jet5_R5_pflavor","jets_R5_p.size()>4 ? jets_R5_pflavor[4] : -999")
+        df = df.Define("jet6_R5_pflavor","jets_R5_p.size()>5 ? jets_R5_pflavor[5] : -999")
+        df = df.Define("njets_R5",       "return int(jets_R5_pflavor.size())")
+
+        df = df.Define("jets_R5_btag_true", "JetTaggingUtils::get_btag({}, 1.0)".format('jets_R5_pflavor'))
+        df = df.Define("jets_R5_ctag_true", "JetTaggingUtils::get_ctag({}, 1.0)".format('jets_R5_pflavor'))
+        df = df.Define("jets_R5_ltag_true", "JetTaggingUtils::get_ltag({}, 1.0)".format('jets_R5_pflavor'))
+        df = df.Define("jets_R5_gtag_true", "JetTaggingUtils::get_gtag({}, 1.0)".format('jets_R5_pflavor'))
+
+        df = df.Define("jets_R5_btag_eff_p9", "JetTaggingUtils::get_btag({}, .9)".format('jets_R5_pflavor'))
+        df = df.Define("jets_R5_btag_eff_p89", "JetTaggingUtils::get_btag({}, .89)".format('jets_R5_pflavor'))
+        df = df.Define("jets_R5_btag_eff_p91", "JetTaggingUtils::get_btag({}, .91)".format('jets_R5_pflavor'))
+
+        df = df.Define("jets_R5_btagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_true,{})".format(jetClusteringHelper_R5.jets))
+        df = df.Define("jets_R5_ctagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ctag_true,{})".format(jetClusteringHelper_R5.jets))
+        df = df.Define("jets_R5_ltagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ltag_true,{})".format(jetClusteringHelper_R5.jets))
+        df = df.Define("jets_R5_gtagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_gtag_true,{})".format(jetClusteringHelper_R5.jets))
+
+        df = df.Define("jets_R5_btagged_eff_p9", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_eff_p9,{})".format(jetClusteringHelper_R5.jets))
+        df = df.Define("jets_R5_btagged_eff_p89", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_eff_p89,{})".format(jetClusteringHelper_R5.jets))
+        df = df.Define("jets_R5_btagged_eff_p91", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_eff_p91,{})".format(jetClusteringHelper_R5.jets))
+
+        df = df.Define("nbjets_R5_true", "return int(jets_R5_btagged_true.size())")
+        df = df.Define("ncjets_R5_true", "return int(jets_R5_ctag_true.size())")
+        df = df.Define("nljets_R5_true", "return int(jets_R5_ltag_true.size())")
+        df = df.Define("ngjets_R5_true", "return int(jets_R5_gtag_true.size())")
+
+        df = df.Define("nbjets_R5_eff_p9", "return int(jets_R5_btagged_eff_p9.size())")
+        df = df.Define("nbjets_R5_eff_p89", "return int(jets_R5_btagged_eff_p89.size())")
+        df = df.Define("nbjets_R5_eff_p91", "return int(jets_R5_btagged_eff_p91.size())")
+
+
+        df = df.Define("jet1_R5_isG", "recojet_isG_R5[0]")
+        df = df.Define("jet2_R5_isG", "recojet_isG_R5[1]")
+        df = df.Define("jet3_R5_isG", "jets_R5_p.size()>2 ? recojet_isG_R5[2] : -999")
+        df = df.Define("jet4_R5_isG", "jets_R5_p.size()>3 ? recojet_isG_R5[3] : -999")
+        df = df.Define("jet5_R5_isG", "jets_R5_p.size()>4 ? recojet_isG_R5[4] : -999")
+        df = df.Define("jet6_R5_isG", "jets_R5_p.size()>5 ? recojet_isG_R5[5] : -999")
+
+        df = df.Define("jet1_R5_isU", "recojet_isU_R5[0]")
+        df = df.Define("jet2_R5_isU", "recojet_isU_R5[1]")
+        df = df.Define("jet3_R5_isU", "jets_R5_p.size()>2 ? recojet_isU_R5[2] : -999")
+        df = df.Define("jet4_R5_isU", "jets_R5_p.size()>3 ? recojet_isU_R5[3] : -999")
+        df = df.Define("jet5_R5_isU", "jets_R5_p.size()>4 ? recojet_isU_R5[4] : -999")
+        df = df.Define("jet6_R5_isU", "jets_R5_p.size()>5 ? recojet_isU_R5[5] : -999")
+
+        df = df.Define("jet1_R5_isB", "recojet_isB_R5[0]")
+        df = df.Define("jet2_R5_isB", "recojet_isB_R5[1]")
+        df = df.Define("jet3_R5_isB", "jets_R5_p.size()>2 ? recojet_isB_R5[2] : -999")
+        df = df.Define("jet4_R5_isB", "jets_R5_p.size()>3 ? recojet_isB_R5[3] : -999")
+        df = df.Define("jet5_R5_isB", "jets_R5_p.size()>4 ? recojet_isB_R5[4] : -999")
+        df = df.Define("jet6_R5_isB", "jets_R5_p.size()>5 ? recojet_isB_R5[5] : -999")
+        
+        df = df.Define("jet1_R5_isS", "recojet_isS_R5[0]")
+        df = df.Define("jet2_R5_isS", "recojet_isS_R5[1]")
+        df = df.Define("jet3_R5_isS", "jets_R5_p.size()>2 ? recojet_isS_R5[2] : -999")
+        df = df.Define("jet4_R5_isS", "jets_R5_p.size()>3 ? recojet_isS_R5[3] : -999")
+        df = df.Define("jet5_R5_isS", "jets_R5_p.size()>4 ? recojet_isS_R5[4] : -999")
+        df = df.Define("jet6_R5_isS", "jets_R5_p.size()>5 ? recojet_isS_R5[5] : -999")
+
+        df = df.Define("jet1_R5_isC", "recojet_isC_R5[0]")
+        df = df.Define("jet2_R5_isC", "recojet_isC_R5[1]")
+        df = df.Define("jet3_R5_isC", "jets_R5_p.size()>2 ? recojet_isC_R5[2] : -999")
+        df = df.Define("jet4_R5_isC", "jets_R5_p.size()>3 ? recojet_isC_R5[3] : -999")
+        df = df.Define("jet5_R5_isC", "jets_R5_p.size()>4 ? recojet_isC_R5[4] : -999")
+        df = df.Define("jet6_R5_isC", "jets_R5_p.size()>5 ? recojet_isC_R5[5] : -999")
+
+        df = df.Define("jet1_R5_isD", "recojet_isD_R5[0]")
+        df = df.Define("jet2_R5_isD", "recojet_isD_R5[1]")
+        df = df.Define("jet3_R5_isD", "jets_R5_p.size()>2 ? recojet_isD_R5[2] : -999")
+        df = df.Define("jet4_R5_isD", "jets_R5_p.size()>3 ? recojet_isD_R5[3] : -999")
+        df = df.Define("jet5_R5_isD", "jets_R5_p.size()>4 ? recojet_isD_R5[4] : -999")
+        df = df.Define("jet6_R5_isD", "jets_R5_p.size()>5 ? recojet_isD_R5[5] : -999")
+
+        df = df.Define("jet1_R5_isTAU", "recojet_isTAU_R5[0]")
+        df = df.Define("jet2_R5_isTAU", "recojet_isTAU_R5[1]")
+        df = df.Define("jet3_R5_isTAU", "jets_R5_p.size()>2 ? recojet_isTAU_R5[2] : -999")
+        df = df.Define("jet4_R5_isTAU", "jets_R5_p.size()>3 ? recojet_isTAU_R5[3] : -999")
+        df = df.Define("jet5_R5_isTAU", "jets_R5_p.size()>4 ? recojet_isTAU_R5[4] : -999")
+        df = df.Define("jet6_R5_isTAU", "jets_R5_p.size()>5 ? recojet_isTAU_R5[5] : -999")
+
+        df = df.Define("jets_R5_isB","recojet_isB_R5")
+        
+        df = df.Define("bjets_R5_WPp5","ZHfunctions::sel_btag(0.5)(jets_R5_isB)")
+        df = df.Define("bjets_R5_WPp8","ZHfunctions::sel_btag(0.8)(jets_R5_isB)")
+        df = df.Define("bjets_R5_WPp85","ZHfunctions::sel_btag(0.85)(jets_R5_isB)")
+        df = df.Define("bjets_R5_WPp9","ZHfunctions::sel_btag(0.9)(jets_R5_isB)")
+
+        df = df.Define("nbjets_R5_WPp5","bjets_R5_WPp5.size()")
+        df = df.Define("nbjets_R5_WPp8","bjets_R5_WPp8.size()")
+        df = df.Define("nbjets_R5_WPp85","bjets_R5_WPp85.size()")
+        df = df.Define("nbjets_R5_WPp9","bjets_R5_WPp9.size()")
+
+        
+        #['recojet_isG_R5', 'recojet_isU_R5', 'recojet_isS_R5', 'recojet_isC_R5', 'recojet_isB_R5', 'recojet_isTAU_R5', 'recojet_isD_R5', 'jet_nmu_R5', 'jet_nel_R5', 'jet_nchad_R5', 'jet_ngamma_R5', 'jet_nnhad_R5']
+        
+        df = df.Define("jets_isB",   "JetFlavourUtils::get_weight(MVAVec_, 4)")
         df = df.Define("bjets_WPp5", "ZHfunctions::sel_btag(0.5)(jets_isB)")
         df = df.Define("bjets_WPp8", "ZHfunctions::sel_btag(0.8)(jets_isB)")
+        df = df.Define("bjets_WPp85", "ZHfunctions::sel_btag(0.85)(jets_isB)")
+        df = df.Define("bjets_WPp9", "ZHfunctions::sel_btag(0.9)(jets_isB)")
         df = df.Define("nbjets_WPp5", "bjets_WPp5.size()")
         df = df.Define("nbjets_WPp8", "bjets_WPp8.size()")
+        df = df.Define("nbjets_WPp85", "bjets_WPp85.size()")
+        df = df.Define("nbjets_WPp9", "bjets_WPp9.size()")
     
         df = df.Define("jet1", "jets_p4[0]")
         df = df.Define("jet2", "jets_p4[1]")
@@ -537,7 +693,9 @@ class RDFanalysis:
     # __________________________________________________________
     # Mandatory: output function, please make sure you return the branchlist as a python list
     def output():
-        #print(jetClusteringHelper.outputBranches())
+        #print('incl jets',jetFlavourHelper_R5.outputBranches())
+        #print('excl jets',jetFlavourHelper.outputBranches())
+        #all_branches += jetFlavourHelper_R5.outputBranches()
         return all_branches
 
         
