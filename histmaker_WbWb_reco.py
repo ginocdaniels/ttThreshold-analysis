@@ -37,11 +37,11 @@ procDict = "FCCee_procDict_winter2023_IDEA.json"
 
 basedir="/eos/cms/store/cmst3/group/top/FCC_tt_threshold/output_condor_20241101_1121"
 
-#inputDir="{}/WbWb/{}/{}/".format(basedir,channel,pf)##with BDT
 inputDir="{}/WbWb/{}/".format(basedir,channel)
 
 # Optional: output directory, default is local running directory
 outputDir = "{}/WbWb/outputs/histmaker/{}/{}/".format(basedir,channel,pf)
+
 print('this is outdir',outputDir)
 
 # optional: ncpus, default is 4, -1 uses all cores available
