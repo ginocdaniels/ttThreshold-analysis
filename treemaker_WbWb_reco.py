@@ -3,19 +3,10 @@ import urllib
 
 # list of processes
 all_processes = {
-#    "wzp6_ee_WWZ_Zbb_ecm340": {
-#        "fraction": 1,
-#     },
-#    "wzp6_ee_WWZ_Zbb_ecm345": {
-#        "fraction": 1,
-#     },
-##am    "wzp6_ee_WWZ_Zbb_ecm365": {
-##am        "fraction": 1,
-##am     },
-##am
-##am     "wzp6_ee_WbWb_ecm340": {
-##am         "fraction": 1,
-##am     },
+
+    # "wzp6_ee_WbWb_ecm340": {
+    #     "fraction": 1,
+    # },
     "wzp6_ee_WbWb_ecm345": {
         "fraction": 1,
     },
@@ -29,62 +20,10 @@ all_processes = {
 ##am    "wzp6_ee_WbWb_ecm365": {
 ##am        "fraction": 1,
 ##am    },
-##am    "p8_ee_WW_ecm345": {
-##am        "fraction": 1,
-##am     },
-##am    "p8_ee_WW_ecm365": {
-##am         "fraction": 1,
-##am    },    
-##am    "p8_ee_WW_ecm350": {
-##am       "fraction": 1,
-##am    },
-##am    "p8_ee_WW_ecm340": {
-##am       "fraction": 1,
-##am    },
-##am     "p8_ee_WW_ecm355": {
-##am        "fraction": 1,
-##am     },
 ##am
-##am    "wzp6_ee_WbWb_PSup_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSdown_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSdown_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSup_ecm365":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSdown_ecm365":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSup_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop171p5_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop171p5_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop173p5_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop171p5_ecm365":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop173p5_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop173p5_ecm365":{
-##am        "fraction": 1,
-##am    },
-
-##am     "wzp6_ee_WbWb_semihad_ecm345": {
-##am         "fraction": 1,
-##am     },
+    # "wzp6_ee_WbWb_semihad_ecm345": {
+    #     "fraction": 1,
+    # },
 ##am     "wzp6_ee_WbWb_had_ecm345": {
 ##am         "fraction": 1,
 ##am     },
@@ -106,6 +45,9 @@ all_processes = {
 ##am    "wzp6_ee_WbWb_had_ecm340": {
 ##am        "fraction": 1,
 ##am    },
+##am    "p8_ee_WW_ecm345": {
+##am        "fraction": 1,
+##am     },
 ##am    "wzp6_ee_WbWb_lep_ecm340": {
 ##am     "fraction": 1,
 ##am     },
@@ -127,7 +69,22 @@ all_processes = {
 ##am    "wzp6_ee_WbWb_had_ecm365": {
 ##am         "fraction": 1,
 ##am    },
-
+##am    "wzp6_ee_WbWb_semihad_mtop173p5_ecm365": {
+##am         "fraction": 1,
+##am    },
+##am    
+##am    "wzp6_ee_WbWb_semihad_mtop171p5_ecm365": {
+##am         "fraction": 1,
+##am    },
+##am    "p8_ee_WW_ecm365": {
+##am         "fraction": 1,
+##am    },    
+##am    "p8_ee_WW_ecm350": {
+##am       "fraction": 1,
+##am    },
+##am    "p8_ee_WW_ecm340": {
+##am       "fraction": 1,
+##am    },
 ##     "wzp6_ee_WbWb_had_ecm345": {
 ##         "fraction": 1,
 ##     },
@@ -178,6 +135,13 @@ all_processes = {
     #"wzp6_ee_WbWb_semihad_mtop171p5_ecm365": {
     #     "fraction": 1,
     #},
+    #"p8_ee_WW_ecm365": {
+    #     "fraction": 1,
+    #},
+    
+    # "p8_ee_WW_ecm355": {
+    #    "fraction": 1,
+    # },
     #"wzp6_ee_qq_ecm345": {
     #   "fraction": 1,
     #},
@@ -195,7 +159,6 @@ hadronic = False
 #semihad  = False
 #lep      = False
 ecm = 345
-print(ecm)
 
 if not str(ecm) in available_ecm:
     raise ValueError("ecm value not in available_ecm")
@@ -205,11 +168,9 @@ channel = "CHANNELNAMEHERE"
 if  channel not in ["lep","semihad","had"]:
     print("using defa channel settings")
     channel="semihad"
-print(channel)    
+    
+processList = {key: value for key, value in all_processes.items() if str(ecm) in key} # and (True if not 'WbWb' in key else channel in key)}
 
-processList={key: value for key, value in all_processes.items() if str(ecm) in available_ecm and str(ecm) in key } # (True if str('p8_ee_WW_ecm'+ecm) in key else str('wzp6_ee_WbWb_ecm'+ecm) in key)}  
-
-print(processList)
 # Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)
 prodTag     = "FCCee/winter2023/IDEA/"
 
@@ -293,7 +254,7 @@ all_branches = [
     "jet1_R5_isS","jet2_R5_isS","jet3_R5_isS","jet4_R5_isS","jet5_R5_isS","jet6_R5_isS",                
     "jet1_R5_isC","jet2_R5_isC","jet3_R5_isC","jet4_R5_isC","jet5_R5_isC","jet6_R5_isC",                
     "jet1_R5_isD","jet2_R5_isD","jet3_R5_isD","jet4_R5_isD","jet5_R5_isD","jet6_R5_isD",                                
-    "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU","mbbar"
+    "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU",
     
 ]
 
@@ -529,6 +490,7 @@ class RDFanalysis:
         df = df.Define("jet5_R5_p","jets_R5_p.size()>4 ? jets_R5_p[4] : -999")
         df = df.Define("jet6_R5_p","jets_R5_p.size()>5 ? jets_R5_p[5] : -999")
 
+
         df = df.Define("jet1_R5_theta","jets_R5_theta[0]")
         df = df.Define("jet2_R5_theta","jets_R5_theta[1]")
         df = df.Define("jet3_R5_theta","jets_R5_theta.size()>2 ? jets_R5_theta[2] : -999")
@@ -536,7 +498,7 @@ class RDFanalysis:
         df = df.Define("jet5_R5_theta","jets_R5_theta.size()>4 ? jets_R5_theta[4] : -999")
         df = df.Define("jet6_R5_theta","jets_R5_theta.size()>5 ? jets_R5_theta[5] : -999")
         
-        df = df.Define("jets_R5_pflavor", "JetTaggingUtils::get_flavour({}, Particle)".format(jetClusteringHelper_R5.jets) )
+        df = df.Define("jets_R5_pflavor", "JetTaggingUtils::get_flavour({}, Particle, 0.25)".format(jetClusteringHelper_R5.jets) )
         df = df.Define("jet1_R5_pflavor","jets_R5_pflavor[0]")
         df = df.Define("jet2_R5_pflavor","jets_R5_pflavor[1]")
         df = df.Define("jet3_R5_pflavor","jets_R5_p.size()>2 ? jets_R5_pflavor[2] : -999")
@@ -572,11 +534,6 @@ class RDFanalysis:
         df = df.Define("nbjets_R5_eff_p89", "return int(jets_R5_btagged_eff_p89.size())")
         df = df.Define("nbjets_R5_eff_p91", "return int(jets_R5_btagged_eff_p91.size())")
 
-        df = df.Define("bjet_R5_eff_p9_p4", "JetConstituentsUtils::compute_tlv_jets({})".format('jets_R5_btagged_eff_p9'))
-
-        df = df.Define("mbbar", "JetConstituentsUtils::InvariantMass(bjet_R5_eff_p9_p4[0], bjet_R5_eff_p9_p4[1])")
-
-        
 
         df = df.Define("jet1_R5_isG", "recojet_isG_R5[0]")
         df = df.Define("jet2_R5_isG", "recojet_isG_R5[1]")
