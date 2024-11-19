@@ -3,84 +3,84 @@ import urllib
 
 # list of processes
 all_processes = {
-#    "wzp6_ee_WWZ_Zbb_ecm340": {
-#        "fraction": 1,
-#     },
-#    "wzp6_ee_WWZ_Zbb_ecm345": {
-#        "fraction": 1,
-#     },
-##am    "wzp6_ee_WWZ_Zbb_ecm365": {
-##am        "fraction": 1,
-##am     },
-##am
-##am     "wzp6_ee_WbWb_ecm340": {
-##am         "fraction": 1,
-##am     },
+    "wzp6_ee_WWZ_Zbb_ecm340": {
+        "fraction": 1,
+     },
+    "wzp6_ee_WWZ_Zbb_ecm345": {
+        "fraction": 1,
+     },
+    "wzp6_ee_WWZ_Zbb_ecm365": {
+        "fraction": 1,
+     },
+
+     "wzp6_ee_WbWb_ecm340": {
+         "fraction": 1,
+     },
     "wzp6_ee_WbWb_ecm345": {
         "fraction": 1,
     },
-##am    "wzp6_ee_WbWb_ecm350": {
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_ecm355": {
-##am        "fraction": 1,
-##am    },
-##am
-##am    "wzp6_ee_WbWb_ecm365": {
-##am        "fraction": 1,
-##am    },
-##am    "p8_ee_WW_ecm345": {
-##am        "fraction": 1,
-##am     },
-##am    "p8_ee_WW_ecm365": {
-##am         "fraction": 1,
-##am    },    
-##am    "p8_ee_WW_ecm350": {
-##am       "fraction": 1,
-##am    },
-##am    "p8_ee_WW_ecm340": {
-##am       "fraction": 1,
-##am    },
-##am     "p8_ee_WW_ecm355": {
-##am        "fraction": 1,
-##am     },
-##am
-##am    "wzp6_ee_WbWb_PSup_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSdown_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSdown_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSup_ecm365":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSdown_ecm365":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSup_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop171p5_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop171p5_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop173p5_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop171p5_ecm365":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop173p5_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop173p5_ecm365":{
-##am        "fraction": 1,
-##am    },
+    "wzp6_ee_WbWb_ecm350": {
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_ecm355": {
+        "fraction": 1,
+    },
+
+    "wzp6_ee_WbWb_ecm365": {
+        "fraction": 1,
+    },
+    "p8_ee_WW_ecm345": {
+        "fraction": 1,
+     },
+    "p8_ee_WW_ecm365": {
+         "fraction": 1,
+    },    
+    "p8_ee_WW_ecm350": {
+       "fraction": 1,
+    },
+    "p8_ee_WW_ecm340": {
+       "fraction": 1,
+    },
+     "p8_ee_WW_ecm355": {
+        "fraction": 1,
+     },
+
+    "wzp6_ee_WbWb_PSup_ecm345":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSdown_ecm340":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSdown_ecm345":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSup_ecm365":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSdown_ecm365":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSup_ecm340":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop171p5_ecm345":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop171p5_ecm340":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop173p5_ecm345":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop171p5_ecm365":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop173p5_ecm340":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop173p5_ecm365":{
+        "fraction": 1,
+    },
 
 ##am     "wzp6_ee_WbWb_semihad_ecm345": {
 ##am         "fraction": 1,
@@ -293,7 +293,7 @@ all_branches = [
     "jet1_R5_isS","jet2_R5_isS","jet3_R5_isS","jet4_R5_isS","jet5_R5_isS","jet6_R5_isS",                
     "jet1_R5_isC","jet2_R5_isC","jet3_R5_isC","jet4_R5_isC","jet5_R5_isC","jet6_R5_isC",                
     "jet1_R5_isD","jet2_R5_isD","jet3_R5_isD","jet4_R5_isD","jet5_R5_isD","jet6_R5_isD",                                
-    "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU","mbbar"
+    "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU","mbbar_p9","mbbar_p89","mbbar_p91",
     
 ]
 
@@ -573,8 +573,11 @@ class RDFanalysis:
         df = df.Define("nbjets_R5_eff_p91", "return int(jets_R5_btagged_eff_p91.size())")
 
         df = df.Define("bjet_R5_eff_p9_p4", "JetConstituentsUtils::compute_tlv_jets({})".format('jets_R5_btagged_eff_p9'))
-
-        df = df.Define("mbbar", "JetConstituentsUtils::InvariantMass(bjet_R5_eff_p9_p4[0], bjet_R5_eff_p9_p4[1])")
+        df = df.Define("bjet_R5_eff_p91_p4", "JetConstituentsUtils::compute_tlv_jets({})".format('jets_R5_btagged_eff_p91'))
+        df = df.Define("bjet_R5_eff_p89_p4", "JetConstituentsUtils::compute_tlv_jets({})".format('jets_R5_btagged_eff_p89'))
+        df = df.Define("mbbar_p9", "JetConstituentsUtils::InvariantMass(bjet_R5_eff_p9_p4[0], bjet_R5_eff_p9_p4[1])")
+        df = df.Define("mbbar_p91", "JetConstituentsUtils::InvariantMass(bjet_R5_eff_p91_p4[0], bjet_R5_eff_p91_p4[1])")
+        df = df.Define("mbbar_p89", "JetConstituentsUtils::InvariantMass(bjet_R5_eff_p89_p4[0], bjet_R5_eff_p89_p4[1])")
 
         
 
