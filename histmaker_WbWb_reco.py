@@ -65,6 +65,7 @@ bins = {
     "njets" : (11,-0.5,10.5),
     "singlebin" :(1,-0.5,12.5),
     "atleastonebjet" : (10,0.5,10.5),
+    "mbbar" : (40,0,200),
     "dij": {
         "d_12": (100, 0, 100000),
         "d_23": (100, 0, 10000),
@@ -118,7 +119,10 @@ def build_graph(df, dataset):
     
     for var in column_names:
         var = str(var)
+        if  var  not in ["lep_p", 'lep_theta', 'lep_phi',"BDT_score","missing_p", "missing_p_theta", "missing_p_phi","singlebin"] and  "R5" not in var and "mbbar" not in var:
+            continue 
         if "is" in var : continue
+        #if "d_" in var : continue
         if var.endswith("_phi"):     binning = bins["phi"];
         elif 'singlebin' in var :    binning = bins["singlebin"]
         elif 'nbjets' in var :       binning = bins["nbjets"]
@@ -128,7 +132,8 @@ def build_graph(df, dataset):
         elif var == 'ntau_h':        binning = bins["nleps"]
         elif var.endswith("_theta"): binning = bins["theta"]; 
         elif var.endswith("_p"):     binning = bins["p"]; 
-        elif 'BDT_score' in var:     binning = bins["tagger"]; 
+        elif 'BDT_score' in var:     binning = bins["tagger"];
+        elif 'mbbar' in var:     binning = bins["mbbar"]; 
         else: 
             print('Default binning for variable {}'.format(var))
             binning = (100, -1, 100)

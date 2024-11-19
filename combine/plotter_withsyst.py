@@ -39,18 +39,19 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,nostack,sel):
     if nostack:
         h_sig.SetLineColor(ROOT.kAzure+1); 
         h_bkg.SetLineColor(ROOT.kOrange+1);
-        if ecm in ["340","345","365"]: h_bkg1.SetLineColor(ROOT.kViolet+5);
+        if ecm in ["340","345","365"]: h_bkg1.SetLineColor(ROOT.kYellow-10);
     else:        
         h_sig.SetFillColor(ROOT.kAzure+1);  h_sig.SetLineColor(ROOT.kBlack)
         h_bkg.SetFillColor(ROOT.kOrange+1); h_bkg.SetLineColor(ROOT.kBlack)
         if ecm in ["340","345","365"]:
-            h_bkg1.SetFillColor(ROOT.kViolet+5);
+            h_bkg1.SetFillColor(ROOT.kYellow-10);
             h_bkg1.SetLineColor(ROOT.kBlack)
             
     f_in.Close();
     hs.Add(h_bkg);
     hs.Add(h_sig);
-    if ecm in ["340","345","365"]:    hs.Add(h_bkg1);
+    if ecm in ["340","345","365"]:
+        hs.Add(h_bkg1);
     legend.AddEntry('NULL',f'{channel}-{sel}','')#e^{#plus}e^{#minus} #rightarrow WbWb/WW  #rightarrow %s'%channel,'')
 
     legend.AddEntry(h_sig,  'WbWb'+ (f"({h_sig.Integral():.2e})"  if showInt else ''),"F" if not nostack else 'l');
@@ -80,9 +81,10 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,nostack,sel):
         hs.GetYaxis().SetTitleOffset(1.25);
         morey=1.65 if 'incl' not in channel else 0.35
         
-    hs.SetMaximum(morey*(h_sig.Integral()+h_bkg.Integral()));   legend.Draw("same");
+    hs.SetMaximum(morey*hs.GetHistogram().GetMaximum()) #(h_sig.Integral()+h_bkg.Integral()));
+    legend.Draw("same");
     #hs.SetMinimum(1);
-    if ecm in ["340","345","365"]: hs.SetMaximum(morey*(h_sig.Integral()+h_bkg.Integral()+h_bkg1.Integral()));
+    #if ecm in ["340","345","365"]: hs.SetMaximum(morey*(h_sig.Integral()+h_bkg.Integral()+h_bkg1.Integral()));
     Canv.Update();
     plotsdir=f"/eos/user/a/anmehta/www/FCC_top/{date}"
     if not os.path.isdir(plotsdir):        os.system("mkdir %s"%plotsdir);  os.system('cp ~/public/index.php %s/'%plotsdir)
@@ -196,7 +198,7 @@ if __name__ == '__main__':
 
     #print(opts.vname,hname)
     
-    xtitle= "N_{bjets}" if "nbjets" in opts.vname else "N_{jets}"
+    xtitle= opts.vname #"N_{bjets}" if "nbjets" in opts.vname else "N_{jets}"
 
     cards(opts.mkplots,lumi,xsec_sig,opts.channel,opts.sel,opts.config,opts.btagWP,opts.ecm,opts.logy,hname,xtitle,opts.showInt,opts.nostack)
 
