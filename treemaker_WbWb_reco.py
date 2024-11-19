@@ -3,84 +3,84 @@ import urllib
 
 # list of processes
 all_processes = {
-#    "wzp6_ee_WWZ_Zbb_ecm340": {
-#        "fraction": 1,
-#     },
-#    "wzp6_ee_WWZ_Zbb_ecm345": {
-#        "fraction": 1,
-#     },
-##am    "wzp6_ee_WWZ_Zbb_ecm365": {
-##am        "fraction": 1,
-##am     },
-##am
-##am     "wzp6_ee_WbWb_ecm340": {
-##am         "fraction": 1,
-##am     },
+    "wzp6_ee_WWZ_Zbb_ecm340": {
+        "fraction": 1,
+     },
+    "wzp6_ee_WWZ_Zbb_ecm345": {
+        "fraction": 1,
+     },
+    "wzp6_ee_WWZ_Zbb_ecm365": {
+        "fraction": 1,
+     },
+
+     "wzp6_ee_WbWb_ecm340": {
+         "fraction": 1,
+     },
     "wzp6_ee_WbWb_ecm345": {
         "fraction": 1,
     },
-##am    "wzp6_ee_WbWb_ecm350": {
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_ecm355": {
-##am        "fraction": 1,
-##am    },
-##am
-##am    "wzp6_ee_WbWb_ecm365": {
-##am        "fraction": 1,
-##am    },
-##am    "p8_ee_WW_ecm345": {
-##am        "fraction": 1,
-##am     },
-##am    "p8_ee_WW_ecm365": {
-##am         "fraction": 1,
-##am    },    
-##am    "p8_ee_WW_ecm350": {
-##am       "fraction": 1,
-##am    },
-##am    "p8_ee_WW_ecm340": {
-##am       "fraction": 1,
-##am    },
-##am     "p8_ee_WW_ecm355": {
-##am        "fraction": 1,
-##am     },
-##am
-##am    "wzp6_ee_WbWb_PSup_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSdown_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSdown_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSup_ecm365":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSdown_ecm365":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_PSup_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop171p5_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop171p5_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop173p5_ecm345":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop171p5_ecm365":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop173p5_ecm340":{
-##am        "fraction": 1,
-##am    },
-##am    "wzp6_ee_WbWb_mtop173p5_ecm365":{
-##am        "fraction": 1,
-##am    },
+    "wzp6_ee_WbWb_ecm350": {
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_ecm355": {
+        "fraction": 1,
+    },
+
+    "wzp6_ee_WbWb_ecm365": {
+        "fraction": 1,
+    },
+    "p8_ee_WW_ecm345": {
+        "fraction": 1,
+     },
+    "p8_ee_WW_ecm365": {
+         "fraction": 1,
+    },    
+    "p8_ee_WW_ecm350": {
+       "fraction": 1,
+    },
+    "p8_ee_WW_ecm340": {
+       "fraction": 1,
+    },
+     "p8_ee_WW_ecm355": {
+        "fraction": 1,
+     },
+
+    "wzp6_ee_WbWb_PSup_ecm345":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSdown_ecm340":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSdown_ecm345":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSup_ecm365":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSdown_ecm365":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_PSup_ecm340":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop171p5_ecm345":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop171p5_ecm340":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop173p5_ecm345":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop171p5_ecm365":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop173p5_ecm340":{
+        "fraction": 1,
+    },
+    "wzp6_ee_WbWb_mtop173p5_ecm365":{
+        "fraction": 1,
+    },
 
 ##am     "wzp6_ee_WbWb_semihad_ecm345": {
 ##am         "fraction": 1,

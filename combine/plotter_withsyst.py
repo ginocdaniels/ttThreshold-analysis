@@ -93,7 +93,7 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,nostack,sel):
 
 def getHist(isSig,proc,vname,h_name,xsec_sig,channel,config,ecm,lumi):
     sf=1.0;sumW=1.0;xsec=1.0;
-    f_in=ROOT.TFile.Open(f'/eos/cms/store/cmst3/group/top/FCC_tt_threshold/output_condor_20241101_1121/WbWb/outputs/histmaker/{channel}/{config}/{proc}.root')
+    f_in=ROOT.TFile.Open(f'/eos/cms/store/cmst3/group/top/FCC_tt_threshold//output_condor_20241114_2154/WbWb/outputs/histmaker/{channel}/{config}/{proc}.root')
     print("looking for ",vname, "in \t",f_in.GetName())
     h_in=f_in.Get(vname).Clone(h_name);
     xsec=f_in.Get('crossSection').GetVal();
@@ -145,7 +145,7 @@ def cards(mkplots,lumi,xsec_sig,channel,sel,config,bWP,ecm,logy,vname,xtitle,sho
         h_obs.Add(h_bkg1)
 
 
-    fout_name=f"rootfiles/{channel}_{sel}_{config}_bWP{bWP}_{ecm}.root"
+    fout_name=f"rootfiles/{channel}_{sel}_{vname}_beffp{bWP}_{ecm}.root"
     f_out=ROOT.TFile(fout_name,"RECREATE");
     f_out.cd();
     #    h_bkg_psUp.Write(); h_bkg_psDown.Write();
@@ -168,7 +168,7 @@ if __name__ == '__main__':
 
     parser = optparse.OptionParser(usage='usage: %prog [opts] ', version='%prog 1.0')
     parser.add_option('-c',  '--ch',       dest='channel',   type='string',         default='semihad',    	help='had/semihad')
-    parser.add_option('-f',  '--fconf',    dest='config',    type='string',         default='noBDT',      	help='withflav/noflav/withbtaggedJet')
+    parser.add_option('-f',  '--fconf',    dest='config',    type='string',         default='sig_vs_wwz',      	help='withflav/noflav/withbtaggedJet/noBDT')
     parser.add_option('-s',  '--sel',      dest='sel' ,      type='string',         default='no_cut',       	help='no_cut/effp9_twob/effp9_oneb/effp9_zerob')
     parser.add_option('-e',  '--ecm',      dest='ecm' ,      type='string',         default='345',        	help='ecm')
     parser.add_option('-w',  '--bwp',      dest='btagWP',    type='string',         default='9',      	        help='btagWP:nom(9)/up(91)/dn(89)')
