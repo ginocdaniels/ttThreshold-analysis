@@ -5,37 +5,23 @@ from treemaker_WbWb_reco import all_processes, available_ecm
 def if3(cond, iftrue, iffalse):
     return iftrue if cond else iffalse
 
-#hadronic = False
 
-channel = 'CHANNELHERE' #'had' if hadronic else 'semihad'
+channel = 'CHANNELHERE' 
 ecm = 'ECMHERE'
-#useflav=useflavHERE
-#usebtagged=usebtaggedHERE
 
-#pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
-#pf=pf+"WPpt8"
-
-#pf="noflav"
-pf="sig_vs_wwz"
-
-#if not ecm in available_ecm:
-#    raise ValueError("ecm value not in available_ecm")
-
+pf='CONFHERE'
 
             
-processList={key: value for key, value in all_processes.items() if ecm in available_ecm and ecm in key} #str('p8_ee_WW_ecm'+ecm) in key else str('wzp6_ee_WbWb_ecm'+ecm) in key)}  #avoid looking for semihad samples in had category
+processList={key: value for key, value in all_processes.items() if ecm in available_ecm and ecm in key} 
 
 print("these are the procs",processList)
-
-# Production tag when running over EDM4Hep centrally produced events, this points to the yaml files for getting sample statistics (mandatory)
-#prodTag = "FCCee/winter2023/IDEA/"
 
 # Link to the dictonary that contains all the cross section informations etc... (mandatory)
 procDict = "FCCee_procDict_winter2023_IDEA.json"
 
 # Define the input dir (optional)
 
-basedir="/eos/cms/store/cmst3/group/top/FCC_tt_threshold/output_condor_20241114_2154"
+basedir="/eos/cms/store/cmst3/group/top/FCC_tt_threshold/output_condor_20241119_1329"
 
 inputDir="{}/WbWb/{}/{}/".format(basedir,channel,pf)
 
@@ -88,16 +74,6 @@ def build_graph(df, dataset):
 
     column_names  = df.GetColumnNames()
     print(column_names)
-    
-    #df_BDT         = df.Filter("BDT_score > 0.5")
-    #df_zerobVL     = df.Filter("nbjets_R5_WPp5  == 0")
-    #df_onebVL      = df.Filter("nbjets_R5_WPp5  > 0")
-    #df_zerobL      = df.Filter("nbjets_R5_WPp8  == 0")
-    #df_onebL       = df.Filter("nbjets_R5_WPp8  > 0")
-    #df_zerobM      = df.Filter("nbjets_R5_WPp85 == 0")
-    #df_onebM       = df.Filter("nbjets_R5_WPp85 > 0")
-    #df_zerobT      = df.Filter("nbjets_R5_WPp9  == 0")
-    #df_onebT       = df.Filter("nbjets_R5_WPp9  > 0")
 
     df_effp9_zerob   = df.Filter("nbjets_R5_eff_p9 == 0");
     df_effp9_oneb    = df.Filter("nbjets_R5_eff_p9 == 1 ");
@@ -111,11 +87,6 @@ def build_graph(df, dataset):
     df_effp89_oneb    = df.Filter("nbjets_R5_eff_p89 == 1");
     df_effp89_twob    = df.Filter("nbjets_R5_eff_p89 > 1");
     
-    ##amdf_BDT_zerobL  = df_zerobL.Filter("BDT_score > 0.5")
-    ##amdf_BDT_onebL   = df_onebL.Filter("BDT_score > 0.5")
-    ##amdf_BDT_zerobT  = df_zerobT.Filter("BDT_score > 0.5")
-    ##amdf_BDT_onebT   = df_onebT.Filter("BDT_score > 0.5")
-
     
     for var in column_names:
         var = str(var)
@@ -133,21 +104,23 @@ def build_graph(df, dataset):
         elif var.endswith("_theta"): binning = bins["theta"]; 
         elif var.endswith("_p"):     binning = bins["p"]; 
         elif 'BDT_score' in var:     binning = bins["tagger"];
-        elif 'mbbar' in var:     binning = bins["mbbar"]; 
+        elif 'mbbar' in var:          binning = bins["mbbar"]; 
         else: 
             print('Default binning for variable {}'.format(var))
             binning = (100, -1, 100)
 
         results.append(df.Histo1D(("no_cut_"+var, "", *binning), var))
-        results.append(df_effp9_zerob.Histo1D(( 'effp9_zerob_'     +var, "", *binning), var))
-        results.append(df_effp9_oneb.Histo1D((  'effp9_oneb_'       +var, "", *binning), var))
-        results.append(df_effp91_zerob.Histo1D(( 'effp91_zerob_'   +var, "", *binning), var))
-        results.append(df_effp91_oneb.Histo1D((  'effp91_oneb_'     +var, "", *binning), var))
-        results.append(df_effp89_zerob.Histo1D(( 'effp89_zerob_'   +var, "", *binning), var))
-        results.append(df_effp89_oneb.Histo1D((  'effp89_oneb_'     +var, "", *binning), var))
-        results.append(df_effp89_twob.Histo1D((  'effp89_twob_'     +var, "", *binning), var))
+        results.append(df_effp9_zerob.Histo1D((  'effp9_zerob_'      +var, "", *binning), var))
+        results.append(df_effp9_oneb.Histo1D((   'effp9_oneb_'       +var, "", *binning), var))
         results.append(df_effp9_twob.Histo1D((   'effp9_twob_'       +var, "", *binning), var))
-        results.append(df_effp91_twob.Histo1D((  'effp91_twob_'     +var, "", *binning), var))
+        results.append(df_effp91_zerob.Histo1D(( 'effp91_zerob_'     +var, "", *binning), var))
+        results.append(df_effp91_oneb.Histo1D((  'effp91_oneb_'      +var, "", *binning), var))
+        results.append(df_effp91_twob.Histo1D((  'effp91_twob_'      +var, "", *binning), var))
+        results.append(df_effp89_zerob.Histo1D(( 'effp89_zerob_'     +var, "", *binning), var))
+        results.append(df_effp89_oneb.Histo1D((  'effp89_oneb_'      +var, "", *binning), var))
+        results.append(df_effp89_twob.Histo1D((  'effp89_twob_'      +var, "", *binning), var))
+        
+
 #        results.append(df_BDT_zerobL.Histo1D(('BDT_cut_zerobtagl_'+var, "", *binning), var))
 #        results.append(df_BDT_onebL.Histo1D(('BDT_cut_onebtagl_'+var, "", *binning), var))
 #        results.append(df_BDT_zerobT.Histo1D(('BDT_cut_zerobtagt_'+var, "", *binning), var))
