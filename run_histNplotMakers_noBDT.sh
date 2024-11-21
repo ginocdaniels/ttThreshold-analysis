@@ -1,22 +1,15 @@
 #!/bin/bash
-#channel=${1}; shift;
-#ecm=${1}; shift;
-#useflav=${1}; shift;
-#usebtagged=${1}; shift;
-for ecm in  340  345 365 #355 340
+for ecm in  340 #345 365 #355 350
 do
-    for channel in semihad had #lep
+    for channel in semihad #had #lep
     do
-	fnameH=histmaker_WbWb_reco_${ecm}_${channel}_noBDT.py
-       	#fnameP=plots_WbWb_reco_${ecm}_${channel}_usebtagged${usebtagged}_useflav${useflav}.py
-	cat histmaker_WbWb_reco.py > dummy.py
-	sed -e 's/CHANNELHERE/'$channel'/g;s/ECMHERE/'$ecm'/g;s/useflavHERE/'$useflav'/g;s/usebtaggedHERE/'$usebtagged'/g' dummy.py > $fnameH
-	#cat plots_WbWb_reco.py >  dummy.py
-	#sed -e 's/CHANNELHERE/'$channel'/g;s/ECMHERE/'$ecm'/g;s/useflavHERE/'$useflav'/g;s/usebtaggedHERE/'$usebtagged'/g' dummy.py > $fnameP
-	fccanalysis run $fnameH
-	#fccanalysis plots $fnameP
-	mv $fnameH jobs/
-	#mv $fnameP jobs/
-	#cd ../
+	for conf in  sig_vs_wwz sig_vs_wwz_btagdown sig_vs_wwz_btagup
+	do
+	    fnameH=histmaker_WbWb_reco_${ecm}_${channel}_{conf}.py
+	    cat histmaker_WbWb_reco.py > dummy.py
+	    sed -e 's/CHANNELHERE/'$channel'/g;s/ECMHERE/'$ecm'/g;s/CONFHERE/'$conf'/g' dummy.py > $fnameH
+	    fccanalysis run $fnameH
+	    mv $fnameH jobs/
+	done
     done
 done

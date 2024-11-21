@@ -112,12 +112,12 @@ if __name__ == '__main__':
 #    parser.add_option('-s',  '--sel',      dest='sel' ,    type='string',         default='incl',       help='sig/cr')
 #    parser.add_option('-e',  '--ecm',      dest='ecm' ,    type='string',         default='345',        help='ecm')
 #    (opts, args) = parser.parse_args()
-    for ecm in ['340','345','365']:
+    for ecm in ['340']: #,'345','365']:
         for sel in ['zerob','oneb','twob']:
-            for ch in ['semihad','had']:
-                for vname in ['mbbar']:#'nbjets_R5_eff_p9','mbbar','singlebin','njets_R5','BDT_score']:
-                    drawhists(ecm,ch,'sig','ps',sel,vname)
+            for ch in ['semihad']: #,'had']:
+                for vname in ['nbjets_R5_eff_p9','singlebin','njets_R5','BDT_score']: #,'mbbar',
+                    #drawhists(ecm,ch,'sig','ps',sel,vname)
                     drawhists(ecm,ch,'sig','btag',sel,vname)
-                    drawhists(ecm,ch,'sig','topmass',sel,vname)
+                    #drawhists(ecm,ch,'sig','topmass',sel,vname)
                     drawhists(ecm,ch,f'bkg_{ch}','btag',sel,vname)
                     drawhists(ecm,ch,f'bkg1','btag',sel,vname)

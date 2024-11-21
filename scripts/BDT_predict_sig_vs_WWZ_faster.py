@@ -47,15 +47,11 @@ def evaluate(proc,ecm,channel,variation):
     dataframes = []
     root_files=[os.path.join(base_dir,channel,proc,f)  for f in os.listdir(os.path.join(base_dir,channel,proc)) if f.endswith(".root")]
     for file in root_files:
-        root_file = ROOT.TFile.Open(file)
-        tree = root_file.Get("events")
-        branches = {br.GetName(): [] for br in tree.GetListOfBranches()}
-        for event in tree:
-            for br_name in branches:
-                branches[br_name].append(getattr(event, br_name))
-    df = pd.DataFrame(branches)
-    dataframes.append(df)
-    
+        with uproot.open(file) as root_file:
+            tree = root_file["events"]
+            df = tree.arrays(library="pd")
+            dataframes.append(df)
+
     infiles = pd.concat(dataframes, ignore_index=True)
     print(infiles.head())
     
@@ -110,12 +106,12 @@ def parallel_evaluate(args):
 def main(ncores=4):
     tasks = []
     for ecm in ['340', '345', '365']: #'350', '355', '365']:
-        for ch in ['semihad', 'had']:
-            for var in ["up","down"]: #,""]:
+        for ch in ["had"]:#'semihad', 'had']:
+            for var in [""]: #"up","down"]: #,""]:
                 procs=[];
-                procs.append(f"wzp6_ee_WbWb_ecm{ecm}")
-                procs.append(f"wzp6_ee_WWZ_Zbb_ecm{ecm}")
-                procs.append(f"p8_ee_WW_ecm{ecm}")
+                #procs.append(f"wzp6_ee_WbWb_ecm{ecm}")
+                #procs.append(f"wzp6_ee_WWZ_Zbb_ecm{ecm}")
+                #procs.append(f"p8_ee_WW_ecm{ecm}")
                 if var == "":
                     procs.append(f"p8_ee_WW_PSup_ecm{ecm}")
                     procs.append(f"p8_ee_WW_PSdown_ecm{ecm}")

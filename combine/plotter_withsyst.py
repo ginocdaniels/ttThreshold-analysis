@@ -14,11 +14,11 @@ def drawSLatex(xpos,ypos,text,size):
     latex.SetTextFont(42)
     latex.DrawLatex(xpos,ypos,text)
 
-def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,nostack,sel):
+def stackPlot(fname,vname,lumi,channel,ecm,useLog,showInt,nostack,sel):
     if ecm == "365":
         lumi_txt=f'{lumi/1e6:.1f}'
     else:     lumi_txt=f'{lumi/1e3:.1f}'
-    Canv = ROOT.TCanvas(f'Canv_{channel}_{config}_{ecm}',"",600,600)
+    Canv = ROOT.TCanvas(f'Canv_{channel}_{ecm}',"",600,600)
     Canv.Range(0,0,1,1);   Canv.SetFillColor(0);   Canv.SetBorderMode(0);   Canv.SetBorderSize(2);
     Canv.SetTickx(1);   Canv.SetTicky(1);   Canv.SetLeftMargin(0.16);   Canv.SetRightMargin(0.08);
     Canv.SetBottomMargin(0.13);   Canv.SetFrameFillStyle(0);   Canv.SetFrameBorderMode(0);
@@ -27,7 +27,7 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,nostack,sel):
     legend = ROOT.TLegend(0.5,0.635,0.8,0.8);
     legend.SetNColumns(1);legend.SetFillColor(0);legend.SetFillStyle(0); legend.SetShadowColor(0);   legend.SetLineColor(0);
     legend.SetTextFont(42);        legend.SetBorderSize(0);   legend.SetTextSize(0.04);
-    hs=ROOT.THStack(f'hs_{channel}_{config}_{ecm}',""); 
+    hs=ROOT.THStack(f'hs_{channel}_{ecm}',""); 
     f_in=ROOT.TFile.Open(fname)
     h_sig=f_in.Get('x_sig');
     h_bkg=f_in.Get('x_bkg_%s'%channel);
@@ -84,18 +84,17 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,nostack,sel):
     hs.SetMaximum(morey*hs.GetHistogram().GetMaximum()) #(h_sig.Integral()+h_bkg.Integral()));
     legend.Draw("same");
     #hs.SetMinimum(1);
-    #if ecm in ["340","345","365"]: hs.SetMaximum(morey*(h_sig.Integral()+h_bkg.Integral()+h_bkg1.Integral()));
     Canv.Update();
     plotsdir=f"/eos/user/a/anmehta/www/FCC_top/{date}"
     if not os.path.isdir(plotsdir):        os.system("mkdir %s"%plotsdir);  os.system('cp ~/public/index.php %s/'%plotsdir)
 
-    Canv.Print(f"{plotsdir}/{vname}_{channel}_{config}_{ecm}{pf}.pdf")
-    Canv.Print(f"{plotsdir}/{vname}_{channel}_{config}_{ecm}{pf}.png")
+    Canv.Print(f"{plotsdir}/{vname}_{channel}_{ecm}{pf}.pdf")
+    Canv.Print(f"{plotsdir}/{vname}_{channel}_{ecm}{pf}.png")
     return True
 
-def getHist(isSig,proc,vname,h_name,xsec_sig,channel,config,ecm,lumi):
+def getHist(isSig,proc,vname,h_name,xsec_sig,channel,ecm,lumi):
     sf=1.0;sumW=1.0;xsec=1.0;
-    f_in=ROOT.TFile.Open(f'/eos/cms/store/cmst3/group/top/FCC_tt_threshold//output_condor_20241114_2154/WbWb/outputs/histmaker/{channel}/{config}/{proc}.root')
+    f_in=ROOT.TFile.Open(f'/eos/cms/store/cmst3/group/top/FCC_tt_threshold/output_condor_20241119_1329/WbWb/outputs/histmaker/{channel}/{proc}.root')
     print("looking for ",vname, "in \t",f_in.GetName())
     h_in=f_in.Get(vname).Clone(h_name);
     xsec=f_in.Get('crossSection').GetVal();
@@ -103,56 +102,53 @@ def getHist(isSig,proc,vname,h_name,xsec_sig,channel,config,ecm,lumi):
     if isSig:
         xsec=xsec_sig;
     N_tot=f_in.Get('eventsProcessed').GetVal()
-    #print('input ylds',h_in.Integral())
+    print('input ylds',h_in.Integral())
     sf=xsec*lumi/N_tot #sumW
-    #print('xsec\t',xsec,'\t n_tot\t',N_tot,"\t lumi\t",lumi,"\t sf \t",sf)
+    print("for process \t", proc,'\t',vname,'\t xsec is \t',xsec,'\t n_tot\t',N_tot,"\t lumi\t",lumi,"\t sf \t",sf)
     h_in.Scale(sf);    h_in.SetDirectory(0);    f_in.Close();
     #print('integral after scaling',h_in.Integral())
     return h_in
 
-def cards(mkplots,lumi,xsec_sig,channel,sel,config,bWP,ecm,logy,vname,xtitle,showInt,nostack):
-    h_sig=getHist(True,f'wzp6_ee_WbWb_ecm{ecm}',vname,"x_sig",xsec_sig,channel,config,ecm,lumi)
+def cards(mkplots,lumi,xsec_sig,channel,sel,bWP,ecm,logy,vname,xtitle,showInt,nostack):
+    h_sig=getHist(True,f'sig_vs_wwz/wzp6_ee_WbWb_ecm{ecm}',vname,"x_sig",xsec_sig,channel,ecm,lumi)
     vname_btagUp=vname.replace('p9','p91')
     vname_btagDown=vname.replace('p9','p89')
-    print('checking these histograms', vname_btagUp,vname_btagDown)
-    h_sig_psUp=getHist(True,f'wzp6_ee_WbWb_PSup_ecm{ecm}',vname,"x_sig_psUp",xsec_sig,channel,config,ecm,lumi)
-    h_sig_psDown=getHist(True,f'wzp6_ee_WbWb_PSdown_ecm{ecm}',vname,"x_sig_psDown",xsec_sig,channel,config,ecm,lumi)
 
-    h_sig_topmassUp=getHist(True,f'wzp6_ee_WbWb_mtop173p5_ecm{ecm}',vname,"x_sig_topmassUp",xsec_sig,channel,config,ecm,lumi)
-    h_sig_topmassDown=getHist(True,f'wzp6_ee_WbWb_mtop171p5_ecm{ecm}',vname,"x_sig_topmassDown",xsec_sig,channel,config,ecm,lumi)
+    print('checking these histograms', vname,vname_btagUp,vname_btagDown)
 
-    h_sig_btagUp=getHist(True,f'wzp6_ee_WbWb_ecm{ecm}',vname_btagUp,"x_sig_btagUp",xsec_sig,channel,config,ecm,lumi)
-    h_sig_btagDown=getHist(True,f'wzp6_ee_WbWb_ecm{ecm}',vname_btagDown,"x_sig_btagDown",xsec_sig,channel,config,ecm,lumi)
+    #h_sig_psUp=getHist(True,f'sig_vs_wwz/wzp6_ee_WbWb_PSup_ecm{ecm}',vname,"x_sig_psUp",xsec_sig,channel,ecm,lumi)
+    #h_sig_psDown=getHist(True,f'sig_vs_wwz/wzp6_ee_WbWb_PSdown_ecm{ecm}',vname,"x_sig_psDown",xsec_sig,channel,ecm,lumi)
+
+    #h_sig_topmassUp=getHist(True,f'sig_vs_wwz/wzp6_ee_WbWb_mtop173p5_ecm{ecm}',vname,"x_sig_topmassUp",xsec_sig,channel,ecm,lumi)
+    #h_sig_topmassDown=getHist(True,f'sig_vs_wwz/wzp6_ee_WbWb_mtop171p5_ecm{ecm}',vname,"x_sig_topmassDown",xsec_sig,channel,ecm,lumi)
+
+    h_sig_btagUp=getHist(True,f'sig_vs_wwz_btagup/wzp6_ee_WbWb_ecm{ecm}',vname_btagUp,"x_sig_btagUp",xsec_sig,channel,ecm,lumi)
+    h_sig_btagDown=getHist(True,f'sig_vs_wwz_btagdown/wzp6_ee_WbWb_ecm{ecm}',vname_btagDown,"x_sig_btagDown",xsec_sig,channel,ecm,lumi)
     
 
     #print('sig',h_sig.Integral())
     h_obs  = h_sig.Clone("x_data_obs")
-    h_bkg  = getHist(False,f'p8_ee_WW_ecm{ecm}',vname,"x_bkg_%s"%channel,1.0,channel,config,ecm,lumi)
+    h_bkg  = getHist(False,f'sig_vs_wwz/p8_ee_WW_ecm{ecm}',vname,"x_bkg_%s"%channel,1.0,channel,ecm,lumi)
     
-    #h_bkg_psUp    = getHist(False,f'p8_ee_WW_ecm{ecm}',vname,"x_bkg_%s_psUp"%channel,1.0,channel,config,ecm,lumi)
-    #h_bkg_psDown  = getHist(False,f'p8_ee_WW_ecm{ecm}',vname,"x_bkg_%s_psDown"%channel,1.0,channel,config,ecm,lumi)
-    
-    h_bkg_btagUp    = getHist(False,f'p8_ee_WW_ecm{ecm}',vname_btagUp,"x_bkg_%s_btagUp"%channel,1.0,channel,config,ecm,lumi)
-    h_bkg_btagDown  = getHist(False,f'p8_ee_WW_ecm{ecm}',vname_btagDown,"x_bkg_%s_btagDown"%channel,1.0,channel,config,ecm,lumi)
-    
+    #h_bkg_psUp      = getHist(False,f'sig_vs_wwz/p8_ee_WW_PSup_ecm{ecm}',vname,"x_bkg_%s_psUp"%channel,1.0,channel,ecm,lumi)
+    #h_bkg_psDown    = getHist(False,f'sig_vs_wwz/p8_ee_WW_PSdown_ecm{ecm}',vname,"x_bkg_%s_psDown"%channel,1.0,channel,ecm,lumi)
+    h_bkg_btagUp     = getHist(False,f'sig_vs_wwz_btagup/p8_ee_WW_ecm{ecm}',vname_btagUp,"x_bkg_%s_btagUp"%channel,1.0,channel,ecm,lumi)
+    h_bkg_btagDown   = getHist(False,f'sig_vs_wwz_btagdown/p8_ee_WW_ecm{ecm}',vname_btagDown,"x_bkg_%s_btagDown"%channel,1.0,channel,ecm,lumi)
     h_obs.Add(h_bkg);
+    
     if ecm in ["340","345","365"]:
-        #h_bkg1           = getHist(False,f'wzp6_ee_WWZ_Zbb_ecm{ecm}',vname,"x_bkg1_%s"%channel,1.0,channel,config,ecm,lumi)
-        #h_bkg1_btagUp    = getHist(False,f'wzp6_ee_WWZ_Zbb_ecm{ecm}',vname_btagUp,"x_bkg1_%s_btagUp"%channel,1.0,channel,config,ecm,lumi)
-        #h_bkg1_btagDown  = getHist(False,f'wzp6_ee_WWZ_Zbb_ecm{ecm}',vname_btagDown,"x_bkg1_%s_btagDown"%channel,1.0,channel,config,ecm,lumi)
-        h_bkg1           = getHist(False,f'wzp6_ee_WWZ_Zbb_ecm{ecm}',vname,"x_bkg1",1.0,channel,config,ecm,lumi)
-        h_bkg1_btagUp    = getHist(False,f'wzp6_ee_WWZ_Zbb_ecm{ecm}',vname_btagUp,"x_bkg1_btagUp",1.0,channel,config,ecm,lumi)
-        h_bkg1_btagDown  = getHist(False,f'wzp6_ee_WWZ_Zbb_ecm{ecm}',vname_btagDown,"x_bkg1_btagDown",1.0,channel,config,ecm,lumi)
-
+        h_bkg1           = getHist(False,f'sig_vs_wwz/wzp6_ee_WWZ_Zbb_ecm{ecm}',vname,"x_bkg1",1.0,channel,ecm,lumi)
+        h_bkg1_btagUp    = getHist(False,f'sig_vs_wwz_btagup/wzp6_ee_WWZ_Zbb_ecm{ecm}',vname_btagUp,"x_bkg1_btagUp",1.0,channel,ecm,lumi)
+        h_bkg1_btagDown  = getHist(False,f'sig_vs_wwz_btagdown/wzp6_ee_WWZ_Zbb_ecm{ecm}',vname_btagDown,"x_bkg1_btagDown",1.0,channel,ecm,lumi)
         h_obs.Add(h_bkg1)
 
 
     fout_name=f"rootfiles/{channel}_{sel}_{vname}_beffp{bWP}_{ecm}.root"
     f_out=ROOT.TFile(fout_name,"RECREATE");
     f_out.cd();
-    #    h_bkg_psUp.Write(); h_bkg_psDown.Write();
-    h_sig_psUp.Write(); h_sig_psDown.Write();
-    h_sig_topmassUp.Write(); h_sig_topmassDown.Write();
+    #h_bkg_psUp.Write(); h_bkg_psDown.Write();
+    #h_sig_psUp.Write(); h_sig_psDown.Write();
+    #h_sig_topmassUp.Write(); h_sig_topmassDown.Write();
     h_bkg_btagUp.Write(); h_bkg_btagDown.Write();
     h_sig_btagUp.Write(); h_sig_btagDown.Write();
     if ecm in ["340","345","365"]:
@@ -161,7 +157,7 @@ def cards(mkplots,lumi,xsec_sig,channel,sel,config,bWP,ecm,logy,vname,xtitle,sho
     h_sig.Write();    h_bkg.Write();
     h_obs.Write();    f_out.Close();
     if mkplots:
-        stackPlot(fout_name,vname,lumi,channel,config,ecm,logy,showInt,nostack,sel)
+        stackPlot(fout_name,vname,lumi,channel,ecm,logy,showInt,nostack,sel)
 
 
 if __name__ == '__main__':
@@ -170,7 +166,7 @@ if __name__ == '__main__':
 
     parser = optparse.OptionParser(usage='usage: %prog [opts] ', version='%prog 1.0')
     parser.add_option('-c',  '--ch',       dest='channel',   type='string',         default='semihad',    	help='had/semihad')
-    parser.add_option('-f',  '--fconf',    dest='config',    type='string',         default='sig_vs_wwz',      	help='withflav/noflav/withbtaggedJet/noBDT')
+    #parser.add_option('-f',  '--fconf',    dest='config',    type='string',         default='sig_vs_wwz',      	help='withflav/noflav/withbtaggedJet/noBDT')
     parser.add_option('-s',  '--sel',      dest='sel' ,      type='string',         default='no_cut',       	help='no_cut/effp9_twob/effp9_oneb/effp9_zerob')
     parser.add_option('-e',  '--ecm',      dest='ecm' ,      type='string',         default='345',        	help='ecm')
     parser.add_option('-w',  '--bwp',      dest='btagWP',    type='string',         default='9',      	        help='btagWP:nom(9)/up(91)/dn(89)')
@@ -200,5 +196,5 @@ if __name__ == '__main__':
     
     xtitle= opts.vname #"N_{bjets}" if "nbjets" in opts.vname else "N_{jets}"
 
-    cards(opts.mkplots,lumi,xsec_sig,opts.channel,opts.sel,opts.config,opts.btagWP,opts.ecm,opts.logy,hname,xtitle,opts.showInt,opts.nostack)
+    cards(opts.mkplots,lumi,xsec_sig,opts.channel,opts.sel,opts.btagWP,opts.ecm,opts.logy,hname,xtitle,opts.showInt,opts.nostack)
 
