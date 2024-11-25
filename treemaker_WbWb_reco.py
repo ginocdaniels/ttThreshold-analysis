@@ -44,43 +44,51 @@ all_processes = {
      "p8_ee_WW_ecm355": {
         "fraction": 1,
      },
-
-    "wzp6_ee_WbWb_PSup_ecm345":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_PSdown_ecm340":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_PSdown_ecm345":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_PSup_ecm365":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_PSdown_ecm365":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_PSup_ecm340":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_mtop171p5_ecm345":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_mtop171p5_ecm340":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_mtop173p5_ecm345":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_mtop171p5_ecm365":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_mtop173p5_ecm340":{
-        "fraction": 1,
-    },
-    "wzp6_ee_WbWb_mtop173p5_ecm365":{
-        "fraction": 1,
-    },
+##am
+##am    "wzp6_ee_WbWb_PSup_ecm345":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_PSdown_ecm340":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_PSdown_ecm345":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_PSup_ecm365":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_PSdown_ecm365":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_PSup_ecm340":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_mtop171p5_ecm345":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_mtop171p5_ecm340":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_mtop173p5_ecm345":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_mtop171p5_ecm365":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_mtop173p5_ecm340":{
+##am        "fraction": 1,
+##am    },
+##am    "wzp6_ee_WbWb_mtop173p5_ecm365":{
+##am        "fraction": 1,
+##am    },
+    ##FOR foll WW background samples with PS variations xsec values are wrong in the database!! 
+##am    "p8_ee_WW_PSdown_ecm340":{ "fraction": 1,},
+##am    "p8_ee_WW_PSup_ecm340":{ "fraction": 1,},
+##am    "p8_ee_WW_PSdown_ecm345":{ "fraction": 1,},
+##am    "p8_ee_WW_PSup_ecm345":{ "fraction": 1,},
+##am    "p8_ee_WW_PSdown_ecm365":{ "fraction": 1,},
+##am    "p8_ee_WW_PSup_ecm365":{ "fraction": 1,},
+    
 
 ##am     "wzp6_ee_WbWb_semihad_ecm345": {
 ##am         "fraction": 1,

@@ -21,10 +21,10 @@ procDict = "FCCee_procDict_winter2023_IDEA.json"
 
 # Define the input dir (optional)
 
-basedir="/eos/cms/store/cmst3/group/top/FCC_tt_threshold/output_condor_20241119_1329"
+basedir="/eos/cms/store/cmst3/group/top/FCC_tt_threshold/output_condor_20241121_1142"
 
 inputDir="{}/WbWb/{}/{}/".format(basedir,channel,pf)
-
+print("this is the inputDir",inputDir)
 # Optional: output directory, default is local running directory
 outputDir = "{}/WbWb/outputs/histmaker/{}/{}/".format(basedir,channel,pf)
 
@@ -44,7 +44,7 @@ bins = {
     "theta": (100, 0, 3.2),
     "p": (100, 0, 200),
     "tagger": (4, 0, 1),
-    "tagged": (2, -0.5, 1.5),
+    #    "tagged": (2, -0.5, 1.5),
     "nleps" : (5,-0.5,4.5),
     'singlebin' : (1,-0.5,0.5),
     "nbjets" : (7,-0.5,6.5),
@@ -103,7 +103,7 @@ def build_graph(df, dataset):
         elif var == 'ntau_h':        binning = bins["nleps"]
         elif var.endswith("_theta"): binning = bins["theta"]; 
         elif var.endswith("_p"):     binning = bins["p"]; 
-        elif 'BDT_score' in var:     binning = bins["tagger"];
+        elif 'BDT_score' in var:     binning = bins["tagger"]; print("this is the binning for BDT",binning)
         elif 'mbbar' in var:          binning = bins["mbbar"]; 
         else: 
             print('Default binning for variable {}'.format(var))
