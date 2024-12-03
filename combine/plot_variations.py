@@ -2,6 +2,16 @@ import ROOT, os, subprocess, sys, optparse
 from array import array
 import math
 
+fitvars={
+    'zerob':['singlebin',"N_{events}"],
+    'oneb':['njets_R5',"N_{jets}"],
+    'twob':['BDT_score',"BDT"], #mbbar
+}
+
+fancyname={'singlebin': "N_{events}",
+           'BDT_score': "BDT",
+           "njets_R5":"N_{jets}"}
+
 import datetime
 date = datetime.date.today().isoformat()
 def drawSLatex(xpos,ypos,text,size):
@@ -25,7 +35,7 @@ def histStyle(hist,xtitle,color,lstyle):
     #hist.Scale(1.0/hist.Integral())
     return hist
 
-def drawhists(ecm,channel,hname,syst,sel,vname):
+def drawhists(ecm,channel,hname,syst,sel,vname,xtitle):
     if ecm == "365":
         lumi=2650*1000
         lumi_txt=f'{lumi/1e6:.1f}'
@@ -91,7 +101,7 @@ def drawhists(ecm,channel,hname,syst,sel,vname):
     hUp.Divide(hnom); hUp.SetMarkerColor(ROOT.kBlue);hUp.SetLineColor(ROOT.kBlue); hUp.SetMarkerStyle(26)
     hDn.Divide(hnom); hDn.SetMarkerColor(ROOT.kGreen+2);hDn.SetLineColor(ROOT.kGreen+2); hDn.SetMarkerStyle(32)
     hUp.Draw(); hDn.Draw("psame");
-    hUp.GetYaxis().SetTitle("var/nom");  hUp.GetXaxis().SetTitle(vname) #"n_{jets}");
+    hUp.GetYaxis().SetTitle("var/nom");  hUp.GetXaxis().SetTitle(xtitle) #"n_{jets}");
     hUp.GetXaxis().SetTitleFont(42);     
     hUp.GetYaxis().SetLabelOffset(0.015)     
     hUp.GetYaxis().SetLabelSize(0.1);    hUp.GetYaxis().SetTitleSize(0.135);    hUp.GetYaxis().SetTitleOffset(0.38);
@@ -112,12 +122,13 @@ if __name__ == '__main__':
 #    parser.add_option('-s',  '--sel',      dest='sel' ,    type='string',         default='incl',       help='sig/cr')
 #    parser.add_option('-e',  '--ecm',      dest='ecm' ,    type='string',         default='345',        help='ecm')
 #    (opts, args) = parser.parse_args()
-    for ecm in ['340']: #,'345','365']:
+    for ecm in ['340','345','365']:
         for sel in ['zerob','oneb','twob']:
-            for ch in ['semihad']: #,'had']:
-                for vname in ['nbjets_R5_eff_p9','singlebin','njets_R5','BDT_score']: #,'mbbar',
-                    #drawhists(ecm,ch,'sig','ps',sel,vname)
-                    drawhists(ecm,ch,'sig','btag',sel,vname)
-                    #drawhists(ecm,ch,'sig','topmass',sel,vname)
-                    drawhists(ecm,ch,f'bkg_{ch}','btag',sel,vname)
-                    drawhists(ecm,ch,f'bkg1','btag',sel,vname)
+            for ch in ['semihad','had']:
+                for sel in fitvars.keys(): #['singlebin','njets_R5','BDT_score']: #,'mbbar','nbjets_R5_eff_p9',
+                    drawhists(ecm,ch,'sig','ps',sel,fitvars[sel][0],fitvars[sel][1])
+                    #drawhists(ecm,ch,f'bkg_{ch}','ps',sel,fitvars[sel][0],fitvars[sel][1])
+                    drawhists(ecm,ch,f'bkg_{ch}','btag',sel,fitvars[sel][0],fitvars[sel][1])
+                    drawhists(ecm,ch,'sig','btag',sel,fitvars[sel][0],fitvars[sel][1])
+                    drawhists(ecm,ch,'sig','topmass',sel,fitvars[sel][0],fitvars[sel][1])
+                    drawhists(ecm,ch,f'bkg1_{ch}','btag',sel,fitvars[sel][0],fitvars[sel][1])

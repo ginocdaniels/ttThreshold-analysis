@@ -16,38 +16,39 @@ def if3(cond, iftrue, iffalse):
 
 
 ecm = '345'
-nJ='2' 
-pf="sig_vs_wwz_nombb"
-max_entries = 1E05
+nJ='1' 
+pf="sig_vs_wwz"
+max_entries = 1E06
 hadronic = False
-channel =  if3(nJ == '0','lep',if3(nJ=='1', 'semihad','had')) 
-base_dir=f"/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20241114_2154/WbWb/{channel}"
+channel=if3(nJ == '0','lep',if3(nJ=='1', 'semihad','had')) 
+base_dir=f"/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20241121_1142/WbWb/{channel}"
 sig=f"wzp6_ee_WbWb_ecm{ecm}"
 bkg=f"wzp6_ee_WWZ_Zbb_ecm{ecm}"
 
-branches_toTrain=['jet1_R5_p','jet2_R5_p','jet1_R5_theta','jet2_R5_theta','nbjets_R5_eff_p9','mbbar']
-if channel == "semihad":
-    branches_toTrain+=['missing_p','lep_p','lep_theta']
+branches_toTrain=['jet1_R5_p','jet2_R5_p','jet1_R5_theta','jet2_R5_theta','nbjets_R5_eff_p9','mbbar_p9']
+#if channel == "semihad":
+#    branches_toTrain+=['missing_p','lep_p','lep_theta']
 
-#selection="lambda arrays: arrays [nbjets_R5_eff_p9] > 1"
 selection="nbjets_R5_eff_p9 > 1"
 
 infile_s =  uproot.concatenate([os.path.join(base_dir,sig,f)+':events' for f in os.listdir(os.path.join(base_dir,sig)) if f.endswith(".root")],branches_toTrain,cut=selection,library="np")
 infile_b =  uproot.concatenate([os.path.join(base_dir,bkg,f)+':events' for f in os.listdir(os.path.join(base_dir,bkg)) if f.endswith(".root")],branches_toTrain,cut=selection,library="np")
 
-print("for \t",channel,"\t channel used branches are\t",branches_toTrain)
+print("for \t",channel,"\t channel input branches are\t",branches_toTrain)
 
-#infile_s=infile_s.pop('nbjets_R5_eff_p9')
-#infile_b=infile_b.pop('nbjets_R5_eff_p9')
 pd_s = pd.DataFrame(infile_s).drop(columns=['nbjets_R5_eff_p9'])
 pd_b = pd.DataFrame(infile_b).drop(columns=['nbjets_R5_eff_p9'])
 
+pd_s = pd_s.rename(columns={"mbbar_p9": "mbbar"})
+pd_b = pd_b.rename(columns={"mbbar_p9": "mbbar"})
 
 print(type(pd_s))
 pd_s['target'] = 1.
 pd_b['target'] = 0.
 
+
 pd_all = pd.concat([pd_s, pd_b])
+print("for \t",channel,"\t channel used branches in the training are\t",pd_all.columns)
 
 
 
@@ -102,7 +103,11 @@ outdir = '/eos/cms/store/cmst3/group/top//FCC_tt_threshold/BDT_model/'
 if not os.path.exists(outdir):
     os.makedirs(outdir)
 
-bst.save_model('{}/model_{}_{}{}.json'.format(outdir,channel,ecm,pf))
-plt.savefig('{}/preds_{}_{}{}.png'.format(outdir,channel,ecm,pf))
-plt.savefig('{}/preds_{}_{}{}.pdf'.format(outdir,channel,ecm,pf))
+bst.save_model('{}/model_{}_{}{}_nolepvars.json'.format(outdir,channel,ecm,pf))
+plt.savefig('{}/preds_{}_{}{}_noelpvars.png'.format(outdir,channel,ecm,pf))
+plt.savefig('{}/preds_{}_{}{}_noelpvars.pdf'.format(outdir,channel,ecm,pf))
+
+plt.savefig('/eos/user/a/anmehta/www/FCC_top/BDT_model/preds_22NOV_{}_{}{}_noelpvars.png'.format(channel,ecm,pf))
+plt.savefig('/eos/user/a/anmehta/www/FCC_top/BDT_model/preds_22NOV_{}_{}{}_noelpvars.pdf'.format(channel,ecm,pf))
+
 plt.close()

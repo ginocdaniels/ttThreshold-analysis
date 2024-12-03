@@ -57,7 +57,7 @@ def evaluate(proc,ecm,channel,variation):
     dataframes.append(df)
     
     infiles = pd.concat(dataframes, ignore_index=True)
-    print(infiles.head())
+    #print(infiles.head())
     
     #infiles =  uproot.concatenate([os.path.join(base_dir,channel,proc,f)+':events' for f in os.listdir(os.path.join(base_dir,channel,proc)) if f.endswith(".root")],all_branches,library="pd")
     infiles=infiles.rename(columns={col_name: "mbbar"})
@@ -82,6 +82,7 @@ def evaluate(proc,ecm,channel,variation):
     pd_s['BDT_score'] = preds[:,1]
     pd_s['BDT_score']    = pd_s['BDT_score'].astype('float32')
     pd_out['BDT_score']=pd_s['BDT_score']
+    print(pd_out['BDT_score'])
     data_dict = {name: pd_out[name].values for name in pd_out.columns}
 
     odir=os.path.join(base_dir,channel,pf,proc)
@@ -110,19 +111,19 @@ def parallel_evaluate(args):
 def main(ncores=4):
     tasks = []
     for ecm in ['340', '345', '365']: #'350', '355', '365']:
-        for ch in ['semihad', 'had']:
+        for ch in ['semihad']: #, 'had']:
             for var in ["up","down"]: #,""]:
                 procs=[];
                 procs.append(f"wzp6_ee_WbWb_ecm{ecm}")
                 procs.append(f"wzp6_ee_WWZ_Zbb_ecm{ecm}")
                 procs.append(f"p8_ee_WW_ecm{ecm}")
-                if var == "":
-                    procs.append(f"p8_ee_WW_PSup_ecm{ecm}")
-                    procs.append(f"p8_ee_WW_PSdown_ecm{ecm}")
-                    procs.append(f"wzp6_ee_WbWb_PSup_ecm{ecm}")
-                    procs.append(f"wzp6_ee_WbWb_PSdown_ecm{ecm}")
-                    procs.append(f"wzp6_ee_WbWb_mtop173p5_ecm{ecm}")
-                    procs.append(f"wzp6_ee_WbWb_mtop171p5_ecm{ecm}")
+#                if var == "":
+#                    procs.append(f"p8_ee_WW_PSup_ecm{ecm}")
+#                    procs.append(f"p8_ee_WW_PSdown_ecm{ecm}")
+#                    procs.append(f"wzp6_ee_WbWb_PSup_ecm{ecm}")
+#                    procs.append(f"wzp6_ee_WbWb_PSdown_ecm{ecm}")
+#                    procs.append(f"wzp6_ee_WbWb_mtop173p5_ecm{ecm}")
+#                    procs.append(f"wzp6_ee_WbWb_mtop171p5_ecm{ecm}")
                 for proc in procs:
                     evaluate(proc, ecm, ch,var)
                     tasks.append((proc, ecm, ch,var))
