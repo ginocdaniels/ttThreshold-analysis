@@ -16,14 +16,14 @@ def if3(cond, iftrue, iffalse):
 
 
 ecm ='345'
-nJ='1' 
-pf="sig_vs_wwz"
+#nJ='1' 
+pf="sig_vs_zz"
 max_entries = 1E06
 channel="semihad" #if3(nJ == '0','lep',if3(nJ=='1', 'semihad','had')) 
 base_dir=f"/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20250212_1138/WbWb/{channel}"
 sig=f"wzp6_ee_WbWb_ecm{ecm}"
-bkg=f"wzp6_ee_WWZ_Zbb_ecm{ecm}"
-
+#bkg=f"wzp6_ee_WWZ_Zbb_ecm{ecm}"
+bkg=f"p8_ee_ZZ_ecm{ecm}"
 branches_toTrain=['jet1_R5_p','jet2_R5_p','jet1_R5_theta','jet2_R5_theta','nbjets_R5_eff_p9','mbbar_p9','jet3_R5_p','jet4_R5_p','jet3_R5_theta','jet4_R5_theta']
 
 if channel == "semihad":
@@ -107,11 +107,11 @@ outdir = '/eos/cms/store/cmst3/group/top//FCC_tt_threshold/BDT_model/'
 if not os.path.exists(outdir):
     os.makedirs(outdir)
 
-bst.save_model('{}/model_{}_{}{}_morevars_njcut_Feb2025.json'.format(outdir,channel,ecm,pf))
-plt.savefig('{}/preds_{}_{}{}_morevars_njcut_Feb2025.png'.format(outdir,channel,ecm,pf))
-plt.savefig('{}/preds_{}_{}{}_morevars_njcut_Feb2025.pdf'.format(outdir,channel,ecm,pf))
+bst.save_model('{}/model_{}_{}{}_lepvars_njcut_Mar2025.json'.format(outdir,channel,ecm,pf))
+plt.savefig('{}/preds_{}_{}{}_lepvars_njcut_Mar2025.png'.format(outdir,channel,ecm,pf))
+plt.savefig('{}/preds_{}_{}{}_lepvars_njcut_Mar2025.pdf'.format(outdir,channel,ecm,pf))
 
-plt.savefig('/eos/user/a/anmehta/www/FCC_top/BDT_model/preds_{}_{}{}_morevars_njcut_Feb2025.png'.format(channel,ecm,pf))
-plt.savefig('/eos/user/a/anmehta/www/FCC_top/BDT_model/preds_{}_{}{}_morevars_njcut_Feb2025.pdf'.format(channel,ecm,pf))
+plt.savefig('/eos/user/a/anmehta/www/FCC_top/BDT_model/preds_{}_{}{}_lepvars_njcut_Mar2025.png'.format(channel,ecm,pf))
+plt.savefig('/eos/user/a/anmehta/www/FCC_top/BDT_model/preds_{}_{}{}_lepvars_njcut_Mar2025.pdf'.format(channel,ecm,pf))
 
 plt.close()

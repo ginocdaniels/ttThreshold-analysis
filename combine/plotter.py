@@ -35,37 +35,40 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,pstyle,sel):
         Canv.SetLogy();        pf+='_log'  ;      morey=200
     else:
         if "norm" not in pstyle:
-            hs.GetYaxis().SetTitleOffset(1.25);
+            print(type(hs),'prob')
+            #hs.GetYaxis().SetTitleOffset(1.25);
     f_in=ROOT.TFile.Open(fname)
     h_sig=f_in.Get('x_sig');
-    h_bkg=f_in.Get('x_bkg_%s'%channel);
-    
+    h_bkg=f_in.Get('x_bkg_%s'%channel); 
+    h_bkg.SetDirectory(0);    h_sig.SetDirectory(0);   
     if ecm in ["340","345","365"]:
         h_bkg1=f_in.Get('x_bkg1_%s'%channel);        h_bkg1.SetDirectory(0);
+        h_bkg2=f_in.Get('x_bkg2_%s'%channel);        h_bkg2.SetDirectory(0);
         
-    h_bkg.SetDirectory(0);    h_sig.SetDirectory(0);
-    if pstyle != "stack":
-        h_sig.SetLineStyle(1);
-        h_bkg.SetLineStyle(1);
-        h_sig.SetLineWidth(2);
-        h_bkg.SetLineWidth(2);
 
-        h_sig.SetLineColor(ROOT.kAzure+1); 
-        h_bkg.SetLineColor(ROOT.kOrange+1);
-        if ecm in ["340","345","365"]: h_bkg1.SetLineColor(ROOT.kViolet+5);         h_bkg1.SetLineWidth(2);
+    if pstyle != "stack":
+        h_sig.SetLineStyle(1);        h_bkg.SetLineStyle(1);
+        h_sig.SetLineWidth(2);        h_bkg.SetLineWidth(2);
+        h_sig.SetLineColor(ROOT.kAzure+1);         h_bkg.SetLineColor(ROOT.kOrange+1);
+        if ecm in ["340","345","365"]: h_bkg1.SetLineColor(ROOT.kViolet+5);         h_bkg1.SetLineWidth(2); h_bkg2.SetLineColor(ROOT.kGreen+2);         h_bkg2.SetLineWidth(2);
     else:        
         h_sig.SetFillColor(ROOT.kAzure+1);  h_sig.SetLineColor(ROOT.kBlack)
         h_bkg.SetFillColor(ROOT.kOrange+1); h_bkg.SetLineColor(ROOT.kBlack)
         hs.Add(h_bkg);    hs.Add(h_sig);
         if ecm in ["340","345","365"]:
             h_bkg1.SetFillColor(ROOT.kViolet+5);
+            h_bkg2.SetFillColor(ROOT.kGreen+2);
             h_bkg1.SetLineColor(ROOT.kBlack);  hs.Add(h_bkg1);
-             
+            h_bkg2.SetLineColor(ROOT.kBlack);  hs.Add(h_bkg2);
+            
     f_in.Close();
     #legend.AddEntry('NULL',f'{channel}; {sel}','')#e^{#plus}e^{#minus} #rightarrow WbWb/WW  #rightarrow %s'%channel,'')
     legend.AddEntry(h_sig,  'WbWb'+ (f"({h_sig.Integral():.2e})"  if showInt else ''),"F" if pstyle == "stack" else 'l');
     legend.AddEntry(h_bkg,  'WW ' + (f"({h_bkg.Integral():.2e})"  if showInt else ''),"F" if pstyle == "stack" else 'l');
-    if ecm in ["340","345","365"]:    legend.AddEntry(h_bkg1, 'WWZ '+ (f"({h_bkg1.Integral():.2e})" if showInt else ''),"F" if pstyle == "stack" else 'l');
+    if ecm in ["340","345","365"]:
+        legend.AddEntry(h_bkg1, 'WWZ '+ (f"({h_bkg1.Integral():.2e})" if showInt else ''),"F" if pstyle == "stack" else 'l');
+        legend.AddEntry(h_bkg2, 'qq ' + (f"({h_bkg2.Integral():.2e})" if showInt else ''),"F" if pstyle == "stack" else 'l');
+        
     if  "norm" not in pstyle:
         hs.Draw("HIST" if pstyle ==  "stack" else 'nostackhist');
         hs.GetXaxis().SetTitle(xtitle)
@@ -75,23 +78,26 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,pstyle,sel):
         hs.GetYaxis().SetMaxDigits(3);
         hs.GetXaxis().SetTitleFont(42);        hs.GetYaxis().SetTitleFont(42);
         hs.SetMinimum(0);
-        hs.SetMaximum(1.0) #morey*hs.GetHistogram().GetMaximum())
+        hs.SetMaximum(morey*hs.GetHistogram().GetMaximum())
         #if ecm in ["340","345","365"]: hs.SetMaximum(morey*(h_sig.Integral()+h_bkg.Integral()+h_bkg1.Integral()));
 
     else:
         h_sig.Scale(1.0/h_sig.Integral()); h_bkg.Scale(1.0/h_bkg.Integral());
-        if ecm in ["340","345","365"]: h_bkg1.Scale(1.0/h_bkg1.Integral());
+        if ecm in ["340","345","365"]:
+            h_bkg1.Scale(1.0/h_bkg1.Integral());
+            h_bkg2.Scale(1.0/h_bkg2.Integral());
+        h_sig.GetYaxis().SetRangeUser(0,1.25*max(h_sig.GetMaximum(),h_bkg.GetMaximum(),h_bkg2.GetMaximum(),h_bkg1.GetMaximum()))        
         h_sig.Draw("hist"); 
         h_sig.GetXaxis().SetTitle(xtitle)
         h_sig.GetYaxis().SetTitle("a.u."); h_sig.SetMaximum(1.0);         h_sig.SetMinimum(0);
         h_sig.GetYaxis().SetLabelSize(0.04);    h_sig.GetYaxis().SetTitleSize(0.045);    h_sig.GetYaxis().SetTitleOffset(1.22);
         h_sig.GetXaxis().SetTitleSize(0.045);    h_sig.GetXaxis().SetTitleOffset(1.0); h_sig.GetXaxis().SetLabelSize(0.04);
         h_sig.GetYaxis().SetMaxDigits(3);        h_sig.GetXaxis().SetTitleFont(42);        h_sig.GetYaxis().SetTitleFont(42);
-        h_sig.GetYaxis().SetRangeUser(0,1.25*max(h_sig.GetMaximum(),h_bkg.GetMaximum()))        
+
         h_bkg.Draw("histsame");
 
         if ecm in ["340","345","365"]:
-            h_bkg1.Draw("histsame");
+            h_bkg1.Draw("histsame");             h_bkg2.Draw("histsame");
 
 
     t2a = drawSLatex(0.2,0.85,"#bf{FCC-ee} #it{Simulation (Delphes)}",0.04);
@@ -104,7 +110,7 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,pstyle,sel):
     legend.Draw("same");
     #hs.SetMinimum(0.01);
     Canv.Update();
-    plotsdir=f"/eos/user/a/anmehta/www/FCC_top/{date}_paper"
+    plotsdir=f"/eos/user/a/anmehta/www/FCC_top/{date}_variables"
     if not os.path.isdir(plotsdir):        os.system("mkdir %s"%plotsdir);  os.system('cp ~/public/index.php %s/'%plotsdir)
 
     if "norm" in pstyle : pf="_norm"
@@ -114,7 +120,7 @@ def stackPlot(fname,vname,lumi,channel,config,ecm,useLog,showInt,pstyle,sel):
 
 def getHist(isSig,proc,vname,h_name,xsec_sig,channel,config,ecm,lumi):
     sf=1.0;sumW=1.0;xsec=1.0;
-    f_in=ROOT.TFile.Open(f'/eos/cms/store/cmst3/group/top/FCC_tt_threshold/output_condor_20241121_1142/WbWb/outputs/histmaker/{channel}/{config}/{proc}.root')
+    f_in=ROOT.TFile.Open(f'/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20250212_1138/WbWb/outputs/histmaker/{channel}/{config}/{proc}.root')
     print("looking for ",vname, "in \t",f_in.GetName())
     h_in=f_in.Get(vname).Clone(h_name);
     xsec=f_in.Get('crossSection').GetVal();
@@ -126,7 +132,7 @@ def getHist(isSig,proc,vname,h_name,xsec_sig,channel,config,ecm,lumi):
     sf=xsec*lumi/N_tot #sumW
     print('xsec\t',xsec,'\t n_tot\t',N_tot,"\t lumi\t",lumi,"\t sf \t",sf)
     h_in.Scale(sf);    h_in.SetDirectory(0);    f_in.Close();
-    print('integral after scaling',h_in.Integral())
+    #print('integral after scaling',h_in.Integral())
     return h_in
 
 def cards(mkplots,lumi,xsec_sig,channel,sel,config,bWP,ecm,logy,vname,xtitle,showInt,pstyle):
@@ -136,7 +142,8 @@ def cards(mkplots,lumi,xsec_sig,channel,sel,config,bWP,ecm,logy,vname,xtitle,sho
     h_bkg  = getHist(False,f'p8_ee_WW_ecm{ecm}',vname,"x_bkg_%s"%channel,1.0,channel,config,ecm,lumi)
     if ecm in ["340","345","365"]:
         h_bkg1 = getHist(False,f'wzp6_ee_WWZ_Zbb_ecm{ecm}',vname,"x_bkg1_%s"%channel,1.0,channel,config,ecm,lumi)
-        h_obs.Add(h_bkg1)
+        h_bkg2 = getHist(False,f'wzp6_ee_qq_ecm{ecm}',vname,"x_bkg2_%s"%channel,1.0,channel,config,ecm,lumi)
+        h_obs.Add(h_bkg1);h_obs.Add(h_bkg2)
         
     h_obs.Add(h_bkg); 
     print('bkg',h_bkg.Integral())
@@ -145,7 +152,7 @@ def cards(mkplots,lumi,xsec_sig,channel,sel,config,bWP,ecm,logy,vname,xtitle,sho
     f_out.cd();
     h_sig.Write();    h_bkg.Write();
     if ecm in ["340","345","365"]:
-        h_bkg1.Write();
+        h_bkg1.Write();h_bkg2.Write();
     h_obs.Write();    f_out.Close();
     if mkplots:
         stackPlot(fout_name,vname,lumi,channel,config,ecm,logy,showInt,pstyle,sel)
