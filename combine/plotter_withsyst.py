@@ -209,7 +209,7 @@ def cards(mkplots,lumi,xsec_sig,channel,sel,bWP,ecm,logy,vname,xtitle,showInt,no
     h_obs.Add(h_bkg2)
 
 
-    p8_ee_ZZ={'345':0.6428 , '340':0.6428 ,'365':0.6428 }
+    p8_ee_ZZ={'345':0.932 , '340':0.916 ,'365':0.6428 }
     h_bkg3           = getHist(False,f'sig_vs_wwz/p8_ee_ZZ_ecm{ecm}',vname,f"x_zz_{channel}",p8_ee_ZZ[ecm],channel,ecm,lumi)
     h_bkg3_btagUp    = getHist(False,f'sig_vs_wwz_btagup/p8_ee_ZZ_ecm{ecm}',vname_btagUp,f"x_zz_{channel}_btagUp",p8_ee_ZZ[ecm],channel,ecm,lumi)
     h_bkg3_btagDown  = getHist(False,f'sig_vs_wwz_btagdown/p8_ee_ZZ_ecm{ecm}',vname_btagDown,f"x_zz_{channel}_btagDown",p8_ee_ZZ[ecm],channel,ecm,lumi)
