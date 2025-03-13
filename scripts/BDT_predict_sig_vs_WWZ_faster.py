@@ -19,7 +19,8 @@ outdir = '/eos/cms/store/cmst3/group/top//FCC_tt_threshold/BDT_model/'
 
 ecm_model='345'
 
-base_dir="/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20241121_1142/WbWb/"
+base_dir="/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20250212_1138/WbWb/"
+#base_dir="/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20250130_1158/WbWb/"
 
 
 def calcsumW(proc,channel):
@@ -65,14 +66,19 @@ def evaluate(proc,ecm,channel,variation):
     infiles = infiles.drop(columns=[f for f in infiles.columns if f not in branches_toTrain])
     print("columns to be used are \t",infiles.columns)
     pf_model="sig_vs_wwz"
-    pf=pf_model
+    pf=pf_model#+"_njcut"
     if len(variation) > 0:
-        pf=pf_model+"_btag"+variation
+        pf=pf+"_btag"+variation
+        
+        
     print('runnning for %s %s channel'%(pf,channel))
     bst = XGBClassifier()
 
-    print('model used is',f'{outdir}/model_{channel}_345{pf_model}_nolepvars.json')
-    bst.load_model(f'{outdir}/model_{channel}_345{pf_model}_nolepvars.json')
+    #bst.load_model(f'{outdir}/model_{channel}_345{pf_model}_nolepvars.json')
+    bst.load_model(f'{outdir}/model_{channel}_345{pf_model}_nolepvars_Feb2025.json')
+    #print('model used is',f'{outdir}/model_{channel}_345{pf_model}_nolepvars_njcut_Feb2025.json')
+    #bst.load_model(f'{outdir}/model_{channel}_345{pf_model}_nolepvars_njcut_Feb2025.json')
+
 
     preds = bst.predict_proba(infiles)
     pd_s = (infiles) 
@@ -107,28 +113,38 @@ def parallel_evaluate(args):
 def main(ncores=4):
     tasks = []
     for ecm in ['340', '345', '365']:
-        for ch in ["semihad"]: #,'had']:
-            for var in ["","down","up"]: #,""]:
-                sig=f"wzp6_ee_WbWb_ecm{ecm}"
-                bkg=f"wzp6_ee_WWZ_Zbb_ecm{ecm}"
-                bkg1=f"p8_ee_WW_ecm{ecm}"
-                evaluate(sig, ecm, ch,var)
-                evaluate(bkg1, ecm, ch,var)
-                evaluate(bkg, ecm, ch,var)
-
-                #procs=[];
-                #procs.append(f"wzp6_ee_WbWb_ecm{ecm}")
-                #procs.append(f"wzp6_ee_WWZ_Zbb_ecm{ecm}")
-                #procs.append(f"p8_ee_WW_ecm{ecm}")
-                #procs.append(f"p8_ee_WW_PSup_ecm{ecm}")
-                #procs.append(f"p8_ee_WW_PSdown_ecm{ecm}")
-                #procs.append(f"wzp6_ee_WbWb_PSup_ecm{ecm}")
-                #procs.append(f"wzp6_ee_WbWb_PSdown_ecm{ecm}")
-                #procs.append(f"wzp6_ee_WbWb_mtop173p5_ecm{ecm}")
-                #procs.append(f"wzp6_ee_WbWb_mtop171p5_ecm{ecm}")
-                #for proc in procs:
-                 #   print("this is what i will run on ",proc)
-                    #evaluate(proc, ecm, ch,var)
+        for ch in ["had",'semihad']:
+            for var in ["","down","up"]: 
+#                sig=f"wzp6_ee_WbWb_ecm{ecm}"
+#                bkg=f"wzp6_ee_WWZ_Zbb_ecm{ecm}"
+#                bkg1=f"p8_ee_WW_ecm{ecm}"
+#                bkg2=f"wzp6_ee_qq_ecm{ecm}"
+#                bkg3=f"wzp6_ee_qq_PSdown_ecm{ecm}"
+#                bkg4=f"wzp6_ee_qq_PSup_ecm{ecm}"
+#                
+#                evaluate(sig, ecm, ch,var)
+#                evaluate(bkg1, ecm, ch,var)
+#                evaluate(bkg2, ecm, ch,var)
+#                evaluate(bkg3, ecm, ch,var)
+#                evaluate(bkg4, ecm, ch,var)
+                #evaluate(bkg, ecm, ch,var)
+                procs=[];
+#                procs.append(f"wzp6_ee_WbWb_ecm{ecm}")
+#                procs.append(f"wzp6_ee_WWZ_Zbb_ecm{ecm}")
+#                procs.append(f"p8_ee_WW_ecm{ecm}")
+#                procs.append(f"p8_ee_WW_PSup_ecm{ecm}")
+#                procs.append(f"p8_ee_WW_PSdown_ecm{ecm}")
+#                procs.append(f"wzp6_ee_WbWb_PSup_ecm{ecm}")
+#                procs.append(f"wzp6_ee_WbWb_PSdown_ecm{ecm}")
+#                procs.append(f"wzp6_ee_WbWb_mtop173p5_ecm{ecm}")
+#                procs.append(f"wzp6_ee_WbWb_mtop171p5_ecm{ecm}")
+#                procs.append(f"wzp6_ee_qq_ecm{ecm}")
+#                procs.append(f"wzp6_ee_qq_PSdown_ecm{ecm}")
+#                procs.append(f"wzp6_ee_qq_PSdown_ecm{ecm}")
+                procs.append(f"p8_ee_ZZ_ecm{ecm}")
+                for proc in procs:
+                    print("this is what i will run on ",proc)
+                    evaluate(proc, ecm, ch,var)
                                 
                     #tasks.append((proc, ecm, ch,var))
     #with Pool(ncores) as pool:

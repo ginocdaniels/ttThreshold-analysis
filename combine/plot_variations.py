@@ -3,13 +3,21 @@ from array import array
 import math
 
 fitvars={
-    'zerob':['singlebin',"N_{events}"],
-    'oneb':['njets_R5',"N_{jets}"],
-    'twob':['BDT_score',"BDT"], #mbbar
+    'zerob_had':['njets_R5',"N_{jets}"],
+    'oneb_had':['njets_R5',"N_{jets}"],
+    'twob_had':['njets_R5',"N_{jets}"], #mbbar
+    'zerob_semihad':['singlebin',"N_{events}"],
+    'oneb_semihad':['njets_R5',"N_{jets}"],
+    'twob_semihad':['njets_R5',"N_{jets}"],
 }
 
 fancyname={'singlebin': "N_{events}",
            'BDT_score': "BDT",
+           "zerob":"N_{bjets}=0",
+           "oneb":"N_{bjets}=1",
+           "twob":"N_{bjets}=2",
+           'njgt0':"N_{jets}#geq1",
+           'njgt1':"N_{jets}#geq2",
            "njets_R5":"N_{jets}"}
 
 import datetime
@@ -35,17 +43,18 @@ def histStyle(hist,xtitle,color,lstyle):
     #hist.Scale(1.0/hist.Integral())
     return hist
 
-def drawhists(ecm,channel,hname,syst,sel,vname,xtitle):
+def drawhists(ecm,channel,hname_nom,hname,syst,sel,vname,xtitle):
     if ecm == "365":
         lumi=2650*1000
         lumi_txt=f'{lumi/1e6:.1f}'
     else:
         lumi=41.0*1000
         lumi_txt=f'{lumi/1e3:.1f}'
-
-    filetoread = ROOT.TFile(f'rootfiles/{channel}_{sel}_effp9_{sel}_{vname}_beffp9_{ecm}.root','READ')
+    #semihad_njgt0_effp9_zerob_singlebin_345.root
+    esel="njgt0" if channel == "semihad" else "njgt1"
+    filetoread = ROOT.TFile(f'rootfiles/{channel}_{esel}_effp9_{sel}_{vname}_{ecm}.root','READ')
     print(filetoread.GetName())
-    h_nom = filetoread.Get(f'x_{hname}')
+    h_nom = filetoread.Get(f'x_{hname_nom}')
     h_up  = filetoread.Get(f'x_{hname}_{syst}Up')
     h_dn  = filetoread.Get(f'x_{hname}_{syst}Down')
     
@@ -81,9 +90,9 @@ def drawhists(ecm,channel,hname,syst,sel,vname,xtitle):
     legend = ROOT.TLegend(0.2,0.75,0.85,0.85);
     legend.SetNColumns(3);legend.SetFillColor(0);legend.SetFillStyle(0); legend.SetShadowColor(0);   legend.SetLineColor(0);
     legend.SetTextFont(42);        legend.SetBorderSize(0);   legend.SetTextSize(0.04);
-    legend.AddEntry('NULL',f'{channel} with {sel}','')
+    legend.AddEntry('NULL',f'{channel}; '+fancyname[sel]+fancyname[esel],'')
     #legend.AddEntry('NULL',f'ecm: {ecm} GeV','')
-    legend.AddEntry('NULL',f'proc: {hname}','')
+    legend.AddEntry('NULL',f'proc: {hname_nom}','')
     legend.AddEntry('NULL',f'uncert: {syst}','')
     legend.AddEntry(h_n,'nom','l')
     legend.AddEntry(h_u,'up','l')
@@ -108,8 +117,8 @@ def drawhists(ecm,channel,hname,syst,sel,vname,xtitle):
     hUp.GetXaxis().SetLabelSize(0.1);    hUp.GetXaxis().SetTitleSize(0.12);    hUp.GetXaxis().SetTitleOffset(0.9);
     hUp.GetYaxis().SetRangeUser(0.8,1.52);     hUp.GetYaxis().SetNdivisions(607);    ROOT.gStyle.SetErrorX(0.5);
 
-    Canv.Print(f"{plotsdir}/{sel}_{hname}_{syst}_{channel}_{ecm}_{vname}.pdf")
-    Canv.Print(f"{plotsdir}/{sel}_{hname}_{syst}_{channel}_{ecm}_{vname}.png")
+    Canv.Print(f"{plotsdir}/{sel}_{hname_nom}_{syst}_{channel}_{ecm}_{vname}.pdf")
+    Canv.Print(f"{plotsdir}/{sel}_{hname_nom}_{syst}_{channel}_{ecm}_{vname}.png")
 
     return True
 
@@ -122,13 +131,22 @@ if __name__ == '__main__':
 #    parser.add_option('-s',  '--sel',      dest='sel' ,    type='string',         default='incl',       help='sig/cr')
 #    parser.add_option('-e',  '--ecm',      dest='ecm' ,    type='string',         default='345',        help='ecm')
 #    (opts, args) = parser.parse_args()
+
     for ecm in ['340','345','365']:
-        for sel in ['zerob','oneb','twob']:
-            for ch in ['semihad','had']:
-                for sel in fitvars.keys(): #['singlebin','njets_R5','BDT_score']: #,'mbbar','nbjets_R5_eff_p9',
-                    drawhists(ecm,ch,'sig','ps',sel,fitvars[sel][0],fitvars[sel][1])
-                    #drawhists(ecm,ch,f'bkg_{ch}','ps',sel,fitvars[sel][0],fitvars[sel][1])
-                    drawhists(ecm,ch,f'bkg_{ch}','btag',sel,fitvars[sel][0],fitvars[sel][1])
-                    drawhists(ecm,ch,'sig','btag',sel,fitvars[sel][0],fitvars[sel][1])
-                    drawhists(ecm,ch,'sig','topmass',sel,fitvars[sel][0],fitvars[sel][1])
-                    drawhists(ecm,ch,f'bkg1_{ch}','btag',sel,fitvars[sel][0],fitvars[sel][1])
+        #for sel in ['zerob','oneb','twob']:
+        #for ch in ['semihad','had']:                
+        for iW in fitvars.keys(): #['singlebin','njets_R5','BDT_score']: #,'mbbar','nbjets_R5_eff_p9',
+            ch=iW.split('_')[-1]
+            sel=iW.split('_')[0]
+            #isel=sel+'_'+ch
+            #if not isel in fitvars.keys(): continue
+            drawhists(ecm,ch,'sig','sig_sig','ps',sel,fitvars[iW][0],fitvars[iW][1])
+            drawhists(ecm,ch,'sig','sig_sig','ps',sel,fitvars[iW][0],fitvars[iW][1])
+            drawhists(ecm,ch,f'qq_{ch}',f'qq_{ch}_qq_{ch}','ps',sel,fitvars[iW][0],fitvars[iW][1])
+            drawhists(ecm,ch,f'ww_{ch}',f'ww_{ch}_ww_{ch}','ps',sel,fitvars[iW][0],fitvars[iW][1])
+            drawhists(ecm,ch,f'wwz_{ch}',f'wwz_{ch}','btag',sel,fitvars[iW][0],fitvars[iW][1])
+            drawhists(ecm,ch,'sig','sig','btag',sel,fitvars[iW][0],fitvars[iW][1])
+            drawhists(ecm,ch,f'qq_{ch}',f'qq_{ch}','btag',sel,fitvars[iW][0],fitvars[iW][1])
+            drawhists(ecm,ch,f'ww_{ch}',f'ww_{ch}','btag',sel,fitvars[iW][0],fitvars[iW][1])
+            drawhists(ecm,ch,f'wwz_{ch}',f'wwz_{ch}','btag',sel,fitvars[iW][0],fitvars[iW][1])
+            drawhists(ecm,ch,'sig','sig_sig','topmass',sel,fitvars[iW][0],fitvars[iW][1])
