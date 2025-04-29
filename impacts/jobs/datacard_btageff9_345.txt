@@ -1,0 +1,35 @@
+Combination of datacard_had_btageff9_345.txt  datacard_semihad_btageff9_345.txt
+imax 6 number of bins
+jmax 8 number of processes minus 1
+kmax 6 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes *        ch1_ch1  /afs/cern.ch/work/a/anmehta/public/FCC_ver2/FCCAnalyses/ttThreshold-analysis/combine/rootfiles/had_njgt1_effp9_zerob_njets_R5_345.root x_$PROCESS x_$PROCESS_$SYSTEMATIC
+shapes *        ch1_ch2  /afs/cern.ch/work/a/anmehta/public/FCC_ver2/FCCAnalyses/ttThreshold-analysis/combine/rootfiles/had_njgt1_effp9_oneb_njets_R5_345.root x_$PROCESS x_$PROCESS_$SYSTEMATIC
+shapes *        ch1_ch3  /afs/cern.ch/work/a/anmehta/public/FCC_ver2/FCCAnalyses/ttThreshold-analysis/combine/rootfiles/had_njgt1_effp9_twob_njets_R5_345.root x_$PROCESS x_$PROCESS_$SYSTEMATIC
+shapes *        ch2_ch1  /afs/cern.ch/work/a/anmehta/public/FCC_ver2/FCCAnalyses/ttThreshold-analysis/combine/rootfiles/semihad_njgt0_effp9_zerob_singlebin_345.root x_$PROCESS x_$PROCESS_$SYSTEMATIC
+shapes *        ch2_ch2  /afs/cern.ch/work/a/anmehta/public/FCC_ver2/FCCAnalyses/ttThreshold-analysis/combine/rootfiles/semihad_njgt0_effp9_oneb_njets_R5_345.root x_$PROCESS x_$PROCESS_$SYSTEMATIC
+shapes *        ch2_ch3  /afs/cern.ch/work/a/anmehta/public/FCC_ver2/FCCAnalyses/ttThreshold-analysis/combine/rootfiles/semihad_njgt0_effp9_twob_njets_R5_345.root x_$PROCESS x_$PROCESS_$SYSTEMATIC
+----------------------------------------------------------------------------------------------------------------------------------
+bin          ch1_ch1  ch1_ch2  ch1_ch3  ch2_ch1  ch2_ch2  ch2_ch3
+observation  -1       -1       -1       -1       -1       -1     
+----------------------------------------------------------------------------------------------------------------------------------
+bin                                ch1_ch1      ch1_ch1      ch1_ch1      ch1_ch1      ch1_ch1      ch1_ch2      ch1_ch2      ch1_ch2      ch1_ch2      ch1_ch2      ch1_ch3      ch1_ch3      ch1_ch3      ch1_ch3      ch1_ch3      ch2_ch1      ch2_ch1      ch2_ch1      ch2_ch1      ch2_ch1      ch2_ch2      ch2_ch2      ch2_ch2      ch2_ch2      ch2_ch2      ch2_ch3      ch2_ch3      ch2_ch3      ch2_ch3      ch2_ch3    
+process                            sig          ww_had       wwz_had      qq_had       zz_had       sig          ww_had       wwz_had      qq_had       zz_had       sig          ww_had       wwz_had      qq_had       zz_had       sig          ww_semihad   wwz_semihad  qq_semihad   zz_semihad   sig          ww_semihad   wwz_semihad  qq_semihad   zz_semihad   sig          ww_semihad   wwz_semihad  qq_semihad   zz_semihad 
+process                            0            1            2            3            4            0            1            2            3            4            0            1            2            3            4            0            5            6            7            8            0            5            6            7            8            0            5            6            7            8          
+rate                               -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1           -1         
+----------------------------------------------------------------------------------------------------------------------------------
+btag                    shape      1.0          -            1.0          1.0          1.0          1.0          -            1.0          1.0          1.0          1.0          -            1.0          1.0          1.0          1.0          -            1.0          1.0          1.0          1.0          -            1.0          1.0          1.0          1.0          -            1.0          1.0          1.0        
+lumi                    lnN        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001        1.001      
+norm_zz_had             lnN        -            -            -            -            1.03         -            -            -            -            1.03         -            -            -            -            1.03         -            -            -            -            -            -            -            -            -            -            -            -            -            -            -          
+norm_zz_semihad         lnN        -            -            -            -            -            -            -            -            -            -            -            -            -            -            -            -            -            -            -            1.05         -            -            -            -            1.05         -            -            -            -            1.05       
+qq_semihad_norm         lnN        -            -            -            -            -            -            -            -            -            -            -            -            -            -            -            -            -            -            1.05         -            -            -            -            1.05         -            -            -            -            1.05         -          
+wwz_norm                lnN        1.0          -            1.03         -            -            -            -            1.03         -            -            -            -            1.03         -            -            1.0          -            1.03         -            -            -            -            1.03         -            -            -            -            1.03         -            -          
+norm_qq_had   rateParam ch1_ch1 qq_had 1 [0,5]
+norm_ww_had   rateParam ch1_ch1 ww_had 1 [0,5]
+norm_qq_had   rateParam ch1_ch2 qq_had 1 [0,5]
+norm_ww_had   rateParam ch1_ch2 ww_had 1 [0,5]
+norm_qq_had   rateParam ch1_ch3 qq_had 1 [0,5]
+norm_ww_had   rateParam ch1_ch3 ww_had 1 [0,5]
+norm_ww_semihad  rateParam ch2_ch1 ww_semihad 1 [0,5]
+norm_ww_semihad  rateParam ch2_ch2 ww_semihad 1 [0,5]
+norm_ww_semihad  rateParam ch2_ch3 ww_semihad 1 [0,5]

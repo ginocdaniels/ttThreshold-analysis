@@ -1,0 +1,29 @@
+imax * number of bins
+jmax * number of processes minus 1
+kmax * number of nuisance parameters
+---------------------------------------------------------------------------------------------------------------------------------- 
+shapes *    ch1  /afs/cern.ch/work/a/anmehta/public/FCC_ver2/FCCAnalyses/ttThreshold-analysis/combine/rootfiles/CHANNELNAME_njgt1_effp9_zerob_njets_R5_ECM.root x_$PROCESS x_$PROCESS_$SYSTEMATIC
+shapes *    ch2  /afs/cern.ch/work/a/anmehta/public/FCC_ver2/FCCAnalyses/ttThreshold-analysis/combine/rootfiles/CHANNELNAME_njgt1_effp9_oneb_njets_R5_ECM.root  x_$PROCESS x_$PROCESS_$SYSTEMATIC
+shapes *    ch3  /afs/cern.ch/work/a/anmehta/public/FCC_ver2/FCCAnalyses/ttThreshold-analysis/combine/rootfiles/CHANNELNAME_njgt1_effp9_twob_njets_R5_ECM.root  x_$PROCESS x_$PROCESS_$SYSTEMATIC
+
+----------------------------------------------------------------------------------------------------------------------------------
+bin          ch1    ch2  ch3
+observation  -1     -1   -1
+----------------------------------------------------------------------------------------------------------------------------------
+bin                             ch1    ch1		ch1		ch1		ch1		ch2	ch2	       ch2	       ch2	      ch2		ch3    ch3	      ch3	       ch3	      ch3
+process                         sig    ww_CHANNELNAME  wwz_CHANNELNAME qq_CHANNELNAME	zz_CHANNELNAME    sig   ww_CHANNELNAME wwz_CHANNELNAME qq_CHANNELNAME zz_CHANNELNAME 	sig    ww_CHANNELNAME wwz_CHANNELNAME  qq_CHANNELNAME zz_CHANNELNAME
+process                         0      1   		2   	       3 	       	4	    	  0     1    	       2  	       3	      4    		0      1  	      2		       3	      4
+rate                            -1    -1  		-1  	       -1	        -1   	    	  -1	-1	       -1 	       -1	      -1    		-1     -1 	      -1               -1	      -1
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+lumi                    lnN     1.0002 1.0002  1.0002  1.0002 1.0002 1.0002   1.0002 1.0002 1.0002 1.0002 1.0002  1.0002  1.0002 1.0002  1.0002
+btag			shape	1     -	     1	   1	  1	1	-     1	    1	 1	1	 -    1      1	   1
+wwz_norm		lnN	1     -	     1.03  -	  -	-	-     1.03  -	 -	-	 -    1.03   -	   -
+norm_zz_CHANNELNAME	lnN	-     -	    -	   -	  1.03	-	-     -	    -	 1.03	-	 -    -	     -	   1.03
+
+#sig_ps			shape	1     -	    -	   -	   1	  -	-	-	1    -	  -	-
+#ww_had_ps		shape	-     1	    -	   -	   -	 1	-	-	-    1	  -	-
+#qq_had_ps		shape	-     -	    -	   1	   -	 -	-	1	-    -	  -	1
+#qq_norm			lnN	-     -	    - 	   1.05	   -	  -	-	1.05    -    -	  -	1.05   
+#norm_zz_CHANNELNAME  rateParam  * zz_CHANNELNAME 1 [0,5]
+norm_ww_CHANNELNAME  rateParam  * ww_CHANNELNAME 1 [0,5]
+norm_qq_CHANNELNAME  rateParam  * qq_CHANNELNAME 1 [0,5]
