@@ -355,12 +355,12 @@ class RDFanalysis:
 
         df = df.Define(
             "muons_sel_iso",
-            "FCCAnalyses::ZHfunctions::sel_iso(0.7)(muons_sel, muons_iso)",
+            "FCCAnalyses::ZHfunctions::sel_iso(0.25)(muons_sel, muons_iso)",
         )
 
         df = df.Define(
             "electrons_sel_iso",
-            "FCCAnalyses::ZHfunctions::sel_iso(0.7)(electrons_sel, electrons_iso)",
+            "FCCAnalyses::ZHfunctions::sel_iso(0.25)(electrons_sel, electrons_iso)",
         )
 
         if channel == "had":
@@ -561,10 +561,16 @@ class RDFanalysis:
         df = df.Define("jets_R5_ltag_true", "JetTaggingUtils::get_ltag({}, 1.0)".format('jets_R5_pflavor'))
         df = df.Define("jets_R5_gtag_true", "JetTaggingUtils::get_gtag({}, 1.0)".format('jets_R5_pflavor'))
 
-        df = df.Define("jets_R5_btag_eff_p9", "JetTaggingUtils::get_btag({}, .9)".format('jets_R5_pflavor'))
-        df = df.Define("jets_R5_btag_eff_p89", "JetTaggingUtils::get_btag({}, .89)".format('jets_R5_pflavor'))
-        df = df.Define("jets_R5_btag_eff_p91", "JetTaggingUtils::get_btag({}, .91)".format('jets_R5_pflavor'))
-
+        b_eff = .95
+        c_eff = 10**-1.5
+        l_eff = 10**-3
+        g_eff = 10**-1.7
+        uncert_b_eff = 0.01
+        
+        df = df.Define("jets_R5_btag_eff_p9",  "JetTaggingUtils::get_btag({},{},{},{},{})".format('jets_R5_pflavor', b_eff, c_eff, l_eff, g_eff))
+        df = df.Define("jets_R5_btag_eff_p89", "JetTaggingUtils::get_btag({},{},{},{},{})".format('jets_R5_pflavor', b_eff-uncert_b_eff, c_eff, l_eff, g_eff))
+        df = df.Define("jets_R5_btag_eff_p91", "JetTaggingUtils::get_btag({},{},{},{},{})".format('jets_R5_pflavor', b_eff+uncert_b_eff, c_eff, l_eff, g_eff))
+        
         df = df.Define("jets_R5_btagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_true,{})".format(jetClusteringHelper_R5.jets))
         df = df.Define("jets_R5_ctagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ctag_true,{})".format(jetClusteringHelper_R5.jets))
         df = df.Define("jets_R5_ltagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ltag_true,{})".format(jetClusteringHelper_R5.jets))
