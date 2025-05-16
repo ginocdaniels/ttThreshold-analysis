@@ -146,7 +146,7 @@ struct sel_iso {
     float m_max_iso = .25;
     Vec_rp operator() (Vec_rp in, Vec_f iso);
   };
-
+// what produces the sel iso value that we're even checking for the first place and how do we get the .25 as our max?
 sel_iso::sel_iso(float arg_max_iso) : m_max_iso(arg_max_iso) {};
 ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>  sel_iso::operator() (Vec_rp in, Vec_f iso) {
     Vec_rp result;

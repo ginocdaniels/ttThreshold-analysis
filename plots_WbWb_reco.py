@@ -5,7 +5,8 @@ date = datetime.date.today().isoformat()
 
 from treemaker_WbWb_reco import available_ecm, all_branches as branchList
 #branchList=[]
-branchList.append('BDT_score')
+
+# branchList.append('BDT_score')
 #branchList.append('nbjets')
 #branchList.append('nbjets_sig')
 #branchList.append('nbjets_cr')
@@ -29,10 +30,10 @@ def if3(cond, iftrue, iffalse):
     return iftrue if cond else iffalse
 
 
-channel = 'CHANNELHERE' #'had' if hadronic else 'semihad'
-ecm = ECMHERE
-useflav=useflavHERE  #here it means including all flav-related info
-usebtagged=usebtaggedHERE
+channel = '' #'had' if hadronic else 'semihad'
+ecm = 345
+# useflav=useflavHERE  #here it means including all flav-related info
+# usebtagged=usebtaggedHERE
 
 
 #channel = 'semihad'
@@ -46,8 +47,8 @@ usebtagged=usebtaggedHERE
 ##amusebtagged=False
 ##amecm = 355
 
-pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
-pf=pf+"WPpt8"
+# pf="%s"%if3(usebtagged,'withbtaggedJet',if3(useflav,'withflav','noflav'))
+# pf=pf+"WPpt8"
 
 
 
@@ -58,9 +59,15 @@ delphesVersion = "3.4.2"
 energy = ecm
 collider = "FCC-ee"
 formats = ["png","pdf","root"]
-inputDir  = '/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/outputs/histmaker/{}/{}/'.format(channel,pf)
+
+###
+inputDir= "./outputs/histmaker/WbWb/semihad"
+
+# inputDir  = '/eos/cms/store/cmst3/group/top/anmehta/FCC//output_condor_06092024/WbWb/outputs/histmaker/{}/{}/'.format(channel,pf)
 print('this is the inputDir',inputDir)
-outdir    = '/eos/user/a/anmehta/www/FCC_top/{}/{}/{}/{}/'.format(date,channel,pf,ecm)
+####
+# outdir    = '/eos/user/a/anmehta/www/FCC_top/{}/{}/{}/{}/'.format(date,channel,pf,ecm)
+outdir= './outputs/plots/WbWb/semihad'
 print('saving plots here',outdir)
 
 plotStatUnc = True
@@ -69,6 +76,12 @@ colors["WbWb"] = ROOT.kRed
 colors["WW"] = ROOT.kBlue
 
 procs = {}
+# procs["signal"] = {"WbWb": ["wzp6_ee_WbWb_{}_ecm{}".format(ecm)]}
+# procs["backgrounds"] = {"WW": ["p8_ee_WW_ecm{}".format(ecm)]}
+
+
+
+
 procs["signal"] = {"WbWb": ["wzp6_ee_WbWb_{}_ecm{}".format(channel,ecm)]}
 procs["backgrounds"] = {"WW": ["p8_ee_WW_ecm{}".format(ecm)]}
 
@@ -79,6 +92,22 @@ legend["WbWb"] = "WbWb"
 legend["WW"] = "WW"
 
 hists = {}
+# for var in branchList:
+#     if var.startswith("D_Iso_Values_"):
+#         hists[".7 cut_"+var]= {
+#             "output": var+"_stack",
+#             "logy": True,
+#             "logx": True,
+#             "stack": False,
+#             "rebin": 1,
+#             "xmin": 0,
+#             "xmax": 20,
+#             "ymin": 0,
+#             "ymax": 1000,
+#             "xtitle": var,
+#             "ytitle": "Events",
+#         }
+
 
 
 for var in branchList:

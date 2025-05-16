@@ -86,9 +86,9 @@ class RDFanalysis:
 
         # define some aliases to be used later on
         df = df.Alias("Particle0", "Particle#0.index")
-        df = df.Alias("Particle1", "Particle#1.index")
+        # df = df.Alias("Particle1", "Particle#1.index")
         df = df.Alias("MCRecoAssociations0", "MCRecoAssociations#0.index")
-        df = df.Alias("MCRecoAssociations1", "MCRecoAssociations#1.index")
+        # df = df.Alias("MCRecoAssociations1", "MCRecoAssociations#1.index")
 
         # get all the leptons from the collectio
         df = df.Define("status1parts",           "FCCAnalyses::MCParticle::sel_genStatus(1)(Particle)")

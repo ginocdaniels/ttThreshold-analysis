@@ -1,6 +1,24 @@
 import os, copy
 import urllib
 
+'''
+        So currently the issue is that i have the particle data of of all the prompt/nonprompt leptons and i have to use that and get to the index for each and then convert those to the 
+        index of the reco particle and now that i have the reco particle index i can use the get function and the cone iso func to get the d_Iso values for the reco particles
+        
+
+        the problem that i am dealing with currently is getting form the mc particle date to the mc particle idnex and then i can use the mappings and essentially reset the index for the list for the entries
+        or jsut make an new list that has same size and has the indexes of the reco particles i need to figure this our or figure out how to track them
+        
+        
+        I have the list of indices_all_reco which is same length as the mc particles it essentially fills array with the index of the mc particle that corresponds to the reco particle
+        so then i cna hopefully use that and filter out all the particles that arent reconstructed then map that wit hthe association to get the reco particle index that passed
+        the filters and then i cna use that wit hthe get fucntion to get the reco  particle data and use that to calcualte d_iso values 
+        
+        indices_all_mc_corresponding_to_reco_particles gives us the index of the mc particles that have been reconstructed we can use this  somehow to get the reco particle index
+        we can use the association but the thing is that we do this first and so we still ahve to do all the filtering and then see waht we have left then match it we can prob look for a function or find one that can do this shit 
+        
+        
+        '''
 # list of processes
 all_processes = {
 #    "p8_ee_ZZ_ecm365":{ "fraction": 1,},
@@ -26,9 +44,9 @@ all_processes = {
 #     "wzp6_ee_WbWb_ecm340": {
 #         "fraction": 1,
 #     },
-#   "wzp6_ee_WbWb_ecm345": {
-#       "fraction": 1,
-#   },
+  "wzp6_ee_WbWb_ecm345": {
+      "fraction": 1,
+  },
 #    "wzp6_ee_WbWb_ecm350": {
 #        "fraction": 1,
 #    },
@@ -243,7 +261,7 @@ outputDir   = "outputs/treemaker/WbWb/{}".format(channel)
 
 
 # additional/costom C++ functions, defined in header files (optional)
-includePaths = ["examples/functions.h"]
+includePaths = ["examples/functions.h", "examples/truth_matching.h"]
 
 ## latest particle transformer model, trained on 9M jets in winter2023 samples
 model_name = "fccee_flavtagging_edm4hep_wc" #"fccee_flavtagging_edm4hep_wc_v1"
@@ -290,7 +308,17 @@ jetFlavourHelper = None
 jetFlavourHelper_R5 = None
 jetClusteringHelper = None
 jetClusteringHelper_R5 = None
+'''
+Understand Cone iso calc 
+ADD in D_ISO branch with all the d_Iso values of all the leptons
+and define it and add it in so it gets addded to the root file then re run it 
+after that change the histmaker and make a plot maker file to plot it quickly
+after that add in the truth matching information and make two separate plots for it 
 
+after that show matteo and also make sure that all momentum p>12 GeV are prompt particles
+prompt lep is from W and nonprompt from b
+
+'''
 all_branches = [
     "nlep", "lep_p", 'lep_theta', 'lep_phi',
     "missing_p", "missing_p_theta", "missing_p_phi",
@@ -306,7 +334,14 @@ all_branches = [
     "jet1_R5_isC","jet2_R5_isC","jet3_R5_isC","jet4_R5_isC","jet5_R5_isC","jet6_R5_isC",                
     "jet1_R5_isD","jet2_R5_isD","jet3_R5_isD","jet4_R5_isD","jet5_R5_isD","jet6_R5_isD",                                
     "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU","mbbar_p9","mbbar_p89","mbbar_p91", "bjet1_R5_true_p","ljet1_R5_true_p",
-    ]
+    "D_Iso_Values_muons", "D_Iso_Values_electrons_p", "D_Iso_Values_muons_p","all_reco_leptons_merged_tlv", "fromW_reco_indices","D_Iso_Values_Prompt", "D_Iso_Values_nonPrompt",
+    "gen_leps_status1_fromW", "index","matched_fromW_leptons",
+      ]
+
+
+
+
+
 
 if saveExclJets: all_branches+=[ "njets", "jet1_p", "jet2_p", "jet3_p","jet4_p","jet5_p","jet6_p",
     "jet1_theta", "jet2_theta", "jet3_theta","jet4_theta","jet5_theta","jet6_theta",
@@ -335,8 +370,65 @@ class RDFanalysis:
         # define some aliases to be used later on
         df = df.Alias("Muon0", "Muon#0.index")
         df = df.Alias("Electron0","Electron#0.index")
+        ## Find fraction of ones taht are cut make the d value optimized and find the ineefciecy add the prompt nonprompt together and find the fraction of erach that u ose with that cut 
+        # normalized them as well so that we can get a good estiamte of what the cut is
+        # all interesting proceses wz bb qq.
 
-        # get all the leptons from the collection
+        df = df.Alias("Particle0",           "Particle#0.index");          
+        df = df.Alias("MCParticles",         "Particle");     
+
+        df = df.Alias("MCRecoAssociations0", "MCRecoAssociations#0.index"); 
+        df = df.Alias("MCRecoAssociations1", "MCRecoAssociations#1.index")
+
+
+
+
+        
+    
+
+         
+        df=df.Define("index", "FCCAnalyses::ReconstructedParticle2MC::getRP2MC_index(MCRecoAssociations0, MCRecoAssociations1,ReconstructedParticles)")
+
+        df=df.Define("rec_lep_status1_fromW_data", "FCCAnalyses::ReconstructedParticle2MC::selRP_matched_to_list(Particle0, MCRecoAssociations0,MCRecoAssociations1, ReconstructedParticles, MCParticles)")
+
+        # df= df.Define("status2parts",           "FCCAnalyses::MCParticle::sel_genStatus(2)(MCParticles)")
+        # df= df.Define("gen_taus_status2",       "gen_leps_status1[abs(gen_leps_status1_mother_pdgId_non_prompt) == 15")
+        # df=df.Define("gen_taus_status2_mother_pdgId_non_prompt", "FCCAnalyses::MCParticle::get_leptons_origin(gen_taus_status2,MCParticles,Particle0)")
+        # df=
+
+
+
+
+
+
+
+        df= df.Define("status1parts",           "FCCAnalyses::MCParticle::sel_genStatus(1)(MCParticles)")
+        df= df.Define("gen_leps_status1",       "FCCAnalyses::MCParticle::sel_genleps(13,11, true)(status1parts)")
+        df = df.Define("ngen_leps_status1",      "FCCAnalyses::MCParticle::get_n(gen_leps_status1)")
+
+        # ## MC Leps from W info  with right reco indicies and same size as mc particle list but with 0 or -1 in other spots i can use this get leptons orgin func with the reco indices and then only be selecting from reco particles 
+        df= df.Define("gen_leps_status1_mother_pdgId_prompt", "FCCAnalyses::MCParticle::get_leptons_origin(gen_leps_status1,MCParticles,Particle0)")
+        df = df.Define("gen_leps_status1_fromW",       "FCCAnalyses::MCParticle::sel_genlepsfromW()(gen_leps_status1,gen_leps_status1_mother_pdgId_prompt)")
+        df = df.Define("ngen_leps_status1_fromW",      "FCCAnalyses::MCParticle::get_n(gen_leps_status1_fromW)")
+        df = df.Filter("ngen_leps_status1_fromW == 1")
+        df = df.Define("gen_leps_status1_p",      "FCCAnalyses::MCParticle::get_p(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_theta",  "FCCAnalyses::MCParticle::get_theta(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_phi",    "FCCAnalyses::MCParticle::get_phi(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_charge", "FCCAnalyses::MCParticle::get_charge(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_pdgId",  "FCCAnalyses::MCParticle::get_pdg(gen_leps_status1_fromW)")
+
+         ## MC leps from b info 
+        df=df.Define("gen_leps_status1_mother_pdgId_non_prompt", "FCCAnalyses::MCParticle::get_leptons_origin(gen_leps_status1,MCParticles,Particle0)")
+        df = df.Define("gen_leps_status1_from_b", "gen_leps_status1[abs(gen_leps_status1_mother_pdgId_non_prompt) == 511 || abs(gen_leps_status1_mother_pdgId_non_prompt) == 521 || abs(gen_leps_status1_mother_pdgId_non_prompt) == 531 || abs(gen_leps_status1_mother_pdgId_non_prompt) == 15]")
+        df= df.Define("gen_leps_status1_from_b_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_from_b)")
+        df= df.Define("gen_leps_status1_from_b_theta", "FCCAnalyses::MCParticle::get_theta(gen_leps_status1_from_b)")
+        df= df.Define("gen_leps_status1_from_b_phi", "FCCAnalyses::MCParticle::get_phi(gen_leps_status1_from_b)")
+        df= df.Define("gen_leps_status1_from_b_charge", "FCCAnalyses::MCParticle::get_charge(gen_leps_status1_from_b)")
+        df= df.Define("gen_leps_status1_from_b_pdgId", "FCCAnalyses::MCParticle::get_pdg(gen_leps_status1_from_b)")
+
+        #Calulated Delta R for REco particles and Gen and just comapre with a threshold with the lorentz vector functions
+        df= df.Define("tlv_fromW", "FCCAnalyses::MCParticle::get_tlv(gen_leps_status1_fromW)")
+        df= df.Define("tlv_from_b", "FCCAnalyses::MCParticle::get_tlv(gen_leps_status1_from_b)")
         df = df.Define(
             "muons_all",
             "FCCAnalyses::ReconstructedParticle::get(Muon0, ReconstructedParticles)",
@@ -345,7 +437,39 @@ class RDFanalysis:
             "electrons_all",
             "FCCAnalyses::ReconstructedParticle::get(Electron0, ReconstructedParticles)",
         )
+        df=df.Define("all_reco_leptons_merged", "FCCAnalyses::ReconstructedParticle::merge(muons_all, electrons_all)")
 
+        
+        df=df.Define("all_reco_leptons_merged_tlv", "FCCAnalyses::ReconstructedParticle::get_tlv(all_reco_leptons_merged)")
+
+
+
+        
+        df = df.Define("fromW_reco_indices",
+               "FCCAnalyses::TruthMatching::match_leptons(tlv_fromW, all_reco_leptons_merged_tlv, 0.01)")
+        df = df.Define("from_b_reco_indices",
+               "FCCAnalyses::TruthMatching::match_leptons(tlv_from_b, all_reco_leptons_merged_tlv, 0.01)")
+        
+
+
+        df = df.Define("matched_fromW_leptons",
+               "ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;"
+               "for (size_t i = 0; i < fromW_reco_indices.size(); ++i) {"
+               "  int idx = fromW_reco_indices[i];"
+               "  if (idx >= 0) result.push_back(all_reco_leptons_merged[idx]);"
+               "} return result;")
+        
+
+        df = df.Define("matched_from_b_leptons",
+               "ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;"
+               "for (size_t i = 0; i < from_b_reco_indices.size(); ++i) {"
+               "  int idx = from_b_reco_indices[i];"
+               "  if (idx >= 0) result.push_back(all_reco_leptons_merged[idx]);"
+               "} return result;")
+        
+        df= df.Define("D_Iso_Values_Prompt", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .7)(matched_fromW_leptons, ReconstructedParticles)")
+        df= df.Define("D_Iso_Values_nonPrompt", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .7)(matched_from_b_leptons, ReconstructedParticles)")
+        
         # select leptons with momentum > 12 GeV
         df = df.Define(
             "muons_sel",
@@ -356,6 +480,24 @@ class RDFanalysis:
             "electrons_sel",
             "FCCAnalyses::ReconstructedParticle::sel_p(12)(electrons_all)",
         )
+        df = df.Define(
+            "muons_sel_3",
+            "FCCAnalyses::ReconstructedParticle::sel_p(3)(muons_all)",
+        )
+
+        df = df.Define(
+            "electrons_sel_3",
+            "FCCAnalyses::ReconstructedParticle::sel_p(3)(electrons_all)",
+        )
+
+
+
+
+        df = df.Define("D_Iso_Values_electrons", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .7)(electrons_sel_3, ReconstructedParticles)")
+        df = df.Define("D_Iso_Values_muons", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .7)(muons_sel_3, ReconstructedParticles)")
+
+        df = df.Define("D_Iso_Values_electrons_p", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .7)(electrons_sel, ReconstructedParticles)")
+        df = df.Define("D_Iso_Values_muons_p", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .7)(muons_sel, ReconstructedParticles)")
 
         # compute the muon isolation and store muons with an isolation cut of 0df = df.25 in a separate column muons_sel_iso
         df = df.Define(

@@ -7,7 +7,7 @@ def if3(cond, iftrue, iffalse):
 
 
 channel = 'CHANNELHERE' 
-ecm = 'ECMHERE'
+ecm = '345'
 
 pf='CONFHERE'
 
@@ -20,15 +20,21 @@ print("these are the procs",processList)
 procDict = "FCCee_procDict_winter2023_IDEA.json"
 
 # Define the input dir (optional)
-basedir="/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20250212_1138/"
+# basedir="/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20250212_1138/"
+
 #basedir="/eos/cms/store/cmst3/group/top//FCC_tt_threshold/output_condor_20250130_1158/"
 #basedir="/eos/cms/store/cmst3/group/top/FCC_tt_threshold/output_condor_20241121_1142"
 
-inputDir="{}/WbWb/{}/{}/".format(basedir,channel,pf)
+# inputDir="{}/WbWb/{}/{}/".format(basedir,channel,pf)
+
+inputDir="./outputs/treemaker/WbWb/semihad/" #hardcoded test 
+
 print("this is the inputDir",inputDir)
 # Optional: output directory, default is local running directory
-outputDir = "{}/WbWb/outputs/histmaker/{}/{}/".format(basedir,channel,pf)
+# outputDir = "{}/WbWb/outputs/histmaker/{}/{}/".format(basedir,channel,pf)
 
+#Hard coded test
+outputDir = "./outputs/histmaker/WbWb/semihad/"
 print('this is outdir',outputDir)
 
 # optional: ncpus, default is 4, -1 uses all cores available
@@ -41,6 +47,12 @@ intLumi = 36000 #5000000  # 5 /ab
 
 # define some binning for various histograms
 bins = {
+    "D_Iso_Values_electrons": (25, 0, 50),
+    "D_Iso_Values_muons": (25, 0, 50),
+    "D_Iso_Values_electrons_p": (25, 0, 50),
+    "D_Iso_Values_muons_p": (25, 0, 50),
+    "D_Iso_Values_Prompt": (22, 0, 5),
+    "D_Iso_Values_nonPrompt": (22, 0, 5),
     "phi": (100, -6.3, 6.3),
     "theta": (100, 0, 3.2),
     "p": (100, 0, 200),
@@ -75,6 +87,7 @@ def build_graph(df, dataset):
 
     column_names  = df.GetColumnNames()
     print(column_names)
+
 
     df_effp9_zerob   = df.Filter("nbjets_R5_eff_p9 == 0");
     df_effp9_oneb    = df.Filter("nbjets_R5_eff_p9 == 1 ");
@@ -113,17 +126,24 @@ def build_graph(df, dataset):
 
 
     
-    
+    print(column_names)
     for var in column_names:
         var = str(var) #"nlep",
-        if  var  not in ["lep_p", 'lep_theta', 'lep_phi',"BDT_score","missing_p", "missing_p_theta", "missing_p_phi","singlebin"] and  "R5" not in var and "mbbar" not in var:
-            continue 
+
+        if  var  not in ["lep_p", 'lep_theta', 'lep_phi',"BDT_score","missing_p", "missing_p_theta", "missing_p_phi","singlebin"] and  "R5" not in var and "mbbar" not in var and not var.startswith("D_Iso_Values_"):
+            continue  
         if "is" in var : continue
         #if "d_" in var : continue
         if var.endswith("_phi"):     binning = bins["phi"];
         elif 'singlebin' in var :    binning = bins["singlebin"]
         elif 'nbjets' in var :       binning = bins["nbjets"]
         elif 'njets' in var :        binning = bins["njets"]
+        elif "D_Iso_Values_electrons" == var: binning = bins["D_Iso_Values_electrons"]
+        elif "D_Iso_Values_muons" == var:    binning = bins["D_Iso_Values_muons"]
+        elif "D_Iso_Values_electrons_p" == var: binning = bins["D_Iso_Values_electrons_p"]
+        elif "D_Iso_Values_muons_p" == var:    binning = bins["D_Iso_Values_muons_p"]
+        elif "D_Iso_Values_Prompt" == var: binning = bins["D_Iso_Values_Prompt"]
+        elif "D_Iso_Values_nonPrompt" == var: binning = bins["D_Iso_Values_nonPrompt"]
         
         elif "tagged" in var:        binning = bins["tagged"] 
         elif var == 'ntau_h':        binning = bins["nleps"]
@@ -134,8 +154,14 @@ def build_graph(df, dataset):
         else: 
             print('Default binning for variable {}'.format(var))
             binning = (100, -1, 100)
+        if not var.startswith("D_Iso_Values_"):
+            results.append(df.Histo1D(("no_cut_"+var, "", *binning), var))
+        if var.startswith("D_Iso_Values_"):
+        
+            results.append(df.Histo1D((".7 cut_"+var, "", *binning), var))
+        
 
-        results.append(df.Histo1D(("no_cut_"+var, "", *binning), var))
+
         results.append(df_effp9_zerob.Histo1D((  'effp9_zerob_'      +var, "", *binning), var))
         results.append(df_effp9_oneb.Histo1D((   'effp9_oneb_'       +var, "", *binning), var))
         results.append(df_effp9_twob.Histo1D((   'effp9_twob_'       +var, "", *binning), var))
