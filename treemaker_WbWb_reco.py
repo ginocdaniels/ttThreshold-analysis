@@ -257,7 +257,7 @@ print(processList)
 prodTag     = "FCCee/winter2023/IDEA/"
 
 #Optional: output directory, default is local running directoryp
-outputDir   = "outputs/treemaker/WbWb/{}".format(channel)
+outputDir   = "/eos/user/g/gidaniel/outputs/treemaker/WbWb/{}".format(channel)
 
 
 # additional/costom C++ functions, defined in header files (optional)
@@ -308,17 +308,8 @@ jetFlavourHelper = None
 jetFlavourHelper_R5 = None
 jetClusteringHelper = None
 jetClusteringHelper_R5 = None
-'''
-Understand Cone iso calc 
-ADD in D_ISO branch with all the d_Iso values of all the leptons
-and define it and add it in so it gets addded to the root file then re run it 
-after that change the histmaker and make a plot maker file to plot it quickly
-after that add in the truth matching information and make two separate plots for it 
 
-after that show matteo and also make sure that all momentum p>12 GeV are prompt particles
-prompt lep is from W and nonprompt from b
 
-'''
 all_branches = [
     "nlep", "lep_p", 'lep_theta', 'lep_phi',
     "missing_p", "missing_p_theta", "missing_p_phi",
@@ -335,7 +326,8 @@ all_branches = [
     "jet1_R5_isD","jet2_R5_isD","jet3_R5_isD","jet4_R5_isD","jet5_R5_isD","jet6_R5_isD",                                
     "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU","mbbar_p9","mbbar_p89","mbbar_p91", "bjet1_R5_true_p","ljet1_R5_true_p",
     "D_Iso_Values_muons", "D_Iso_Values_electrons_p", "D_Iso_Values_muons_p","all_reco_leptons_merged_tlv", "fromW_reco_indices","D_Iso_Values_Prompt", "D_Iso_Values_nonPrompt",
-    "gen_leps_status1_fromW", "index","matched_fromW_leptons",
+    "gen_leps_status1_fromW", "index","matched_fromW_leptons", "n_leps_d_iso_prompt_precut", "n_leps_d_iso_non_prompt_precut","n_leps_d_iso_all_precut","D_Iso_particles_leptons_cut_prompt",
+    "D_Iso_particles_leptons_cut_nonPrompt", "n_leps_d_iso_postcut_prompt", "n_leps_d_iso_postcut_nonPrompt", "n_leps_d_iso_postcut_all",
       ]
 
 
@@ -370,10 +362,18 @@ class RDFanalysis:
         # define some aliases to be used later on
         df = df.Alias("Muon0", "Muon#0.index")
         df = df.Alias("Electron0","Electron#0.index")
-        ## Find fraction of ones taht are cut make the d value optimized and find the ineefciecy add the prompt nonprompt together and find the fraction of erach that u ose with that cut 
-        # normalized them as well so that we can get a good estiamte of what the cut is
-        # all interesting proceses wz bb qq.
+        ## Find fraction of ones taht are cut make the d value optimized and find the ineefciecy add the prompt nonprompt together and find the fraction of erach that u ose with that cut and try to optimize this
+        # normalized them as well as well so u can add them together because otherwize we dont have same number of events and it doesnt work for the bins 
+        #Then we can send in condor jobs do cd/condor 
+        # all interesting proceses wz bb qq. files will be in eos/user/g/gidaniel
+        # to send in jobs do python3 send_all.py condor_q to check whats going on condor rm gidaniel to remove everythign
+        # ls std/condor.1231753 does something 
+        #
 
+        # so next thing for tomorrow is to start with some cuts and see how many we lose for each yk and figure out which is best trade off in efficieny yk because we dont want 
+        # our nonprompt with low d values still passing out cut because they first past the cone iso and then the d value cut and we dont want this 
+        #for normalization we can prob just divide each by the the total evetns and so same number of bins we should get a value that works because we can fill a hist based on their weights of the d iso values for that bin then divide by the total to almost get an average d iso value for that bin that we can compare to the other one prompt vs non prompt regardless of the number of events
+        #
         df = df.Alias("Particle0",           "Particle#0.index");          
         df = df.Alias("MCParticles",         "Particle");     
 
@@ -467,9 +467,32 @@ class RDFanalysis:
                "  if (idx >= 0) result.push_back(all_reco_leptons_merged[idx]);"
                "} return result;")
         
+
+        df=df.Define("merged_leptons_list", "FCCAnalyses::ReconstructedParticle::merge(matched_fromW_leptons, matched_from_b_leptons)")
+
+
+
         df= df.Define("D_Iso_Values_Prompt", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .7)(matched_fromW_leptons, ReconstructedParticles)")
         df= df.Define("D_Iso_Values_nonPrompt", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .7)(matched_from_b_leptons, ReconstructedParticles)")
+        df=df.Define("D_Iso_Values_all", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .7)(merged_leptons_list, ReconstructedParticles)")
+
         
+        df=df.Define("n_leps_d_iso_prompt_precut", "matched_fromW_leptons.size()")
+        df=df.Define("n_leps_d_iso_non_prompt_precut", "matched_from_b_leptons.size()")
+        df=df.Define("n_leps_d_iso_all_precut", "merged_leptons_list.size()")
+
+
+        
+        df= df.Define("D_Iso_particles_leptons_cut_prompt", "FCCAnalyses::ZHfunctions::sel_iso(0.25)(matched_fromW_leptons, D_Iso_Values_Prompt)")
+        df= df.Define("D_Iso_particles_leptons_cut_nonPrompt", "FCCAnalyses::ZHfunctions::sel_iso(0.25)(matched_from_b_leptons, D_Iso_Values_nonPrompt)")
+        df= df.Define("D_Iso_particles_leptons_cut_all", "FCCAnalyses::ZHfunctions::sel_iso(0.25)(merged_leptons_list, D_Iso_Values_all)")
+        
+        df= df.Define("n_leps_d_iso_postcut_prompt", "D_Iso_particles_leptons_cut_prompt.size()")
+        df= df.Define("n_leps_d_iso_postcut_nonPrompt", "D_Iso_particles_leptons_cut_nonPrompt.size()")
+        df= df.Define("n_leps_d_iso_postcut_all", "D_Iso_particles_leptons_cut_all.size()")
+       
+
+
         # select leptons with momentum > 12 GeV
         df = df.Define(
             "muons_sel",
