@@ -57,9 +57,9 @@ all_processes = {
 #    "wzp6_ee_WbWb_ecm365": {
 #        "fraction": 1,
 #    },
-    "p8_ee_WW_ecm345": {
-        "fraction": 1,
-    },
+    # "p8_ee_WW_ecm345": {
+    #     "fraction": 1,
+    # },
 #    "p8_ee_WW_ecm365": {
 #         "fraction": 1,
 #    },    
