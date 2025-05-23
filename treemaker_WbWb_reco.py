@@ -229,6 +229,7 @@ all_processes = {
 
     
 }
+nCPUS       = -1
 
 available_ecm = ['340','345', '350', '355','365']
 
@@ -261,7 +262,7 @@ outputDir   = "/eos/user/g/gidaniel/outputs/treemaker/WbWb/{}".format(channel)
 
 
 # additional/costom C++ functions, defined in header files (optional)
-includePaths = ["examples/functions.h", "examples/truth_matching.h", "examples/MCParticleUtils.h"]
+includePaths = ["examples/functions.h", "examples/truth_matching.h", "examples/MCParticleUtils.h","examples/test_funcs.h"]
 
 ## latest particle transformer model, trained on 9M jets in winter2023 samples
 model_name = "fccee_flavtagging_edm4hep_wc" #"fccee_flavtagging_edm4hep_wc_v1"
@@ -269,12 +270,12 @@ model_name = "fccee_flavtagging_edm4hep_wc" #"fccee_flavtagging_edm4hep_wc_v1"
 ## model files locally stored on /eos
 eos_dir ="/eos/experiment/fcc/ee/generation/DelphesEvents/winter2023/IDEA/"
 model_dir = (
-    "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_7classes_12_04_2023/"    # "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_13_01_2022/"
+    "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_7classes_12_04_2023/"    # "/eos/experiment/fcc/ee/jet_flavour_tagging/winter2023/wc_pt_13_25_2022/"
 )
 local_preproc = "{}/{}.json".format(model_dir, model_name)
 local_model = "{}/{}.onnx".format(model_dir, model_name)
 
-url_model_dir = "https://fccsw.web.cern.ch/fccsw/testsamples/jet_flavour_tagging/winter2023/wc_pt_13_01_2022/"
+url_model_dir = "https://fccsw.web.cern.ch/fccsw/testsamples/jet_flavour_tagging/winter2023/wc_pt_13_25_2022/"
 url_preproc = "{}/{}.json".format(url_model_dir, model_name)
 url_model = "{}/{}.onnx".format(url_model_dir, model_name)
 
@@ -326,9 +327,8 @@ all_branches = [
     "jet1_R5_isD","jet2_R5_isD","jet3_R5_isD","jet4_R5_isD","jet5_R5_isD","jet6_R5_isD",                                
     "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU","mbbar_p9","mbbar_p89","mbbar_p91", "bjet1_R5_true_p","ljet1_R5_true_p",
      "all_reco_leptons_merged_tlv", "fromW_reco_indices","D_Iso_Values_Prompt", "D_Iso_Values_nonPrompt",
-    "gen_leps_status1_fromW", "index","matched_fromW_leptons", "n_leps_d_iso_prompt_precut", "n_leps_d_iso_non_prompt_precut","n_leps_d_iso_all_precut_status1","D_Iso_particles_leptons_cut_prompt",
-    "D_Iso_particles_leptons_cut_nonPrompt", "n_leps_d_iso_postcut_prompt", "n_leps_d_iso_postcut_nonPrompt", "n_leps_d_iso_postcut_all_status1", "D_Iso_Values_all_status1","gen_leps_status1_mother_pdgId_non_prompt","gen_leps_status1_mother_pdgId_prompt", "ngen_leps_status1_from_b", "gen_leps_status1_from_b_pdgId","ngen_leps_status1_fromW",
-    "sanity_checks_fromW", "sanity_checks_from_b", "gen_leps_status1_pdgId", "muons_n", "electrons_n",]
+    "gen_leps_status1_fromW", "index","matched_fromW_leptons", "n_leps_d_iso_prompt_precut", "n_leps_d_iso_non_prompt_precut","n_leps_d_iso_all_precut_status1", "D_Iso_Values_all_status1","gen_leps_status1_mother_pdgId_non_prompt","gen_leps_status1_mother_pdgId_prompt", "ngen_leps_status1_from_b", "gen_leps_status1_from_b_pdgId","ngen_leps_status1_fromW",
+    "sanity_checks_fromW", "sanity_checks_from_b", "gen_leps_status1_pdgId", "muons_n", "electrons_n","all_status2_taus_fromWs_e_mu_daughters","all_status2_taus_fromWs", ]
   
 
 
@@ -384,6 +384,13 @@ class RDFanalysis:
         df = df.Alias("DaughterIndices", "Particle#1.index")
 
 
+    #NUMBER OF LEPTONS PASSING D_ISO CUTS ok done 
+
+
+    
+    # plot the jet multiplicity as function of the d_iso values so we can see how many jets we have at each d iso value
+    # plot jet multiplicity as function of efficiencies so how many jets we reconstruct at each efficiency
+    # R5 clustering algorithm
 
 
         
@@ -399,18 +406,47 @@ class RDFanalysis:
        #Gets all muons and electrons from reco 
         #figure out how to get them taus
         df = df.Define(
-            "muons_all",
+            "muons_all_2",
             "FCCAnalyses::ReconstructedParticle::get(Muon0, ReconstructedParticles)",
         )
         df = df.Define(
-            "electrons_all",
+            "electrons_all_2",
             "FCCAnalyses::ReconstructedParticle::get(Electron0, ReconstructedParticles)",
         )
-        df=df.Define("all_reco_leptons_merged", "FCCAnalyses::ReconstructedParticle::merge(muons_all, electrons_all)")
+        df=df.Define("all_reco_leptons_merged", "FCCAnalyses::ReconstructedParticle::merge(muons_all_2, electrons_all_2)")
         df=df.Define("all_reco_leptons_merged_tlv", "FCCAnalyses::ReconstructedParticle::get_tlv(all_reco_leptons_merged)")
+        
+
+        #Test with taus
+        df=df.Define("all_status2_taus", "FCCAnalyses::MCParticle::sel_genleps(15,0, true)(MCParticles)")
+        df=df.Define("all_status2_taus_origins", "FCCAnalyses::MCParticle::get_leptons_origin(all_status2_taus,MCParticles,Particle0)")
+        df=df.Define("all_status2_taus_fromWs", "FCCAnalyses::MCParticle::sel_genlepsfromW()(all_status2_taus,all_status2_taus_origins)")
+        # df=df.Define("all_status2_taus_fromWs_daughter1", "FCCAnalyses::myUtils::get_MCDaughter1(all_status2_taus_fromWs, Particle0)")
+        # df=df.Define("Taus_pre_pdgId", "FCCAnalyses::MCParticle::get_pdg(all_status2_taus_fromWs)")
+     
+        df = df.Define(
+            "all_status2_taus_fromWs_e_mu_daughters",
+            "FCCAnalyses::TestFuncs::get_MCElectronMuonDaughters(all_status2_taus_fromWs, MCParticles, DaughterIndices)"
+        )
+        # df=df.Define("all_status2_taus_fromWs_e_mu_daughters_pdgId", "FCCAnalyses::MCParticle::get_pdg(all_status2_taus_fromWs_e_mu_daughters)")
+
+
+        df = df.Define(
+            "reco_leptons_from_taus_fromWs",
+            "FCCAnalyses::ReconstructedParticle2MC::selRP_matched_to_list(all_status2_taus_fromWs_e_mu_daughters, MCRecoAssociations0, MCRecoAssociations1, all_reco_leptons_merged, MCParticles)"
+        )
+
+
+        df = df.Define(
+            "reco_leptons_from_taus_fromWs_tlv",
+            "FCCAnalyses::ReconstructedParticle::get_tlv(reco_leptons_from_taus_fromWs)"
+        )
+ 
 
 
 
+        # another way to do this error maybe define two separate electron and muon collections so that the filter applies
+        # to the one that we don't want to change 
 
 
 
@@ -487,9 +523,10 @@ class RDFanalysis:
 
         df= df.Define("D_Iso_Values_Prompt", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .5)(matched_fromW_leptons_p_cut, ReconstructedParticles)")
         df= df.Define("D_Iso_Values_nonPrompt", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .5)(matched_from_b_leptons_p_cut, ReconstructedParticles)")
-
         df=df.Define("D_Iso_Values_all_status1", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .5)(merged_leptons_list_status1, ReconstructedParticles)")
-       
+
+        
+
         
       
         df=df.Define("n_leps_d_iso_prompt_precut", "matched_fromW_leptons_p_cut.size()")
@@ -497,17 +534,24 @@ class RDFanalysis:
         df=df.Define("n_leps_d_iso_all_precut_status1", "merged_leptons_list_status1.size()")
 
 
-
+          ## KEEP CHANGING THESE D VALS
         # adding in cut and return particle data 
-        df= df.Define("D_Iso_particles_leptons_cut_prompt", "FCCAnalyses::ZHfunctions::sel_iso(0.25)(matched_fromW_leptons_p_cut, D_Iso_Values_Prompt)")
-        df= df.Define("D_Iso_particles_leptons_cut_nonPrompt", "FCCAnalyses::ZHfunctions::sel_iso(0.25)(matched_from_b_leptons_p_cut, D_Iso_Values_nonPrompt)")
-        df= df.Define("D_Iso_particles_leptons_cut_all_status1", "FCCAnalyses::ZHfunctions::sel_iso(0.25)(merged_leptons_list_status1, D_Iso_Values_all_status1)")
+        # df= df.Define("D_Iso_particles_leptons_cut_prompt", "FCCAnalyses::ZHfunctions::sel_iso(0.25)(matched_fromW_leptons_p_cut, D_Iso_Values_Prompt)")
+        # df= df.Define("D_Iso_particles_leptons_cut_nonPrompt", "FCCAnalyses::ZHfunctions::sel_iso(0.25)(matched_from_b_leptons_p_cut, D_Iso_Values_nonPrompt)")
+        # df= df.Define("D_Iso_particles_leptons_cut_all_status1", "FCCAnalyses::ZHfunctions::sel_iso(0.25)(merged_leptons_list_status1, D_Iso_Values_all_status1)")
 
-        # number leps post cut 
-        df= df.Define("n_leps_d_iso_postcut_prompt", "D_Iso_particles_leptons_cut_prompt.size()")
-        df= df.Define("n_leps_d_iso_postcut_nonPrompt", "D_Iso_particles_leptons_cut_nonPrompt.size()")
-        df= df.Define("n_leps_d_iso_postcut_all_status1", "D_Iso_particles_leptons_cut_all_status1.size()")
-    
+        # # number leps post cut 
+        # df= df.Define("n_leps_d_iso_postcut_prompt", "D_Iso_particles_leptons_cut_prompt.size()")
+        # df= df.Define("n_leps_d_iso_postcut_nonPrompt", "D_Iso_particles_leptons_cut_nonPrompt.size()")
+        # df= df.Define("n_leps_d_iso_postcut_all_status1", "D_Iso_particles_leptons_cut_all_status1.size()")
+        df = df.Define(
+            "muons_all",
+            "FCCAnalyses::ReconstructedParticle::get(Muon0, ReconstructedParticles)",
+        )
+        df = df.Define(
+            "electrons_all",
+            "FCCAnalyses::ReconstructedParticle::get(Electron0, ReconstructedParticles)",
+        )
        
 
 
@@ -521,29 +565,39 @@ class RDFanalysis:
             "electrons_sel",
             "FCCAnalyses::ReconstructedParticle::sel_p(12)(electrons_all)",
         )
-       
+        # df=df.Define("muon_size", "muons_sel.size()")
+        # df=df.Define("electron_size", "electrons_sel.size()")
+        # df= df.Define("nlep_total", "muon_size + electron_size")
+        # df=df.Define("merged_leptons_list", "FCCAnalyses::ReconstructedParticle::merge(muons_sel, electrons_sel)")
+        # df=df.Define("merged_leptons_list_coneIso", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .5)(merged_leptons_list, ReconstructedParticles)")
 
-
-        # compute the muon isolation and store muons with an isolation cut of 0df = df.25 in a separate column muons_sel_iso
+        # compute the muon isolation and store muons with an isolation cut of 0df = df.20 in a separate column muons_sel_iso
         df = df.Define(
             "muons_iso",
             "FCCAnalyses::ZHfunctions::coneIsolation(0.01, 0.5)(muons_sel, ReconstructedParticles)",
         )
-        # compute the electron isolation and store electrons with an isolation cut of 0df = df.25 in a separate column electrons_sel_iso
+        # compute the electron isolation and store electrons with an isolation cut of 0df = df.20 in a separate column electrons_sel_iso
         df = df.Define(
             "electrons_iso",
             "FCCAnalyses::ZHfunctions::coneIsolation(0.01, 0.5)(electrons_sel, ReconstructedParticles)",
         )
 
+
+
+        ## KEEP CHANGING THESE D VALS
+        # CHECK THIS PROBLEM UGHGHGHGH HGHGH and talk to Matteo and Explain what u mean 
         df = df.Define(
             "muons_sel_iso",
-            "FCCAnalyses::ZHfunctions::sel_iso(0.25)(muons_sel, muons_iso)",
+            "FCCAnalyses::ZHfunctions::sel_iso(.25)(muons_sel, muons_iso)",
         )
 
         df = df.Define(
             "electrons_sel_iso",
-            "FCCAnalyses::ZHfunctions::sel_iso(0.25)(electrons_sel, electrons_iso)",
+            "FCCAnalyses::ZHfunctions::sel_iso(.25)(electrons_sel, electrons_iso)",
         )
+
+
+
 
         if channel == "had":
             #hadronic=True
@@ -753,7 +807,7 @@ class RDFanalysis:
         c_eff = 10**-1.5
         l_eff = 10**-3
         g_eff = 10**-1.7
-        uncert_b_eff = 0.01
+        uncert_b_eff = 0.25
         
         df = df.Define("jets_R5_btag_eff_p9",  "JetTaggingUtils::get_btag({},{},{},{},{})".format('jets_R5_pflavor', b_eff, c_eff, l_eff, g_eff))
         df = df.Define("jets_R5_btag_eff_p89", "JetTaggingUtils::get_btag({},{},{},{},{})".format('jets_R5_pflavor', b_eff-uncert_b_eff, c_eff, l_eff, g_eff))
