@@ -330,7 +330,8 @@ all_branches = [
     "gen_leps_status1_fromW", "matched_fromW_leptons", "n_leps_d_iso_prompt_precut", "n_leps_d_iso_non_prompt_precut","n_leps_d_iso_all_precut_status1", "D_Iso_Values_all_status1","gen_leps_status1_mother_pdgId_non_prompt","gen_leps_status1_mother_pdgId_prompt", "ngen_leps_status1_from_b", "gen_leps_status1_from_b_pdgId","ngen_leps_status1_fromW",
     "sanity_checks_fromW", "sanity_checks_from_b", "gen_leps_status1_pdgId", "muons_n", "electrons_n","All_Delta_R_W","All_Delta_R_B","tlv_from_b", "tlv_fromW", "size_gen_leps_status1_fromW", "size_gen_leps_status1_from_b",
     "combined_leptons_per_event","nlep_total", "gen_leps_status1_p","gen_leps_status1_from_b_p","momentum_post_iso_cut","leps_that_dont_pass_iso_p","momentum_from_94",
-    "momentum_merged_leptons_list_past_5_iso_sel","fraction_not_passing_cut","size_passing_cut","merged_leptons_list_just_past_5",]
+    "momentum_merged_leptons_list_past_5_iso_sel","fraction_not_passing_cut","size_passing_cut","merged_leptons_list_just_past_5","gen_leps_status1_from_bW_muons_p","gen_leps_status1_from_bW_electrons_p",
+    "gen_leps_status1_from_b_muons_p","gen_leps_status1_fromW_muons_p", "gen_leps_status1_from_b_electrons_p","gen_leps_status1_fromW_electrons_p", ]
   
 
 
@@ -477,9 +478,43 @@ class RDFanalysis:
         df= df.Define("gen_leps_status1_from_b_pdgId", "FCCAnalyses::MCParticle::get_pdg(gen_leps_status1_from_b)")
         # for this we can add in a pdgid filter and then just sort into the electrons and the muon collections for this 
         # we want to make the 
+        
+        # All gen muons collection
+        df = df.Define("gen_leps_status1_from_b_muons", "FCCAnalyses::MCParticle::sel_genleps(13,0, true)(gen_leps_status1_from_b)")
+        df = df.Define("gen_leps_status1_fromW_muons", "FCCAnalyses::MCParticle::sel_genleps(13,0, true)(gen_leps_status1_fromW)")
 
+        df=df.Define("gen_leps_status1_from_b_muons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_from_b_muons)")
+        df = df.Define("gen_leps_status1_fromW_muons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_fromW_muons)")
 
+        df= df.Define("merged_muons_fromb_W", "FCCAnalyses::MCParticle::mergeParticles(gen_leps_status1_from_b_muons, gen_leps_status1_fromW_muons)")
+        df = df.Define("gen_leps_status1_from_bW_muons_p", "FCCAnalyses::MCParticle::get_p(merged_muons_fromb_W)")
+        df = df.Define("gen_leps_status1_from_bW_muons_tlv", "FCCAnalyses::MCParticle::get_tlv(merged_muons_fromb_W)")
+        df = df.Define("reco_leps_status1_from_bW_muons_indcies", "FCCAnalyses::TruthMatching::match_leptons(gen_leps_status1_from_bW_muons_tlv, all_reco_leptons_merged_tlv, 0.01)")
+        df =df.Define("matched_leps_status1_from_bW_muons",  
+                "ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;"
+                "for (size_t i = 0; i < reco_leps_status1_from_bW_muons_indcies.size(); ++i) {"
+                "  int idx = reco_leps_status1_from_bW_muons_indcies[i];"
+                "  if (idx >= 0) result.push_back(all_reco_leptons_merged[idx]);"
+                "} return result;")
+        
+        # All gen electrons collection
+        df = df.Define("gen_leps_status1_from_b_electrons", "FCCAnalyses::MCParticle::sel_genleps(11,0, true)(gen_leps_status1_from_b)")
+        df = df.Define("gen_leps_status1_fromW_electrons", "FCCAnalyses::MCParticle::sel_genleps(11,0, true)(gen_leps_status1_fromW)")
 
+        df = df.Define("gen_leps_status1_from_b_electrons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_from_b_electrons)")
+        df = df.Define("gen_leps_status1_fromW_electrons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_fromW_electrons)")
+
+        df= df.Define("merged_electrons_fromb_W", "FCCAnalyses::MCParticle::mergeParticles(gen_leps_status1_from_b_electrons, gen_leps_status1_fromW_electrons)")
+        df = df.Define("gen_leps_status1_from_bW_electrons_p", "FCCAnalyses::MCParticle::get_p(merged_electrons_fromb_W)")
+        df = df.Define("gen_leps_status1_from_bW_electrons_tlv", "FCCAnalyses::MCParticle::get_tlv(merged_electrons_fromb_W)")
+        df = df.Define("reco_leps_status1_from_bW_electrons_indcies", "FCCAnalyses::TruthMatching::match_leptons(gen_leps_status1_from_bW_electrons_tlv, all_reco_leptons_merged_tlv, 0.01)")
+        df =df.Define("matched_leps_status1_from_bW_electrons", 
+                "ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;"
+                "for (size_t i = 0; i < reco_leps_status1_from_bW_electrons_indcies.size(); ++i) {"
+                "  int idx = reco_leps_status1_from_bW_electrons_indcies[i];"
+                "  if (idx >= 0) result.push_back(all_reco_leptons_merged[idx]);"
+                "} return result;") 
+                      
 
 
         df=df.Define("sanity_checks_from_b", "FCCAnalyses::MCParticle::get_leptons_origin(gen_leps_status1_from_b,MCParticles,Particle0)")
