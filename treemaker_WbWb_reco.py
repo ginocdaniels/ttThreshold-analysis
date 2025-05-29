@@ -229,7 +229,7 @@ all_processes = {
 
     
 }
-nCPUS       = -1
+ncpus= 48
 
 available_ecm = ['340','345', '350', '355','365']
 
@@ -328,10 +328,14 @@ all_branches = [
     "jet1_R5_isTAU","jet2_R5_isTAU","jet3_R5_isTAU","jet4_R5_isTAU","jet5_R5_isTAU","jet6_R5_isTAU","mbbar_p9","mbbar_p89","mbbar_p91", "bjet1_R5_true_p","ljet1_R5_true_p",
      "all_reco_leptons_merged_tlv", "fromW_reco_indices","from_b_reco_indices","D_Iso_Values_Prompt", "D_Iso_Values_nonPrompt",
     "gen_leps_status1_fromW", "matched_fromW_leptons", "n_leps_d_iso_prompt_precut", "n_leps_d_iso_non_prompt_precut","n_leps_d_iso_all_precut_status1", "D_Iso_Values_all_status1","gen_leps_status1_mother_pdgId_non_prompt","gen_leps_status1_mother_pdgId_prompt", "ngen_leps_status1_from_b", "gen_leps_status1_from_b_pdgId","ngen_leps_status1_fromW",
-    "sanity_checks_fromW", "sanity_checks_from_b", "gen_leps_status1_pdgId", "muons_n", "electrons_n","All_Delta_R_W","All_Delta_R_B","tlv_from_b", "tlv_fromW", "size_gen_leps_status1_fromW", "size_gen_leps_status1_from_b",
-    "combined_leptons_per_event","nlep_total", "gen_leps_status1_p","gen_leps_status1_from_b_p","momentum_post_iso_cut","leps_that_dont_pass_iso_p","momentum_from_94",
-    "momentum_merged_leptons_list_past_5_iso_sel","fraction_not_passing_cut","size_passing_cut","merged_leptons_list_just_past_5","gen_leps_status1_from_bW_muons_p","gen_leps_status1_from_bW_electrons_p",
-    "gen_leps_status1_from_b_muons_p","gen_leps_status1_fromW_muons_p", "gen_leps_status1_from_b_electrons_p","gen_leps_status1_fromW_electrons_p", ]
+    "sanity_checks_fromW", "sanity_checks_from_b", "gen_leps_status1_pdgId", "muons_n", "electrons_n","tlv_from_b", "tlv_fromW", "size_gen_leps_status1_fromW", "size_gen_leps_status1_from_b",
+    "combined_leptons_per_event","nlep_total", "gen_leps_status1_p","gen_leps_status1_from_b_p","momentum_from_94",
+    "gen_leps_status1_from_b_muons_p","gen_leps_status1_fromW_muons_p", "gen_leps_status1_from_b_electrons_p","gen_leps_status1_fromW_electrons_p","matched_leps_status1_from_b_muons_p_cut_coneIso_2", "matched_leps_status1_from_b_muons_p_cut_coneIso_3", "matched_leps_status1_from_b_muons_p_cut_coneIso_4", "matched_leps_status1_from_b_muons_p_cut_coneIso_5",
+    "matched_leps_status1_from_b_muons_p_cut_coneIso_6", "matched_leps_status1_from_b_electrons_p_cut_coneIso_2", "matched_leps_status1_from_b_electrons_p_cut_coneIso_3", "matched_leps_status1_from_b_electrons_p_cut_coneIso_4",
+     "matched_leps_status1_from_b_electrons_p_cut_coneIso_5", "matched_leps_status1_from_b_electrons_p_cut_coneIso_6", "matched_leps_status1_from_W_muons_p_cut_coneIso_2", "matched_leps_status1_from_W_muons_p_cut_coneIso_3",
+      "matched_leps_status1_from_W_muons_p_cut_coneIso_4", "matched_leps_status1_from_W_muons_p_cut_coneIso_5", "matched_leps_status1_from_W_muons_p_cut_coneIso_6",
+      "matched_leps_status1_from_W_electrons_p_cut_coneIso_2", "matched_leps_status1_from_W_electrons_p_cut_coneIso_3", "matched_leps_status1_from_W_electrons_p_cut_coneIso_4",
+      "matched_leps_status1_from_W_electrons_p_cut_coneIso_5", "matched_leps_status1_from_W_electrons_p_cut_coneIso_6",]
   
 
 
@@ -387,7 +391,6 @@ class RDFanalysis:
         df = df.Alias("DaughterIndices", "Particle#1.index")
 
 
-    #NUMBER OF LEPTONS PASSING D_ISO CUTS ok done 
  
 
     
@@ -452,10 +455,10 @@ class RDFanalysis:
 
         df= df.Define("gen_leps_status1_mother_pdgId_prompt", "FCCAnalyses::MCParticle::get_leptons_origin(gen_leps_status1,MCParticles,Particle0)")
         # df = df.Define("gen_leps_status1_fromW",       "FCCAnalyses::MCParticle::sel_genlepsfromW()(gen_leps_status1,gen_leps_status1_mother_pdgId_prompt)")
-        df=df.Define("gen_leps_status1_fromW", "gen_leps_status1[abs(gen_leps_status1_mother_pdgId_prompt) == 24 || abs(gen_leps_status1_mother_pdgId_prompt) == 94]") #24 is the W boson pdgId
+        df=df.Define("gen_leps_status1_fromW", "gen_leps_status1[abs(gen_leps_status1_mother_pdgId_prompt) == 24 || abs(gen_leps_status1_mother_pdgId_prompt) == 94]")
         df = df.Define("ngen_leps_status1_fromW",      "FCCAnalyses::MCParticle::get_n(gen_leps_status1_fromW)")
         df = df.Define("size_gen_leps_status1_fromW", "gen_leps_status1_fromW.size()")
-       # ok think it might've been the mother pgdid 94 needed to be included 
+     
         df = df.Define("gen_leps_status1_p",      "FCCAnalyses::MCParticle::get_p(gen_leps_status1_fromW)")
         df = df.Define("gen_leps_status1_theta",  "FCCAnalyses::MCParticle::get_theta(gen_leps_status1_fromW)")
         df = df.Define("gen_leps_status1_phi",    "FCCAnalyses::MCParticle::get_phi(gen_leps_status1_fromW)")
@@ -468,7 +471,7 @@ class RDFanalysis:
         
 
         df=df.Define("gen_leps_status1_mother_pdgId_non_prompt", "FCCAnalyses::MCParticle::get_leptons_origin(gen_leps_status1,MCParticles,Particle0)")
-        df = df.Define("gen_leps_status1_from_b", "gen_leps_status1[abs(gen_leps_status1_mother_pdgId_non_prompt) !=15 && abs(gen_leps_status1_mother_pdgId_non_prompt) != 24]")
+        df = df.Define("gen_leps_status1_from_b", "gen_leps_status1[abs(gen_leps_status1_mother_pdgId_non_prompt) !=15 && abs(gen_leps_status1_mother_pdgId_non_prompt) != 24 && abs(gen_leps_status1_mother_pdgId_non_prompt) != 94]") #15 is the tau lepton pdgId, 24 is the W boson pdgId, 94 is the W boson pdgId
         df = df.Define("ngen_leps_status1_from_b", "FCCAnalyses::MCParticle::get_n(gen_leps_status1_from_b)")
         df=df.Define("size_gen_leps_status1_from_b", "gen_leps_status1_from_b.size()")
         df= df.Define("gen_leps_status1_from_b_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_from_b)")
@@ -481,40 +484,90 @@ class RDFanalysis:
         
         # All gen muons collection
         df = df.Define("gen_leps_status1_from_b_muons", "FCCAnalyses::MCParticle::sel_genleps(13,0, true)(gen_leps_status1_from_b)")
-        df = df.Define("gen_leps_status1_fromW_muons", "FCCAnalyses::MCParticle::sel_genleps(13,0, true)(gen_leps_status1_fromW)")
-
         df=df.Define("gen_leps_status1_from_b_muons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_from_b_muons)")
-        df = df.Define("gen_leps_status1_fromW_muons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_fromW_muons)")
-
-        df= df.Define("merged_muons_fromb_W", "FCCAnalyses::MCParticle::mergeParticles(gen_leps_status1_from_b_muons, gen_leps_status1_fromW_muons)")
-        df = df.Define("gen_leps_status1_from_bW_muons_p", "FCCAnalyses::MCParticle::get_p(merged_muons_fromb_W)")
-        df = df.Define("gen_leps_status1_from_bW_muons_tlv", "FCCAnalyses::MCParticle::get_tlv(merged_muons_fromb_W)")
-        df = df.Define("reco_leps_status1_from_bW_muons_indcies", "FCCAnalyses::TruthMatching::match_leptons(gen_leps_status1_from_bW_muons_tlv, all_reco_leptons_merged_tlv, 0.01)")
-        df =df.Define("matched_leps_status1_from_bW_muons",  
+        df = df.Define("gen_leps_status1_from_b_muons_tlv", "FCCAnalyses::MCParticle::get_tlv(gen_leps_status1_from_b_muons)")
+        df = df.Define("reco_leps_status1_from_b_muons_indcies", "FCCAnalyses::TruthMatching::match_leptons(gen_leps_status1_from_b_muons_tlv, all_reco_leptons_merged_tlv, 0.01)")
+        df =df.Define("matched_leps_status1_from_b_muons",  
                 "ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;"
-                "for (size_t i = 0; i < reco_leps_status1_from_bW_muons_indcies.size(); ++i) {"
-                "  int idx = reco_leps_status1_from_bW_muons_indcies[i];"
+                "for (size_t i = 0; i < reco_leps_status1_from_b_muons_indcies.size(); ++i) {"
+                "  int idx = reco_leps_status1_from_b_muons_indcies[i];"
                 "  if (idx >= 0) result.push_back(all_reco_leptons_merged[idx]);"
                 "} return result;")
         
+        df = df.Define("gen_leps_status1_fromW_muons", "FCCAnalyses::MCParticle::sel_genleps(13,0, true)(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_fromW_muons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_fromW_muons)")
+        df = df.Define("gen_leps_status1_fromW_muons_tlv", "FCCAnalyses::MCParticle::get_tlv(gen_leps_status1_fromW_muons)")
+        df = df.Define("reco_leps_status1_fromW_muons_indcies", "FCCAnalyses::TruthMatching::match_leptons(gen_leps_status1_fromW_muons_tlv, all_reco_leptons_merged_tlv, 0.01)")
+        df =df.Define("matched_leps_status1_from_W_muons",  
+                "ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;"
+                "for (size_t i = 0; i < reco_leps_status1_fromW_muons_indcies.size(); ++i) {"
+                "  int idx = reco_leps_status1_fromW_muons_indcies[i];"
+                "  if (idx >= 0) result.push_back(all_reco_leptons_merged[idx]);"
+                "} return result;")
+
+        
+        
         # All gen electrons collection
         df = df.Define("gen_leps_status1_from_b_electrons", "FCCAnalyses::MCParticle::sel_genleps(11,0, true)(gen_leps_status1_from_b)")
-        df = df.Define("gen_leps_status1_fromW_electrons", "FCCAnalyses::MCParticle::sel_genleps(11,0, true)(gen_leps_status1_fromW)")
-
         df = df.Define("gen_leps_status1_from_b_electrons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_from_b_electrons)")
-        df = df.Define("gen_leps_status1_fromW_electrons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_fromW_electrons)")
-
-        df= df.Define("merged_electrons_fromb_W", "FCCAnalyses::MCParticle::mergeParticles(gen_leps_status1_from_b_electrons, gen_leps_status1_fromW_electrons)")
-        df = df.Define("gen_leps_status1_from_bW_electrons_p", "FCCAnalyses::MCParticle::get_p(merged_electrons_fromb_W)")
-        df = df.Define("gen_leps_status1_from_bW_electrons_tlv", "FCCAnalyses::MCParticle::get_tlv(merged_electrons_fromb_W)")
-        df = df.Define("reco_leps_status1_from_bW_electrons_indcies", "FCCAnalyses::TruthMatching::match_leptons(gen_leps_status1_from_bW_electrons_tlv, all_reco_leptons_merged_tlv, 0.01)")
-        df =df.Define("matched_leps_status1_from_bW_electrons", 
+        df = df.Define("gen_leps_status1_from_b_electrons_tlv", "FCCAnalyses::MCParticle::get_tlv(gen_leps_status1_from_b_electrons)")
+        df = df.Define("reco_leps_status1_from_b_electrons_indcies", "FCCAnalyses::TruthMatching::match_leptons(gen_leps_status1_from_b_electrons_tlv, all_reco_leptons_merged_tlv, 0.01)")
+        df =df.Define("matched_leps_status1_from_b_electrons", 
                 "ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;"
-                "for (size_t i = 0; i < reco_leps_status1_from_bW_electrons_indcies.size(); ++i) {"
-                "  int idx = reco_leps_status1_from_bW_electrons_indcies[i];"
+                "for (size_t i = 0; i < reco_leps_status1_from_b_electrons_indcies.size(); ++i) {"
+                "  int idx = reco_leps_status1_from_b_electrons_indcies[i];"
                 "  if (idx >= 0) result.push_back(all_reco_leptons_merged[idx]);"
                 "} return result;") 
+        
+        df = df.Define("gen_leps_status1_fromW_electrons", "FCCAnalyses::MCParticle::sel_genleps(11,0, true)(gen_leps_status1_fromW)")
+        df = df.Define("gen_leps_status1_fromW_electrons_p", "FCCAnalyses::MCParticle::get_p(gen_leps_status1_fromW_electrons)")
+        df = df.Define("gen_leps_status1_fromW_electrons_tlv", "FCCAnalyses::MCParticle::get_tlv(gen_leps_status1_fromW_electrons)")
+        df = df.Define("reco_leps_status1_fromW_electrons_indcies", "FCCAnalyses::TruthMatching::match_leptons(gen_leps_status1_fromW_electrons_tlv, all_reco_leptons_merged_tlv, 0.01)")
+        df =df.Define("matched_leps_status1_from_W_electrons", 
+                "ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData> result;"
+                "for (size_t i = 0; i < reco_leps_status1_fromW_electrons_indcies.size(); ++i) {"
+                "  int idx = reco_leps_status1_fromW_electrons_indcies[i];"
+                "  if (idx >= 0) result.push_back(all_reco_leptons_merged[idx]);"
+                "} return result;") 
+        
+
+
+        
+        
+        df=df.Define("matched_leps_status1_from_b_muons_p_cut", "FCCAnalyses::ReconstructedParticle::sel_p(12)(matched_leps_status1_from_b_muons)")
+        df=df.Define("matched_leps_status1_from_b_electrons_p_cut", "FCCAnalyses::ReconstructedParticle::sel_p(12)(matched_leps_status1_from_b_electrons)")
+        df=df.Define("matched_leps_status1_from_W_muons_p_cut", "FCCAnalyses::ReconstructedParticle::sel_p(12)(matched_leps_status1_from_W_muons)")
+        df=df.Define("matched_leps_status1_from_W_electrons_p_cut", "FCCAnalyses::ReconstructedParticle::sel_p(12)(matched_leps_status1_from_W_electrons)")
+
+        
+
+
+
+        ## non prompts
+        df =df.Define("matched_leps_status1_from_b_muons_p_cut_coneIso_2", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .2)(matched_leps_status1_from_b_muons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_b_muons_p_cut_coneIso_3", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .3)(matched_leps_status1_from_b_muons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_b_muons_p_cut_coneIso_4", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .4)(matched_leps_status1_from_b_muons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_b_muons_p_cut_coneIso_5", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .5)(matched_leps_status1_from_b_muons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_b_muons_p_cut_coneIso_6", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .6)(matched_leps_status1_from_b_muons_p_cut, ReconstructedParticles)")
+
+        df =df.Define("matched_leps_status1_from_b_electrons_p_cut_coneIso_2", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .2)(matched_leps_status1_from_b_electrons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_b_electrons_p_cut_coneIso_3", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .3)(matched_leps_status1_from_b_electrons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_b_electrons_p_cut_coneIso_4", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .4)(matched_leps_status1_from_b_electrons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_b_electrons_p_cut_coneIso_5", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .5)(matched_leps_status1_from_b_electrons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_b_electrons_p_cut_coneIso_6", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .6)(matched_leps_status1_from_b_electrons_p_cut, ReconstructedParticles)")
                       
+        # Prompts
+        df =df.Define("matched_leps_status1_from_W_muons_p_cut_coneIso_2", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .2)(matched_leps_status1_from_W_muons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_W_muons_p_cut_coneIso_3", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .3)(matched_leps_status1_from_W_muons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_W_muons_p_cut_coneIso_4", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .4)(matched_leps_status1_from_W_muons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_W_muons_p_cut_coneIso_5", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .5)(matched_leps_status1_from_W_muons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_W_muons_p_cut_coneIso_6", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .6)(matched_leps_status1_from_W_muons_p_cut, ReconstructedParticles)")
+
+        df =df.Define("matched_leps_status1_from_W_electrons_p_cut_coneIso_2", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .2)(matched_leps_status1_from_W_electrons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_W_electrons_p_cut_coneIso_3", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .3)(matched_leps_status1_from_W_electrons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_W_electrons_p_cut_coneIso_4", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .4)(matched_leps_status1_from_W_electrons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_W_electrons_p_cut_coneIso_5", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .5)(matched_leps_status1_from_W_electrons_p_cut, ReconstructedParticles)")
+        df =df.Define("matched_leps_status1_from_W_electrons_p_cut_coneIso_6", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, .6)(matched_leps_status1_from_W_electrons_p_cut, ReconstructedParticles)")
 
 
         df=df.Define("sanity_checks_from_b", "FCCAnalyses::MCParticle::get_leptons_origin(gen_leps_status1_from_b,MCParticles,Particle0)")
@@ -579,13 +632,7 @@ class RDFanalysis:
         # df= df.Define("n_leps_d_iso_postcut_prompt", "D_Iso_particles_leptons_cut_prompt.size()")
         # df= df.Define("n_leps_d_iso_postcut_nonPrompt", "D_Iso_particles_leptons_cut_nonPrompt.size()")
         # df= df.Define("n_leps_d_iso_postcut_all_status1", "D_Iso_particles_leptons_cut_all_status1.size()")
-        df=df.Define("muons_sel_past_5", "FCCAnalyses::ReconstructedParticle::sel_p(5)(muons_all)")
-        df=df.Define("electrons_sel_past_5", "FCCAnalyses::ReconstructedParticle::sel_p(5)(electrons_all)")
-        df=df.Define("merged_leptons_list_past_5", "FCCAnalyses::ReconstructedParticle::merge(muons_sel_past_5, electrons_sel_past_5)")
-        df=df.Define("merged_leptons_list_just_past_5", "FCCAnalyses::ReconstructedParticle::get_p(merged_leptons_list_past_5)")
-        df=df.Define("merged_leptons_list_past_5_iso", "FCCAnalyses::ZHfunctions::coneIsolation(0.01, 0.3)(merged_leptons_list_past_5, ReconstructedParticles)")
-        df=df.Define("merged_leptons_list_past_5_iso_sel", "FCCAnalyses::ZHfunctions::sel_iso(0.2)(merged_leptons_list_past_5, merged_leptons_list_past_5_iso)")
-        df=df.Define("momentum_merged_leptons_list_past_5_iso_sel", "FCCAnalyses::ReconstructedParticle::get_p(merged_leptons_list_past_5_iso_sel)")
+       
 
 
         # select leptons with momentum > 12 GeV
@@ -625,23 +672,19 @@ class RDFanalysis:
 
         df = df.Define(
             "muons_sel_iso",
-            "FCCAnalyses::ZHfunctions::sel_iso(0.2)(muons_sel, muons_iso)",
+            "FCCAnalyses::ZHfunctions::sel_iso(0.3)(muons_sel, muons_iso)",
         )
 
         df = df.Define(
             "electrons_sel_iso",
-            "FCCAnalyses::ZHfunctions::sel_iso(0.2)(electrons_sel, electrons_iso)",
+            "FCCAnalyses::ZHfunctions::sel_iso(0.3)(electrons_sel, electrons_iso)",
         )
 
         df=df.Define("combined_leptons_per_event", "muons_sel_iso.size() + electrons_sel_iso.size()")
         df=df.Define("merged_sel_iso", "FCCAnalyses::ReconstructedParticle::merge(muons_sel_iso, electrons_sel_iso)")
-        df=df.Define("leps_that_dont_pass_iso", "FCCAnalyses::ReconstructedParticle::remove(merged_leptons_list_past_momentum_cut, merged_sel_iso)")
+     
 
-        df=df.Define("leps_that_dont_pass_iso_p", "FCCAnalyses::ReconstructedParticle::get_p(leps_that_dont_pass_iso)")
-        df=df.Define("fraction_not_passing_cut", "leps_that_dont_pass_iso_p.size()")
-        df=df.Define("size_passing_cut", "merged_sel_iso.size()")
-        df= df.Define("momentum_post_iso_cut", "FCCAnalyses::ReconstructedParticle::get_p(merged_sel_iso)")
-
+       
 
 
 
@@ -697,7 +740,7 @@ class RDFanalysis:
                 "electrons_n", "FCCAnalyses::ReconstructedParticle::get_n(electrons_sel_iso)",
             )
 
-        #since the lepton dist looks different maybe its cause I'm only using the truth matched selection idk?
+    
         
        
         
