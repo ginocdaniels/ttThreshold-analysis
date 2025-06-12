@@ -157,42 +157,41 @@ static std::pair<ROOT::VecOps::RVec<int>, ROOT::VecOps::RVec<int>> getJetMotherP
     const ROOT::VecOps::RVec<int>& recIndices,
     const ROOT::VecOps::RVec<int>& mcIndices,
     const ROOT::VecOps::RVec<edm4hep::ReconstructedParticleData>& recoParticles,
-    const ROOT::VecOps::RVec<int>& Particle0, // Parent indices Particle0
-    const ROOT::VecOps::RVec<int>& Particle1, // Daughter indices Particle1
+    const ROOT::VecOps::RVec<int>& Particle0, // Parent indices (MCParticle#0.parents)
+    const ROOT::VecOps::RVec<int>& Particle1, // Daughter indices (MCParticle#1.daughters)
     float max_angle = 0.3) {
   ROOT::VecOps::RVec<int> jetFlavors(jets.size(), 0);
   ROOT::VecOps::RVec<int> motherPdgIds(jets.size(), 0);
 
+  // Get eta and phi for all MC particles
+  auto partonEta = MCParticle::get_eta(mcParticles);
+  auto partonPhi = MCParticle::get_phi(mcParticles);
+
   for (size_t j = 0; j < jets.size(); ++j) {
     const auto& jet = jets[j];
+    float jetEta = jet.eta();
+    float jetPhi = jet.phi_std();
 
     for (size_t i = 0; i < mcParticles.size(); ++i) {
       const auto& parton = mcParticles[i];
-      // std::cout << " parton.generator  status " << parton.generatorStatus << std::endl;
-      // Select partons only (for pythia8 71-79, for pythia6 2)
-      if ((parton.generatorStatus > 80 || parton.generatorStatus < 70) &&
-          parton.generatorStatus != 2) {
-        continue;
-      }
-      if (std::abs(parton.PDG) > 5 && parton.PDG != 21) {
+      // Select partons: quarks (|PDG| <= 5) or gluons (PDG == 21)
+      // Status 70-80 (Pythia8 shower) or 2 (Pythia6 final state)
+      if ((std::abs(parton.PDG) > 5 && parton.PDG != 21) ||
+          ((parton.generatorStatus > 80 || parton.generatorStatus < 70) && parton.generatorStatus != 2)) {
         continue;
       }
 
-      
-      Float_t dot = jet.px() * parton.momentum.x + jet.py() * parton.momentum.y +
-                    jet.pz() * parton.momentum.z;
-      Float_t lenSq1 = jet.px() * jet.px() + jet.py() * jet.py() + jet.pz() * jet.pz();
-      Float_t lenSq2 = parton.momentum.x * parton.momentum.x +
-                       parton.momentum.y * parton.momentum.y +
-                       parton.momentum.z * parton.momentum.z;
-      Float_t norm = sqrt(lenSq1 * lenSq2);
-      Float_t angle = acos(dot / norm);
+      // Calculate angular distance
+      float deta = jetEta - partonEta[i];
+      float dphi = std::abs(jetPhi - partonPhi[i]);
+      if (dphi > M_PI) dphi = 2 * M_PI - dphi;
+      float angle = std::sqrt(deta * deta + dphi * dphi);
 
       if (angle <= max_angle) {
         int current_pdg = std::abs(parton.PDG);
         bool update_mother = false;
 
-        // If the jet flavor is 5 or 21 go to next mother to get the pdgid 
+        // Flavor assignment: prefer heavier quarks over gluons
         if (jetFlavors[j] == 0 || jetFlavors[j] == 21) {
           jetFlavors[j] = current_pdg;
           update_mother = true;
@@ -207,26 +206,65 @@ static std::pair<ROOT::VecOps::RVec<int>, ROOT::VecOps::RVec<int>> getJetMotherP
         if (update_mother && parton.parents_begin < parton.parents_end &&
             parton.parents_begin < Particle0.size()) {
           int selected_mother_pdg = 0;
-          // Check immediate parents to find the first one that is not the same as the jet flavor
+          int selected_parent_idx = -1;
+          // Check all immediate parents
           for (unsigned int p = parton.parents_begin; p < parton.parents_end && p < Particle0.size(); ++p) {
             int parent_idx = Particle0[p];
             if (parent_idx < 0 || parent_idx >= mcParticles.size()) continue;
             int parent_pdg = std::abs(mcParticles[parent_idx].PDG);
-            if(parent_pdg == abs(6)){
-              selected_mother_pdg = parent_pdg;
-              break;
+
+            // Exclude leptons as mothers for quark-flavored jets
+            if (jetFlavors[j] >= 1 && jetFlavors[j] <= 5 &&
+                parent_pdg >= 11 && parent_pdg <= 16) {
+              continue;
             }
 
-            // Select the first parent that is not the same as the jet flavor
-            if (parent_pdg != jetFlavors[j]) {
+            // Validate mother by checking daughters
+            bool flavor_match = false;
+            const auto& parent = mcParticles[parent_idx];
+            if (parent.daughters_begin < parent.daughters_end &&
+                parent.daughters_begin < Particle1.size()) {
+              for (unsigned int d = parent.daughters_begin; d < parent.daughters_end && d < Particle1.size(); ++d) {
+                int daughter_idx = Particle1[d];
+                if (daughter_idx >= 0 && daughter_idx < mcParticles.size()) {
+                  int daughter_pdg = std::abs(mcParticles[daughter_idx].PDG);
+                  if (daughter_pdg == jetFlavors[j]) {
+                    flavor_match = true;
+                    break;
+                  }
+                }
+              }
+            }
+
+            if (flavor_match) {
               selected_mother_pdg = parent_pdg;
-              break; // Use the first parent that is different from the jet flavor
+              selected_parent_idx = parent_idx;
+              break; // Use the first valid mother
             }
           }
 
           // Only update if a valid mother was found
           if (selected_mother_pdg != 0) {
             motherPdgIds[j] = selected_mother_pdg;
+          }
+
+          // Debug output
+          std::cout << "Jet " << j << " flavor " << jetFlavors[j]
+                    << ", parton " << i << " PDG " << parton.PDG
+                    << ", parents_begin " << parton.parents_begin
+                    << ", parents_end " << parton.parents_end
+                    << ", selected mother PDG " << selected_mother_pdg
+                    << ", parent idx " << selected_parent_idx << std::endl;
+          if (selected_parent_idx >= 0) {
+            const auto& parent = mcParticles[selected_parent_idx];
+            std::cout << "  Parent daughters: ";
+            for (unsigned int d = parent.daughters_begin; d < parent.daughters_end && d < Particle1.size(); ++d) {
+              int daughter_idx = Particle1[d];
+              if (daughter_idx >= 0 && daughter_idx < mcParticles.size()) {
+                std::cout << mcParticles[daughter_idx].PDG << " ";
+              }
+            }
+            std::cout << std::endl;
           }
         }
       }
@@ -235,54 +273,6 @@ static std::pair<ROOT::VecOps::RVec<int>, ROOT::VecOps::RVec<int>> getJetMotherP
 
   return std::make_pair(jetFlavors, motherPdgIds);
 }
-static int get_particle_origin(const edm4hep::MCParticleData &p,
-                        const ROOT::VecOps::RVec<edm4hep::MCParticleData> &in,
-                        const ROOT::VecOps::RVec<int> &ind){
-
- // std::cout  << std::endl << " enter in MCParticle::get_lepton_origin  PDG = " << p.PDG << std::endl;
-
- int result = 0;
-
-//  std::cout << " p.parents_begin p.parents_end " << p.parents_begin <<  " "  << p.parents_end << std::endl;
-    for (unsigned j = (p.parents_begin); j <(p.parents_end); ++j) {
-      if (j >= ind.size()) continue; 
-      int index = ind.at(j);
-      if (index < 0 || index >= in.size()) continue; // Safety check for valid index
-      int pdg_parent = in.at(index).PDG ;
-      // std::cout << " pdg_parent " << pdg_parent << std::endl;
-      if(pdg_parent == 6) result = pdg_parent;
-      if (pdg_parent== 11 || pdg_parent== -11) continue;
-      else (result=pdg_parent); //I dont understand why this doesnt ever show a top quark and only the 11,-11
-      // std::cout  << " parent has pdg = " << in.at(index).PDG <<  "  status = " << in.at(index).generatorStatus << std::endl;
-      break;
-      // result = pdg_parent;
-      // // std::cout <<  " ... Parent PDG ID found, return code = " << result <<  std::endl;
-      // break; // Return the first parent's PDG ID
-    }
- return result;
-}
-
-
-
-static ROOT::VecOps::RVec<int> get_particles_origin(const ROOT::VecOps::RVec<edm4hep::MCParticleData> &particles,
-                                             const ROOT::VecOps::RVec<edm4hep::MCParticleData> &in,
-                                             const ROOT::VecOps::RVec<int> &ind)  {
-
-  ROOT::VecOps::RVec<int> result;
-  result.reserve(particles.size());
-  for (size_t i = 0; i < particles.size(); ++i) {
-    auto & p = particles[i];
-    int origin = get_particle_origin(p, in, ind);
-    result.push_back(origin);
-  }
-  return result;
-}
-
-
-
-
-
-
   
 };
 
