@@ -52,8 +52,37 @@ struct TruthMatching {
         delta_r_values.push_back(dR);
       }
     }
-    
     return delta_r_values;
+  }
+
+  static ROOT::VecOps::RVec<TLorentzVector> Delta_R_filter_and_merge(
+      const ROOT::VecOps::RVec<TLorentzVector>& mc_tlvs,
+      const ROOT::VecOps::RVec<TLorentzVector>& reco_tlvs,
+      float deltaR_threshold = 0.5) {
+    ROOT::VecOps::RVec<TLorentzVector> merged_collection = mc_tlvs;
+    std::vector<bool> reco_used(reco_tlvs.size(), false);
+
+    for (size_t i = 0; i < mc_tlvs.size(); ++i) {
+      bool has_match = false;
+      for (size_t j = 0; j < reco_tlvs.size(); ++j) {
+        if (reco_used[j]) continue;
+        float dR = mc_tlvs[i].DeltaR(reco_tlvs[j]);
+        if (dR < deltaR_threshold) {
+          has_match = true;
+          reco_used[j] = true;
+          break; // Found a match, no need to check further for this mc_tlv
+        }
+      }
+    }
+
+    // Add unmatched reco_tlvs to the merged collection
+    for (size_t j = 0; j < reco_tlvs.size(); ++j) {
+      if (!reco_used[j]) {
+        merged_collection.push_back(reco_tlvs[j]);
+      }
+    }
+
+    return merged_collection;
   }
   // Delta R calc between two tlv collections, returns the minimum delta R value for each lepton
    static ROOT::VecOps::RVec<float> Delta_R_min_calc(
@@ -277,13 +306,68 @@ static ROOT::VecOps::RVec<int> get_particles_origin(const ROOT::VecOps::RVec<edm
   }
   return result;
 }
+static ROOT::VecOps::RVec<bool> computeJetRemovalMask(
+    const ROOT::VecOps::RVec<TLorentzVector>& jets,
+    const ROOT::VecOps::RVec<TLorentzVector>& muons,
+    const ROOT::VecOps::RVec<TLorentzVector>& electrons,
+    float deltaR_threshold) {
+    ROOT::VecOps::RVec<bool> mask(jets.size(), true);
+    for (size_t j = 0; j < jets.size(); ++j) {
+        for (size_t i = 0; i < muons.size(); ++i) {
+            if (jets[j].DeltaR(muons[i]) < deltaR_threshold) {
+                mask[j] = false;
+                break; // Jet is already excluded, no need to check further
+            }
+        }
+        if (mask[j]) { // Only check electrons if jet wasn’t excluded by muons
+            for (size_t i = 0; i < electrons.size(); ++i) {
+                if (jets[j].DeltaR(electrons[i]) < deltaR_threshold) {
+                    mask[j] = false;
+                    break;
+                }
+            }
+        }
+    }
+    return mask;
+}
 
+static ROOT::VecOps::RVec<int> get_MCDaughter1(ROOT::VecOps::RVec<edm4hep::MCParticleData> mc,
+  ROOT::VecOps::RVec<int> ind,ROOT::VecOps::RVec<edm4hep::MCParticleData> mcParticles){
 
-
-
-
+ROOT::VecOps::RVec<int> result;
+for (size_t i = 0; i < mc.size(); ++i){
+  // auto & p = mc[i];
+  // std::cout << " mc.at(i).daughters_begin " << mc.at(i).daughters_begin << " mc.at(i).daughters_end " << mc.at(i).daughters_end << std::endl;
+  if (mc.at(i).daughters_begin==mc.at(i).daughters_end)result.push_back(-999);
+  else if (mcParticles.at(mc.at(i).daughters_end).PDG != 23) result.push_back(mcParticles.at(mc.at(i).daughters_end).PDG);
+  else if (mcParticles.at(mc.at(i).daughters_end-1).PDG != 23) result.push_back(mcParticles.at(mc.at(i).daughters_end-1).PDG);
+  else if (mcParticles.at(mc.at(i).daughters_end-2).PDG != 23) result.push_back(mcParticles.at(mc.at(i).daughters_end-2).PDG);
+  else if (mcParticles.at(mc.at(i).daughters_end-3).PDG != 23) result.push_back(mcParticles.at(mc.at(i).daughters_end-3).PDG);
+  else result.push_back(-999);
 
   
+  }
+return result;
+}
+static ROOT::VecOps::RVec<int> get_MCDaughter1_W(ROOT::VecOps::RVec<edm4hep::MCParticleData> mc,
+  ROOT::VecOps::RVec<int> ind,ROOT::VecOps::RVec<edm4hep::MCParticleData> mcParticles){
+
+ROOT::VecOps::RVec<int> result;
+for (size_t i = 0; i < mc.size(); ++i){
+  // auto & p = mc[i];
+  // std::cout << " mc.at(i).daughters_begin " << mc.at(i).daughters_begin << " mc.at(i).daughters_end " << mc.at(i).daughters_end << std::endl;
+  if (mc.at(i).daughters_begin==mc.at(i).daughters_end)result.push_back(-999);
+  else if (mcParticles.at(mc.at(i).daughters_begin).PDG != std::abs(24)) result.push_back(mcParticles.at(mc.at(i).daughters_begin).PDG);
+  else if (mcParticles.at(mc.at(i).daughters_begin+1).PDG != std::abs(24)) result.push_back(mcParticles.at(mc.at(i).daughters_begin+1).PDG);
+  else if (mcParticles.at(mc.at(i).daughters_begin+2).PDG != std::abs(24)) result.push_back(mcParticles.at(mc.at(i).daughters_begin+2).PDG);
+  else if (mcParticles.at(mc.at(i).daughters_begin+3).PDG != std::abs(24)) result.push_back(mcParticles.at(mc.at(i).daughters_begin+3).PDG);
+  else result.push_back(-999);
+
+  
+  }
+return result;
+}
+
 };
 
 } // namespace FCCAnalyses
