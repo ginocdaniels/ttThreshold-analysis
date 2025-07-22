@@ -2,11 +2,6 @@ import os, copy
 import urllib
 # list of processes
 all_processes = {
-    "wzp6_ee_nunuH_Hbb_ecm240":{ "fraction": 1,},
-    "wzp6_ee_nunuH_Hcc_ecm240":{ "fraction": 1,},
-    "wzp6_ee_nunuH_Hss_ecm240":{ "fraction": 1,},
-    "wzp6_ee_nunuH_Huu_ecm240":{ "fraction": 1,},
-    "wzp6_ee_nunuH_Hdd_ecm240":{ "fraction": 1,},
     #  "p8_ee_ZZ_ecm365":{ "fraction": 1,},
 #    "p8_ee_ZZ_ecm345":{ "fraction": 1,},
 #    "p8_ee_ZZ_ecm340":{ "fraction": 1,},
@@ -22,11 +17,11 @@ all_processes = {
     # "p8_ee_Zss_ecm91":{ "fraction": 1,},
     # "p8_ee_Zud_ecm91":{ "fraction": 1,},
 
-    # "wzp6_ee_nunuH_Hbb_ecm365":{ "fraction": 1,},
-    # "wzp6_ee_nunuH_Hcc_ecm365":{ "fraction": 1,},
-    # "wzp6_ee_nunuH_Hss_ecm365":{ "fraction": 1,},
-    # "wzp6_ee_nunuH_Huu_ecm365":{ "fraction": 1,},
-    # "wzp6_ee_nunuH_Hdd_ecm365":{ "fraction": 1,},
+    "wzp6_ee_nunuH_Hbb_ecm240":{ "fraction": 1,},
+    "wzp6_ee_nunuH_Hcc_ecm240":{ "fraction": 1,},
+    "wzp6_ee_nunuH_Hss_ecm240":{ "fraction": 1,},
+    "wzp6_ee_nunuH_Huu_ecm240":{ "fraction": 1,},
+    "wzp6_ee_nunuH_Hdd_ecm240":{ "fraction": 1,},
 
 #    "wzp6_ee_WWZ_Zbb_ecm340": {
 #        "fraction": 1,
@@ -311,13 +306,11 @@ jetClusteringHelper_R5 = None
 
 all_branches = [
     "njets_R5","jets_R5_pflavor", "jets_R5_p_unfiltered_size","jets_R5_p_size", "jets_R5_theta_unfiltered",
-      "bjets_R5_true","ljets_R5_true","remaining_muons_deltaR","remaining_electrons_deltaR","jets_R5_tlv","jets_R5_p","jets_R5_theta", "electrons_iso", "muons_iso", "electrons_sel","muons_all_p", "electrons_all_p","bjets_R5_true_theta",
+      "bjets_R5_true","ljets_R5_true","jets_R5_tlv","jets_R5_p","jets_R5_theta", "electrons_iso", "muons_iso", "electrons_sel","muons_all_p", "electrons_all_p","bjets_R5_true_theta",
       "jets_R5_isC","jets_R5_isU","jets_R5_isD","jets_R5_isB","jets_R5_isG","jets_R5_isS","jets_R5_isTAU","cjets_R5_true_theta","ljets_R5_true_theta","gjets_R5_true_theta",
       "all_thetas_merged", 
-      "jets_R5_isB_true_b", "jets_R5_isC_true_b", "jets_R5_isU_true_b", "jets_R5_isD_true_b", "jets_R5_isG_true_b", "jets_R5_isS_true_b", "jets_R5_isTau_true_b",
-      "jets_R5_isC_true_c", "jets_R5_isB_true_c", "jets_R5_isU_true_c", "jets_R5_isD_true_c", "jets_R5_isG_true_c", "jets_R5_isS_true_c", "jets_R5_isTau_true_c",
       "nbjets_R5_true", "ncjets_R5_true","nljets_R5_true","ngjets_R5_true","jets_R5_eta","jets_R5_phi",
-      "bjets_R5_true_pt", "bjets_R5_true_m", "jets_R5_pt", "jets_R5_m", "jets_R5_e"
+      "bjets_R5_true_pt", "bjets_R5_true_m", "jets_R5_pt", "jets_R5_m", "jets_R5_e", "jets_R5_tlv_unfiltered", "jet_lep_deltaR",
      
 ]
 
@@ -368,13 +361,13 @@ class RDFanalysis:
 
         df = df.Alias("MCRecoAssociations0", "MCRecoAssociations#0.index"); 
         df = df.Alias("MCRecoAssociations1", "MCRecoAssociations#1.index");
-        df=df.Define("neutrino_collection_1", "FCCAnalyses::MCParticle::sel_pdgID(12,true)(MCParticles)")
-        df=df.Define("neutrino_collection_2", "FCCAnalyses::MCParticle::sel_pdgID(14,true)(MCParticles)")
-        df=df.Define("neutrino_collection_3", "FCCAnalyses::MCParticle::sel_pdgID(16,true)(MCParticles)")
-        df=df.Define("merged_neutrinos_1", "FCCAnalyses::MCParticle::mergeParticles(neutrino_collection_1, neutrino_collection_2)")
+        # df=df.Define("neutrino_collection_1", "FCCAnalyses::MCParticle::sel_pdgID(12,true)(MCParticles)")
+        # df=df.Define("neutrino_collection_2", "FCCAnalyses::MCParticle::sel_pdgID(14,true)(MCParticles)")
+        # df=df.Define("neutrino_collection_3", "FCCAnalyses::MCParticle::sel_pdgID(16,true)(MCParticles)")
+        # df=df.Define("merged_neutrinos_1", "FCCAnalyses::MCParticle::mergeParticles(neutrino_collection_1, neutrino_collection_2)")
 
-        df=df.Define("merged_neutrinos_2", "FCCAnalyses::MCParticle::mergeParticles(merged_neutrinos_1, neutrino_collection_3)")
-        df=df.Filter("merged_neutrinos_2.size() == 0")
+        # df=df.Define("merged_neutrinos_2", "FCCAnalyses::MCParticle::mergeParticles(merged_neutrinos_1, neutrino_collection_3)")
+        # df=df.Filter("merged_neutrinos_2.size() == 0")
        
 
        
@@ -439,7 +432,7 @@ class RDFanalysis:
         )
        
         
-        # df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 0")
+        df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 0")
         # df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 1")
         # df = df.Filter("muons_sel_iso.size() + electrons_sel_iso.size() == 2")
         ## require opsite charges for zz not for the zbb and cc ss but for those just make sure the iso leptons are 0 
@@ -542,8 +535,47 @@ class RDFanalysis:
         )
         # Can make efficiency plots for jet flavor taggings for the Bs can also start trying new clustering algorithms and 
         # plot jet distributions for the different clustering algorithms and see if there is a difference in the jet distributions
+        df = df.Define(f"jets_R5_pflavor_unfiltered", "JetTaggingUtils::get_flavour({}, Particle)".format(jetClusteringHelper_R5.jets) )
+        
+        
+        df = df.Define(f"jets_R5_p_unfiltered",           "JetClusteringUtils::get_p({})".format(jetClusteringHelper_R5.jets))
+        df=df.Define(f"jets_R5_p_unfiltered_size", "jets_R5_p_unfiltered.size()")
+        df = df.Define(f"jets_R5_theta_unfiltered",       "JetClusteringUtils::get_theta({})".format(jetClusteringHelper_R5.jets))
+        df=df.Define(f"jets_R5_tlv_unfiltered",           "JetConstituentsUtils::compute_tlv_jets({})".format(jetClusteringHelper_R5.jets))
+        df=df.Define(f"PseudoJetCollection_masked", f"{jetClusteringHelper_R5.jets}")
+        df = df.Define("remaining_muons_tlv", "FCCAnalyses::ReconstructedParticle::get_tlv(muons_sel_iso)")
+        df = df.Define("remaining_electrons_tlv", "FCCAnalyses::ReconstructedParticle::get_tlv(electrons_sel_iso)")
+        df=df.Define("merged_iso_muons_electrons", "FCCAnalyses::ReconstructedParticle::merge(muons_sel_iso, electrons_sel_iso)")
+        df=df.Define("merged_iso_muons_electrons_tlv", "FCCAnalyses::ReconstructedParticle::get_tlv(merged_iso_muons_electrons)")
+        df=df.Define("jet_lep_deltaR", "FCCAnalyses::TruthMatching::Delta_R_calc(jets_R5_tlv_unfiltered, merged_iso_muons_electrons_tlv)")
+
+        df = df.Define("Jets_R5_filtered", """
+            ROOT::VecOps::RVec<fastjet::PseudoJet> result;
+            for (size_t i = 0; i < jets_R5_tlv_unfiltered.size(); ++i) {
+                bool overlaps = false;
+                for (size_t j = 0; j < merged_iso_muons_electrons_tlv.size(); ++j) {
+                    float dR = jets_R5_tlv_unfiltered[i].DeltaR(merged_iso_muons_electrons_tlv[j]);
+                    if (dR < 0.5) {
+                        overlaps = true;
+                        break;
+                    }
+                }
+                if (!overlaps) {
+                    result.push_back(PseudoJetCollection_masked[i]);
+                }
+            }
+            return result;
+        """)
+
+
+
         
 
+
+
+
+        # df = df.Define("jets_R5_tlv", "jets_R5_tlv_filtered")
+       
 
 
         if saveExclJets:    df = jetFlavourHelper.define(df)
@@ -553,81 +585,36 @@ class RDFanalysis:
         if  saveExclJets: df = jetFlavourHelper.inference(weaver_preproc, weaver_model, df)
         df = jetFlavourHelper_R5.inference(weaver_preproc, weaver_model,df)
 
+        df = df.Define("jets_R5_isB","recojet_isB_R5")
+        df = df.Define("jets_R5_isC","recojet_isC_R5")
+        df = df.Define("jets_R5_isU","recojet_isU_R5")
+        df = df.Define("jets_R5_isD","recojet_isD_R5")
+        df = df.Define("jets_R5_isG","recojet_isG_R5")
+        df = df.Define("jets_R5_isS","recojet_isS_R5")
+        df = df.Define("jets_R5_isTAU","recojet_isTAU_R5")
+
+
+
+       
+        # df=df.Filter("jets_R5_tlv_filtered")
+
     
-        if saveExclJets:
-            df = df.Define(
-                f"jets_p4",
-                "JetConstituentsUtils::compute_tlv_jets({})".format(
-                    jetClusteringHelper.jets
-                ),
-            )
+        # df= df.Filter("isOverlapping_muons || isOverlapping_electrons")
         
-        df = df.Define(
-            f"jets_R5_p4",
-            "JetConstituentsUtils::compute_tlv_jets({})".format(
-                jetClusteringHelper_R5.jets
-            ),
-        )
+       
+        
+        df=df.Define("jets_R5_pflavor", "JetTaggingUtils::get_flavour(Jets_R5_filtered, Particle)")
+        
+        # df=df.Define("masked_jet_constitutents", f"{jetClusteringHelper_R5.constituents}")
 
-        df = df.Define(f"jets_R5_pflavor_unfiltered", "JetTaggingUtils::get_flavour({}, Particle)".format(jetClusteringHelper_R5.jets) )
-        
-        
-        df = df.Define(f"jets_R5_p_unfiltered",           "JetClusteringUtils::get_p({})".format(jetClusteringHelper_R5.jets))
-        df=df.Define(f"jets_R5_p_unfiltered_size", "jets_R5_p_unfiltered.size()")
-        df = df.Define(f"jets_R5_theta_unfiltered",       "JetClusteringUtils::get_theta({})".format(jetClusteringHelper_R5.jets))
-        df=df.Define(f"jets_R5_tlv_unfiltered",           "JetConstituentsUtils::compute_tlv_jets({})".format(jetClusteringHelper_R5.jets))
-        
-        df = df.Define("remaining_muons_tlv", "FCCAnalyses::ReconstructedParticle::get_tlv(muons_sel_iso)")
-        df = df.Define("remaining_electrons_tlv", "FCCAnalyses::ReconstructedParticle::get_tlv(electrons_sel_iso)")
-
-        df=df.Define("remaining_muons_deltaR", "FCCAnalyses::TruthMatching::Delta_R_calc(jets_R5_tlv_unfiltered, remaining_muons_tlv)")
-        df=df.Define("remaining_electrons_deltaR", "FCCAnalyses::TruthMatching::Delta_R_calc(jets_R5_tlv_unfiltered, remaining_electrons_tlv)")
-        
-        df=df.Define("jet_removal_mask", 
-                    f"""
-                    ROOT::VecOps::RVec<bool> mask(jets_R5_theta_unfiltered.size(), true);
-                    // Check Delta R for muons
-                    for(size_t i = 0; i < remaining_muons_tlv.size(); i++) {{
-                        for(size_t j = 0; j < jets_R5_theta_unfiltered.size(); j++) {{
-                            size_t deltaR_index = i * jets_R5_theta_unfiltered.size() + j;
-                            if(deltaR_index < remaining_muons_deltaR.size() && remaining_muons_deltaR[deltaR_index] < {deltaR_threshold}) {{
-                                mask[j] = false;
-                            }}
-                        }}
-                    }}
-                    // Check Delta R for electrons
-                    for(size_t i = 0; i < remaining_electrons_tlv.size(); i++) {{
-                        for(size_t j = 0; j < jets_R5_theta_unfiltered.size(); j++) {{
-                            size_t deltaR_index = i * jets_R5_theta_unfiltered.size() + j;
-                            if(deltaR_index < remaining_electrons_deltaR.size() && remaining_electrons_deltaR[deltaR_index] < {deltaR_threshold}) {{
-                                mask[j] = false;
-                            }}
-                        }}
-                    }}
-                    return mask;
-                    """)
-    
-        ''' 
-        Implemented logic to calculate Delta R between jets and remaining leptons (muons and electrons).
-        Instead of using the minimum Delta R, all Delta R values between each lepton and each jet are checked.
-        If any Delta R value for a jet to a lepton (muon or electron) is below the threshold (set to jet radius),
-        that jet is marked for removal using a mask. The jet collection is then filtered to exclude these jets.
-        This makes sure that jets overlapping with any lepton (based on Delta R) are removed from the analysis,
-        avoiding index mismatch issues and accounting for cases where a lepton might be close to multiple jets.
-        '''
-        
-        df=df.Define("jets_R5_pflavor", "jets_R5_pflavor_unfiltered[jet_removal_mask]")
-        df=df.Define(f"PseudoJetCollection_masked", f"{jetClusteringHelper_R5.jets}[jet_removal_mask]")
-        df=df.Define("masked_jet_constitutents", f"{jetClusteringHelper_R5.constituents}[jet_removal_mask]")
-
-        df=df.Define("jets_R5_eta", "JetClusteringUtils::get_eta(PseudoJetCollection_masked)")
-        df=df.Define("jets_R5_phi", "JetClusteringUtils::get_phi(PseudoJetCollection_masked)")
-        df=df.Define("jets_R5_pt", "JetClusteringUtils::get_pt(PseudoJetCollection_masked)")
-        df=df.Define("jets_R5_m", "JetClusteringUtils::get_m(PseudoJetCollection_masked)")
-        df=df.Define("jets_R5_e", "JetClusteringUtils::get_e(PseudoJetCollection_masked)")
-        df=df.Define(f"jets_R5_tlv", "jets_R5_tlv_unfiltered[jet_removal_mask]")
-        df=df.Define(f"jets_R5_p", "jets_R5_p_unfiltered[jet_removal_mask]")
-        df=df.Define(f"jets_R5_theta", "jets_R5_theta_unfiltered[jet_removal_mask]")
+        df=df.Define("jets_R5_eta", "JetClusteringUtils::get_eta(Jets_R5_filtered)")
+        df=df.Define("jets_R5_phi", "JetClusteringUtils::get_phi(Jets_R5_filtered)")
+        df=df.Define("jets_R5_pt", "JetClusteringUtils::get_pt(Jets_R5_filtered)")
+        df=df.Define("jets_R5_m", "JetClusteringUtils::get_m(Jets_R5_filtered)")
+        df=df.Define("jets_R5_e", "JetClusteringUtils::get_e(Jets_R5_filtered)")
+        df=df.Define(f"jets_R5_tlv", "JetConstituentsUtils::compute_tlv_jets(Jets_R5_filtered)")
+        df=df.Define(f"jets_R5_p", "JetClusteringUtils::get_p(Jets_R5_filtered)")
+        df=df.Define(f"jets_R5_theta", "JetClusteringUtils::get_theta(Jets_R5_filtered)")
         
         
         # df=df.Define("masked_jet_constituents", "FCCAnalyses::JetClusteringUtils::get_constituents(PseudoJetCollection_masked)")
@@ -668,10 +655,10 @@ class RDFanalysis:
     
         
         # This is where error comes from when i used the filreted jets_R5_pflavor_new
-        df = df.Define("jets_R5_btagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_true,PseudoJetCollection_masked)")
-        df = df.Define("jets_R5_ctagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ctag_true,PseudoJetCollection_masked)")
-        df = df.Define("jets_R5_ltagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ltag_true,PseudoJetCollection_masked)")
-        df = df.Define("jets_R5_gtagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_gtag_true,PseudoJetCollection_masked)")
+        df = df.Define("jets_R5_btagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_btag_true,Jets_R5_filtered)")
+        df = df.Define("jets_R5_ctagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ctag_true,Jets_R5_filtered)")
+        df = df.Define("jets_R5_ltagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_ltag_true,Jets_R5_filtered)")
+        df = df.Define("jets_R5_gtagged_true", "JetTaggingUtils::sel_tag(true)(jets_R5_gtag_true,Jets_R5_filtered)")
 
         df = df.Define(f"nbjets_R5_true", "return int(jets_R5_btagged_true.size())")
         df = df.Define(f"ncjets_R5_true", "return int(jets_R5_ctagged_true.size())")
@@ -692,29 +679,23 @@ class RDFanalysis:
         df=df.Define(f"gjets_R5_true_theta","JetClusteringUtils::get_theta({})".format('gjets_R5_true'))
 
 
-        df = df.Define("jets_R5_isB","recojet_isB_R5[jet_removal_mask]")
-        df = df.Define("jets_R5_isC","recojet_isC_R5[jet_removal_mask]")
-        df = df.Define("jets_R5_isU","recojet_isU_R5[jet_removal_mask]")
-        df = df.Define("jets_R5_isD","recojet_isD_R5[jet_removal_mask]")
-        df = df.Define("jets_R5_isG","recojet_isG_R5[jet_removal_mask]")
-        df = df.Define("jets_R5_isS","recojet_isS_R5[jet_removal_mask]")
-        df = df.Define("jets_R5_isTAU","recojet_isTAU_R5[jet_removal_mask]")
+        
 
-        df = df.Define(f"jets_R5_isB_true_b", "jets_R5_isB[jets_R5_btag_true]")
-        df = df.Define(f"jets_R5_isC_true_b", "jets_R5_isC[jets_R5_btag_true]")
-        df = df.Define(f"jets_R5_isU_true_b", "jets_R5_isU[jets_R5_btag_true]")
-        df = df.Define(f"jets_R5_isD_true_b", "jets_R5_isD[jets_R5_btag_true]")
-        df = df.Define(f"jets_R5_isG_true_b", "jets_R5_isG[jets_R5_btag_true]")
-        df = df.Define(f"jets_R5_isS_true_b", "jets_R5_isB[jets_R5_btag_true]")
-        df = df.Define(f"jets_R5_isTau_true_b", "jets_R5_isTAU[jets_R5_btag_true]")
+        # df = df.Define(f"jets_R5_isB_true_b", "jets_R5_isB[jets_R5_btag_true]")
+        # df = df.Define(f"jets_R5_isC_true_b", "jets_R5_isC[jets_R5_btag_true]")
+        # df = df.Define(f"jets_R5_isU_true_b", "jets_R5_isU[jets_R5_btag_true]")
+        # df = df.Define(f"jets_R5_isD_true_b", "jets_R5_isD[jets_R5_btag_true]")
+        # df = df.Define(f"jets_R5_isG_true_b", "jets_R5_isG[jets_R5_btag_true]")
+        # df = df.Define(f"jets_R5_isS_true_b", "jets_R5_isB[jets_R5_btag_true]")
+        # df = df.Define(f"jets_R5_isTau_true_b", "jets_R5_isTAU[jets_R5_btag_true]")
 
-        df=df.Define(f"jets_R5_isC_true_c", "jets_R5_isC[jets_R5_ctag_true]")
-        df=df.Define(f"jets_R5_isB_true_c", "jets_R5_isB[jets_R5_ctag_true]")
-        df=df.Define(f"jets_R5_isU_true_c", "jets_R5_isU[jets_R5_ctag_true]")
-        df=df.Define(f"jets_R5_isD_true_c", "jets_R5_isD[jets_R5_ctag_true]")
-        df=df.Define(f"jets_R5_isG_true_c", "jets_R5_isG[jets_R5_ctag_true]")
-        df=df.Define(f"jets_R5_isS_true_c", "jets_R5_isS[jets_R5_ctag_true]")
-        df=df.Define(f"jets_R5_isTau_true_c", "jets_R5_isTAU[jets_R5_ctag_true]")
+        # df=df.Define(f"jets_R5_isC_true_c", "jets_R5_isC[jets_R5_ctag_true]")
+        # df=df.Define(f"jets_R5_isB_true_c", "jets_R5_isB[jets_R5_ctag_true]")
+        # df=df.Define(f"jets_R5_isU_true_c", "jets_R5_isU[jets_R5_ctag_true]")
+        # df=df.Define(f"jets_R5_isD_true_c", "jets_R5_isD[jets_R5_ctag_true]")
+        # df=df.Define(f"jets_R5_isG_true_c", "jets_R5_isG[jets_R5_ctag_true]")
+        # df=df.Define(f"jets_R5_isS_true_c", "jets_R5_isS[jets_R5_ctag_true]")
+        # df=df.Define(f"jets_R5_isTau_true_c", "jets_R5_isTAU[jets_R5_ctag_true]")
         
     
         return df
@@ -722,7 +703,7 @@ class RDFanalysis:
     # __________________________________________________________
     # Mandatory: output function, please make sure you return the branchlist as a python list
     def output():
-        print('incl jets',jetFlavourHelper_R5.outputBranches())
+        # print('incl jets',jetFlavourHelper.outputBranches())
         # print('incl jets class:', jetFlavourHelper_R5.__class__.__name__)
         # print('incl jets attributes:', dir(jetFlavourHelper_R5)["defintion"])
         # print('incl jets attributes:', jetFlavourHelper_R5.__class__.__name__)
